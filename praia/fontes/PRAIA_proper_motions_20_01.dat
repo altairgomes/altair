@@ -1,0 +1,8 @@
+/media/VERBATIM/2MASS/2MASS/                      | root directory of 2MASS catalogue zone files
+/media/VERBATIM/USNOB/USNOB/                      | root directory of USNOB1 catalogue zone files
+************************************************************************************************************
+list                                              | input list
+1                                                 | format: 1 = xy  .:. 2 = offset
+01.0                                              | error radius for common stars identification (arcsec)
+pm_                                               | label for proper motion updated xy/offset output files
+************************************************************************************************************

@@ -1,0 +1,8 @@
+export jebvfile=""
+export jebvnmobj=""
+export jebvcodeob=""
+export jebvcodelc=""
+export jebvmail=""
+export jebvlong="00 00 00"
+export jebvlat="+00 00 00"
+export jebvalt="0.000"

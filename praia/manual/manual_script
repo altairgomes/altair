@@ -1,0 +1,7 @@
+
+--- Verifica FITS ---------------------------------
+Esse programa abre todas as imagens fits da lista
+uma por uma e abre uma tela perguntando
+se a imagem é boa ou ruim.
+A saída é uma lista só com as imagens que foram
+consideradas boas.

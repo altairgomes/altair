@@ -1,0 +1,12 @@
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with offsets; 3 - MPC format
+list.ucac2.xy                                     | input file  : list of xy files from PRAIA reduction
+target_apophis_jpl144                             | input file  : list of targets (movable or not, if any)
+ucac2_results                                     | output file : log file with output of intermediary/main results from run
+01.5000                                           | error radius (arcsec) for cross-identification of common stars among all xy fields
+************************************************************************************************************************************************
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with offsets; 3 - MPC format
+list.2mass.xy                                     | input file  : list of xy files from PRAIA reduction
+target_apophis_jpl144                             | input file  : list of targets (movable or not, if any)
+2mass_results                                     | output file : log file with output of intermediary/main results from run
+01.5000                                           | error radius (arcsec) for cross-identification of common stars among all xy fields
+************************************************************************************************************************************************

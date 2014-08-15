@@ -1,0 +1,16 @@
+2mass_tno                                         | TNO offset file
+2mass_star                                        | star offset file
+target_eris_jpl28                                 | topocentric TNO ephemeris file (PRAIA format)
+target_eris_geo_jpl28                             | geocentric  TNO ephemeris file (PRAIA format)
+relative_coords_LNA_Eris_05Nov2010.dat            | relative (RA,Dec)s "TNO minus star" and instants
+trajectory_LNA_Eris_05Nov2010.log                 | shadow trajectory log file (C/A, P/A, instant, errors)
+tno_LNA_Eris_05Nov2010.dat                        | file with shadow trajectory projected on Earth (Km)
+earth_LNA_Eris_05Nov2010.dat                      | file with Earth circumference (Km)
+95.7376453361621                                  | TNO distance to Earth (AU)
+6371                                              | Earth radius (Km)
+1200                                              | TNO radius (Km)
+80000 80000    16000 16000                        | (X,Y) plot sizes (Km)
+10                                                | Plot step size X (Km)
+1                                                 | trajectory: straight line (1), parabola (2), ..., n=21
+1                                                 | time scale: straight line (1), parabola (2), ..., n=21
+***********************************************************************************************************

@@ -1,0 +1,125 @@
+  Esta função adiciona imagens ao banco de dados!!!
+
+  Campos:
+
+O nome do objeto pode ser escolhido através do campo 1 (*), ou ser montado
+utilizando-se dos campos 2, 3 e 4 (**) caso seja uma estrela de ocultação.
+
+--*Objeto:
+Escolha o nome do Objeto da lista.
+Caso não exista na lista, apenas digite o nome no campo.
+Se o nome não consta no banco de dados, será pedido na tela seguinte o nome
+do corpo principal (sistema) e logo após o nome do corpo secundário, de forma
+que o caminho seja  ./"Corpo Principal"/"Corpo Secundário"/Objeto/
+Não digite espaços.
+Bias e Flats estarão nos diretórios
+   ./CALIBRACAO/BIAS/BIAS/
+   ./CALIBRACAO/FLAT/FLAT/
+
+--**Estrela de ocultacao Est_Objeto_data:
+Marcando essa opção, a opção *Objeto será desconsiderada e o nome
+poderá ser montado com os campos abaixo.
+O Nome do objeto será "Est_(Objeto Ocultante)_(Data da Ocultação)".
+
+--**Objeto Ocultante:
+!!!!!!! Essa opção só será utilizada caso o campo "Estrela de ocultacao
+!!!!!!! Est_Objeto_data" esteja marcado.
+Procure na lista o objeto que oculta a estrela.
+Caso o objeto não exista, digite o nome do objeto normalmente.
+
+--**Data da Ocultacao:
+!!!!!!! Essa opção só será utilizada caso o campo "Estrela de ocultacao
+!!!!!!! Est_Objeto_data" esteja marcado.
+Clicando no ícone no lado direito do campo, um calendário aparecerá.
+Selecione a data da ocultação prevista para o objeto selecionado.
+Essa data será adicionada ao nome do objeto "Est_Objeto_data".
+O formato utilizado é "Ano_Mes_Dia" date-format="%Y_%b_%d".
+Não digite espaços.
+
+OBS: Utilizando a opção de estrela de ocultação, os diretórios serão
+criados utilizando o mesmo "Corpo Principal" e "Corpo Secundário"
+do objeto ocultante. Esistindo o objeto ocultante no banco de dados,
+essas informações serão identificadas automaticamente. Não existindo,
+os dois serão criados:
+   ./"Corpo Principal"/"Corpo Secundário"/"Objeto Ocultante"
+   ./"Corpo Principal"/"Corpo Secundário"/"Estrela de Ocultação"
+
+OBS2: Caso o usuário marque a opção de Estrela de ocultação,
+mas esqueça de selecionar o nome do objeto ocultante ou a data
+de ocultação ou os dois, irá aparecer adiante uma tela perguntando
+se deseja continuar assim mesmo e com as opções de editar essas
+duas informações.
+
+--Corpo Principal:
+Essa opção só será apresentada posteriormente caso o objeto selecionado
+não exista no banco de dados.
+Nesse campo selecione da liste ou digite o nome do Corpo Principal ou do Sistema a que ele pertença.
+Por exemplo: se for uma estrela de ocultação de Charon, o corpo principal é Pluto.
+
+--Corpo Secundário:
+Essa opção só será apresentada posteriormente caso o objeto selecionado
+não exista no banco de dados e após ser fornecido o nome do Corpo Principal.
+Nesse campo selecione da lista ou digite o nome do Corpo Secundário a que ele pertença.
+Por exemplo: se for uma estrela de ocultação de Charon, o corpo principal é Pluto
+e o corpo secundário é Charon.
+
+--Telescópio:
+Escolha o telescópio utilizado da lista.
+Caso não exista na lista, apenas digite o novo valor
+que ele será adiconado ao banco de dados.
+Não digite espaços.
+
+--CCD:
+Escolha o CCD utilizado da lista.
+Caso não exista na lista, apenas digite o novo valor
+que ele será adiconado ao banco de dados.
+Não digite espaços.
+
+--Filtro:
+Escolha o filtro utilizado da lista.
+Caso não exista na lista, apenas digite o novo valor
+que ele será adiconado ao banco de dados.
+Não digite espaços.
+
+--Binagem:
+Escolha a binagem utilizado da lista.
+Caso não exista na lista, apenas digite o novo valor
+que ele será adiconado ao banco de dados.
+O valor de saida é no formato "NxN".
+Se for digitado, por exemplo o valor "2" ou "22" sairá "2x2".
+se for digitado "21" sairá "21x21"
+Não digite espaços.
+
+--Data:
+Adicione a data da observação
+Clique no ícone que tem no lado direito do campo e um calendário aparecerá.
+Nesse calendário, escolha a data da observação.
+Note que esse valor é editável, podendo ser então modificado pelo usuário.
+O formato utilizado é "Ano_Mes_Dia" date-format="%Y_%b_%d".
+Não digite espaços.
+
+--Imagens:
+Clique no ícone que tem no lado direito do campo.
+Abrirá uma tela de seleção de arquivo. Vá até o diretório onde está as
+imagens e selecione as imagens que deseja adicionar às configurações
+fornecidas nos passos anteriores.
+Note que não é necessário adicionar uma por uma, selecione várias imagens
+utilizando os botões "Shift" ou "Ctrl".
+
+--Renomear as imagens no formato "Objeto_numero":
+Marcando essa opção, as imagens selecionadas serão renomeadas
+ao serem adicionadas no banco de dados.
+O novo nome da imagem terá o nome do Objeto adicionado de uma numeração
+com 4 (quatro) algarismos iniciado no valor 1 (um).
+
+--Relatório:
+Digite aqui o relatório da noite.
+Pode ser o relatório exclusivo do objeto.
+Não se esqueça de colocar o nome dos observadores.
+
+
+As imagens serão adicionadas ao diretório:
+./"Corpo Principal"/"Corpo Secundário"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/RAW/
+
+E o relatório será escrito no arquivo:
+./"Corpo Principal"/"Corpo Secundário"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/Relatorio

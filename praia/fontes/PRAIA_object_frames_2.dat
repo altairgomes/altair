@@ -1,0 +1,79 @@
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with target offsets
+list_ucac2_xy                                     | input file name
+18 20 16.7943  -18 11 48.059                      | (RA,DEC) object coordinates (h m s dg ' " or RA,DEC decimals, in free format)            
+40 15                                             | (RA,DEC) box for sub-frame fits image (arcsec)
+32 0                                              | (dx,dy) central pixel offset (pixels)
+0.238                                             | pixel scale (arcsec/pixel)
+0                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+01.5000                                           | error radius (arcsec) for object identification
+pluto_19may2010_30by30_                           | root name for sub-frame fits file names
+pluto_19may2010.log                               | file name for object PRAIA data log (xy or target file format)
+************************************************************************************************************************************************
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with target offsets
+list_ucac2_xy                                     | input file name
+18 19 29.6632  -18 12 17.542                      | (RA,DEC) object coordinates (h m s dg ' " or RA,DEC decimals, in free format)            
+240 240                                           | (RA,DEC) box for sub-frame fits image (arcsec)
+30 30                                             | (RA,DEC) box for sub-frame fits image (arcsec)
+00 00                                             | (dx,dy) central pixel offset (pixels)
+0.238                                             | pixel scale (arcsec/pixel)
+0                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+01.5000                                           | error radius (arcsec) for object identification
+pluto_28may2010_30by30_                           | root name for sub-frame fits file names
+pluto_28may2010.log                               | file name for object PRAIA data log (xy or target file format)
+************************************************************************************************************************************************
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with target offsets
+list_ucac2_xy                                     | input file name
+18 18 32.7018  -18 13 06.091                      | (RA,DEC) object coordinates (h m s dg ' " or RA,DEC decimals, in free format)            
+240 240                                           | (RA,DEC) box for sub-frame fits image (arcsec)
+30 30                                             | (RA,DEC) box for sub-frame fits image (arcsec)
+00 00                                             | (dx,dy) central pixel offset (pixels)
+0.238                                             | pixel scale (arcsec/pixel)
+0                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+01.5000                                           | error radius (arcsec) for object identification
+pluto_07jun2010_30by30_                           | root name for sub-frame fits file names
+pluto_07jun2010.log                               | file name for object PRAIA data log (xy or target file format)
+************************************************************************************************************************************************
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with target offsets
+list_ucac2_xy                                     | input file name
+18 17 42.5194  -18 13 58.295                      | (RA,DEC) object coordinates (h m s dg ' " or RA,DEC decimals, in free format)            
+240 240                                           | (RA,DEC) box for sub-frame fits image (arcsec)
+30 30                                             | (RA,DEC) box for sub-frame fits image (arcsec)
+00 00                                             | (dx,dy) central pixel offset (pixels)
+0.238                                             | pixel scale (arcsec/pixel)
+0                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+01.5000                                           | error radius (arcsec) for object identification
+pluto_15jun2010_30by30_                           | root name for sub-frame fits file names
+pluto_15jun2010.log                               | file name for object PRAIA data log (xy or target file format)
+************************************************************************************************************************************************
+1                                                 | input file type: 1 - list of xy files ; 2 - output target file with target offsets
+list_ucac2_xy                                     | input file name
+18 15 42.1045  -18 16 41.157                      | (RA,DEC) object coordinates (h m s dg ' " or RA,DEC decimals, in free format)            
+240 240                                           | (RA,DEC) box for sub-frame fits image (arcsec)
+30 30                                             | (RA,DEC) box for sub-frame fits image (arcsec)
+00 00                                             | (dx,dy) central pixel offset (pixels)
+0.238                                             | pixel scale (arcsec/pixel)
+0                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+01.5000                                           | error radius (arcsec) for object identification
+pluto_04jul2010_30by30_                           | root name for sub-frame fits file names
+pluto_04jul2010.log                               | file name for object PRAIA data log (xy or target file format)
+************************************************************************************************************************************************

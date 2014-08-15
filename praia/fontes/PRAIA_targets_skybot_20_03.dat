@@ -1,0 +1,34 @@
+output                                            | input  file with extracted headers
+targets_skybot_field3                             | output file with skybot ephemeris for all known Solar System objects in the FOV
+0.1850                                            | pixel scale (arcsec/pixel)
+568                                               | IAU Observatory code
+40                                                | time delay (secs) to SKYBOT service to recover (recommended = 40s)
+0.010                                             | (RA,DEC) box (arcsec) for double entry checking (useful for CCD mosaics)
+0.1                                               | time instant box (seconds) for double entry checking (useful for CCD mosaics)
+************************************************************************************************************************************
+
+
+Useful IAU site codes:
+
+
+
+500@399   -  Geocentric
+500@10    -  Sun body center
+500@0     -  solar-system barycenter
+
+874@399   -  LNA telescopes
+809@399   -  ESO, La Silla telescopes: 1.2m Swiss, 2p2WFI ...
+511@399   -  Haute Provence 
+586@399   -  Pic du Midi
+568@399   -  Mauna Kea (CFHT, etc)
+304@399   -  Las Campanas Observatory (Swope 1m, 40cm, etc)
+493@399   -  Calar Alto (3.5m, 2.2m, 1.23m)
+J86@399   -  Sierra Nevada Observatory (1.5m)
+I08@399   -  Alianza S4, Cerro Burek (CASLEO), San Juan, Argentina (0.45m)                
+I08@399   -  ASH (Astrograph for the Southern Hemisphere), Cerro Burek (CASLEO), San Juan, Argentina, D=0.45m f/2.8 I08 (1.4698 "/pixel)
+I16@399   -  ACP->ASA telescope (0.4m f/3.6), San Pedro de Atacama Observatory (chile)
+I95@399   -  0.77m Observatorio de la Hita
+
+
+
+

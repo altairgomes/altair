@@ -1,0 +1,38 @@
+/home/marcelo/2MASS/2MASS/                        | root directory under which the 2MASS catalogue sub-directories lay 
+/home/marcelo/UCAC2/UCAC2/                        | root directory under which the UCAC2 catalogue sub-directories lay 
+/home/marcelo/UCAC4/UCAC4/                        | root directory under which the UCAC4 catalogue sub-directories lay 
+13_2002MS4.cat                                    | User reference catalogue (PRAIA format) 
+2                                                 | Make reduction with user's reference catalogue ? 1 - yes;  2 - no 
+1                                                 | Use 2MASS/UCAC2/UCAC4 catalogue extraction acceleration indexes: 1 - yes; 2 - no  
+1                                                 | (1) Use measured (x,y) for reductions .:. (2) Use (RA,DEC) (tangent plane technique)
+list.xy                                           | List of xy files for redoing astrometry
+targets                                           | targets input file: (RA,Dec), JD, target name 
+fdp.dat                                           | Field Distortion Pattern data file
+4                                                 | n nearest points for FDP computations 
+astrometry_2MASS_target_praia_star10              | target statistics for 2MASS (original) 
+astrometry_UCAC2_target_praia_star10              | target statistics for UCAC2
+astrometry_UCAC4_target_praia_star10              | target statistics for UCAC4
+astrometry_2MASS_target_mpu4_praia_star10         | target statistics for 2MASS (t.p.+common p.m.)
+astrometry_2MASS_target_mpu4_med_praia_star10     | target statistics for 2MASS (t.p.+common and non-common p.m.)
+astrometry_USER_target_praia_star10               | target statistics for User reference catalogue 
+ucac2.rod.xy                                      | extension of "xy" output files, UCAC2 reduction
+ucac4.rod.xy                                      | extension of "xy" output files, UCAC4 reduction
+2mass.rod.xy                                      | extension of "xy" output files  2MASS reduction
+2mass.rop.xy                                      | extension of "xy" output files  2MASS (t.p.+common p.m.) reduction
+2mass.roe.xy                                      | extension of "xy" output files  2MASS (t.p.+common and non-common p.m.) reduction
+wfi.rod.xy                                        | extension of "xy" output files, User reference catalog reduction
+2    00  00  00     00  00  00                    | field area for tp+pm reduction (key,dg,min,arcsec): key=1-2 CCD size;  key=0 areax=dg,m,s areay=dg,m,s 
+15                                                | maximum number of non-common 2MASS stars for (t.p.+common and non-common p.m.) reduction
+2.0                                               | error radius for target identification (arcsec) 
+2.0                                               | error radius (arcsec) for cross-identification between brightest catalogue/measured objs
+0.200                                             | (O-C) cutoff for outliers in (RA,DEC) reductions with 2MASS (original)
+0.120                                             | (O-C) cutoff for outliers in (RA,DEC) reductions with UCAC2, UCAC4 & 2MASS corrected versions 
+0.120                                             | (O-C) cutoff for outliers in (RA,DEC) reductions with user's reference catalogue 
+3                                                 | polynomial (x,y) <-> (X,Y) in (RA,DEC) reductions: 0 = 4 Ctes; 1 to 3 = complete order
+0                                                 | radial distortion of 3rd order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 3 = yes  
+0                                                 | radial distortion of 5th order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 5 = yes
+000 000                                           | range of fits images to reduce from extracted header data file
+*************************************************************************************************************************************************************
+
+
+

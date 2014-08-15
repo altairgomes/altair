@@ -1,0 +1,140 @@
+Input file name                                  |R220720156P.ucac2.red.xy
+Output log file                                  |opt_statistics.log
+Threshold Minimum   X                            |-10000
+Threshold Maximum   X                            |+10000
+Threshold Minimum   Y                            |-10000
+Threshold Maximum   Y                            |+10000
+Column x                                         |23
+Column y                                         |24
+Column weight x                                  |16
+Column weight y                                  |17
+***********************************************************************
+
+
+
+Note-1: Cols 03 and 04 are the measured (x,y)s 
+Note-2: Cols 33, 34, 36, 37 allows retrieving the used reference catalogue (RA,DEC)s
+Note-3: Be aware that Cols 01 and 02 below are only present on files "total" - THEY
+        DO NOT EXIST on "xy" FILES! Avoid column numbering mis-readings!
+
+
+***********************************************************************************
+
+col 01 dx     = CCD minus ephemeris for RA  (arcsec)
+
+col 02 dy     = CCD minus ephemeris for Dec  (arcsec)
+
+col 03 xob    =  x on CCD (Circular Gaussian) in pixels
+
+col 04 yob    =  y on CCD (Circular Gaussian) in pixels
+
+col 05 seng   = computed star FWHM (arcsec)
+
+col 06 altu   = Gaussian peak (CCD counting units)
+
+col 07 fgcc   = sky background in the vicinity of the object, derived from the
+                Gaussian adjustment
+
+col 08 fumag  = sky background magnitude based in UCAC2 star magnitudes,
+
+col 09 fumag2 = sky background magnitude based in 2MASS star J magnitudes,
+                converted to UCAC2 magnitudes by common 2MASS/UCAC2 stars
+
+col 10 xmgu   = UCAC2 star magnitude (if UCAC2 star)
+                
+col 11 cudmg  = object magnitude based in UCAC2 star magnitudes (PSF photometry)
+
+col 12 cudmg2 = object magnitude as in col 09
+
+col 13 xmgj   = J magnitude 2MASS (if 2MASS star)
+
+col 14 xmgj   = H magnitude 2MASS (if 2MASS star)
+
+col 15 xmgj   = K magnitude 2MASS (if 2MASS star)
+
+col 16 res2mg = error of object magnitude (UCAC2-based) 
+
+col 17 resmg2 = error of object magnitude (2MASS/UCAC2-based as in col 09) 
+
+col 18 ermgj  = J magnitude error from 2MASS
+
+col 19 ermgh  = H magnitude error from 2MASS
+
+col 20 ermgk  = K magnitude error from 2MASS
+
+col 21 pma    = UCAC2 proper motion (RA) (arcsec/year)
+                (99.999 if not an UCAC2 star)
+
+col 22 pmd    = UCAC2 proper motion (Dec) (arcsec/year)
+                (99.999 if not an UCAC2 star)
+
+col 23 epma   = UCAC2 proper motion error (RA) (arcsec/year)
+
+col 24 epmd   = UCAC2 proper motion error (Dec) (arcsec/year)
+
+col 25 ex     = Gaussian error in (x) (arcsec)
+
+col 26 ey     = Gaussian error in (y) (arcsec)
+
+col 27 erau   = standard error (RA) (arcsec) from variance-covariance matrix of (RA,DEC)
+                least squares reduction for the (x,y) of object, rigorously computed
+                (Eichorn & Willians, AJ, 1963)
+
+col 28 edeu   = same as before for DEC (arcsec)
+       
+
+col 29 alfsiu = mean error (RA) (arcsec) from (RA,Dec) reductions
+                (i.e., standard-deviation from the (O-C) residuals
+                for the reference catalogues)
+
+col 30 delsiu = same as above for DEC (arcsec)
+
+col 31 nstaru = number of identified reference catalogue stars on the field
+
+col 32 nfinau = number of used reference catalogue stars in reduction
+                (elimination of about 10% stars with highest (O-C) residuals)
+
+
+col 33 alsiu  = (O-C) (arcsec) for RA (99.999 if target is not a reference star)
+
+col 34 desiu  = (O-C) (arcsec) for DEC (99.999 if target is not a reference star)
+
+col 35 ktirau = - 0 if target is a reference catalogue star mantained  in the (RA,DEC) reductions
+                - 1 if target is a reference catalogue star eliminated in the (RA,DEC) reductions
+                  (the (O-C) is computed anyway)
+                - 99 target is not a reference catalogue star
+
+col 36 ra     = target CCD right ascension (RA) (hours and fraction)
+                (if target is a reference star, the RA catalogue position can be retrieved
+                 using the (O-C), ie, RA_ref_cat = ra - alsiu
+
+col 37 de     = target CCD declination  (DEC) (degrees and fraction)
+                (if target is a reference star, the DEC catalogue position can be retrieved
+                 using the (O-C), ie, DEC_ref_cat = de - desiu 
+
+
+col 38 iuth   = UT instant of exposition (hours)
+
+col 39 iutm   = UT instant of exposition (minutes)
+
+col 40 sut    = UT instant of exposition (seconds)
+
+col 41 iutano = Gregorian date of exposition (year)
+
+col 42 iutmes = Gregorian date of exposition (month)
+
+col 43 iutdia = Gregorian date of exposition (day)
+
+col 44 dj     = Julian Date of exposition
+
+col 45 iexps  = exposure time in seconds
+
+col 46 ichfil = used filter
+
+col 47 infits = image fits file from which target position is derived
+
+col 48 mchobj = target name or alias
+
+col 49, 50 nx, ny = CCD or field size in pixels in x and y
+
+

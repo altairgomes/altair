@@ -1,0 +1,50 @@
+  Essa função Insere no banco de dados os aquivos de Análise
+
+  Campos:
+
+--Todos os Objetos:
+Marcada essa opção, os arquivos de análise serão copiados pra todos
+os objetos que corresponderem às definições.
+Se não for marcada, aparecerá uma tela depois onde
+deverão ser selecionados os objetos desejados.
+
+--Telescopio:
+Selecione o telescópio correspondente aos arquivos de análise.
+
+--CCD:
+Selecione o CCD correspondente aos arquivos de análise.
+
+--Todos os Filtros:
+Marcada essa opção, os arquivos de análise serão copiados pra todos
+os filtros que corresponderem às definições.
+
+--Filtro:
+Caso a opção anterior não seja marcada, selecione aqui para qual
+filtro deseja copiar os arquivos.
+
+--Todas as Binagens:
+Marcada essa opção, os arquivos de análise serão copiados pra todos
+as binagens que corresponderem às definições.
+
+--Binagem:
+Caso a opção anterior não seja marcada, selecione aqui para qual
+binagem deseja copiar os arquivos.
+
+--Data da observacao:
+Selecione aqui a data da observação correspondente aos arquivos de análise.
+
+--Autor da Analise:
+Selecione ou digite o nome da pessoa responsável pela análise.
+
+--Ano e mes da Analise:
+Digite aqui o Ano e o Mês da análise no formato "Ano_mes"
+não digite espaços.
+
+--Diretório onde estao os arquivos de análise:
+Clique no menu e selecione o diretório onde estão os arquivos de análise.
+Se o diretório não estiver na lista, clique em "Outros" (Other)
+e busque o diretório correspondente.
+
+OBS: todos os arquivos e pastas dentro do diretório selecionado serão
+copiados para o caminho:
+.../"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/ANALISE/"Autor_Ano_Mes"

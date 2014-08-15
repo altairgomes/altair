@@ -1,0 +1,50 @@
+list                                              | list of fits images for digital coronagraphy
+0000  0000                                        | range of fits images for treatment
+bad_boxs.pix                                      | pixel mask of bad rectangle regions (xmin, xmax, ymin, ymax)
+bad_circ.pix                                      | pixel mask of bad circular regions (xc, xc, radius)
+CO|-----------------------------------------------| FITS file name extension for bright object profile image (2 characters)
+TO|-----------------------------------------------| FITS file name extension for coronographed image         (2 characters)
+32184                                             | saturation    cutoff limit (ADUs)
+0001                                              | minimum count cutoff limit (ADUs)
+1                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+00                                                | sky background flattening: degree of complete bi-variate 2-D polynomial model (1 - 15) (0 = no flattening)
+1                                                 | N for smoothing filter of (2N+1) channels in sky background computations (0 = no filter) (suggestion: N=5)
+0.2                                               | all sky background theshold factor: theshold = sky + FACTOR * sigma (backgound computations of whole image)
+05                                                | box size (pixels) for bright object search
+0001 0150 0110 0220                               | bright object search area: (xmin, xmax, ymin, ymax) .:. (read Note 1)
+85                                                | Percentage of peak count (0% to 100%; suggestion 10%): sets bright object coronagraphy radius (read Note 2)
+1                                                 | Coronography computation for (x,y) bright object center: 1 = robust ring sampling  .:. 2 = fast ring sampling
+1                                                 | Coronography computation (final)                       : 1 = robust ring sampling  .:. 2 = fast ring sampling
+1                                                 | net search for (x,y) coronographic center of bright object (1=3x3; 2= 5x5; etc)
+1.0                                               | convergence (0% to 100%; suggestion 1% to 5%) of counts for bright object center search
+0.2                                               | sky background factor: theshold = sky + FACTOR * sigma .:. coronography region automatic perimeter setting.
+0001 0150 0110 0165                               | coronagraphy box area for calibration star  (xmin, xmax, ymin, ymax) .:. (read Note 3)
+0001 0150 0166 0220                               | coronagraphy box area for target            (xmin, xmax, ymin, ymax) .:. (read Note 3)
+-32                                               | bit of output FITS images:  64 bits or 32 bits
+2                                                 | number representation (litteendian x bigendian) of output FITS images: 1 = don't ; 2 = swap bytes (default)
+******************************************************************************************************************************************************************
+
+0450 0580 0510 0590                               | bright object search area: (xmin, xmax, ymin, ymax) .:. (read Note 1)
+
+0450 0580 0510 0550                               | coronagraphy box area for calibration star  (xmin, xmax, ymin, ymax) .:. (read Note 3)
+0450 0580 0551 0590                               | coronagraphy box area for target            (xmin, xmax, ymin, ymax) .:. (read Note 3)
+
+Notes:
+
+1) if 0 0 0 0     => search brightest object over all image
+
+2) Automatic estimation of best bright object coronagraphy radius for (x,y) bright object center search
+
+3) if   0 0 0 0  
+        0 0 0 0     => all image coronagraphed
+
+   if  -1 -1 -1 -1     (or any negative value)
+       -1 -1 -1 -1  => only one part of the image is coronagraphed, around the bright
+                       object, with radius automatically computed in such a way that
+                       the counts under the last ring of coronographed pixels are
+                       within the overall sky background threshold level
+

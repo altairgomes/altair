@@ -1,0 +1,260 @@
+dist_mag_all.dat                                  | output table for all mosaics (objects) together: magnitude x No. catalogue stars 
+mag_gauss_all.dat                                 | output table for all mosaics (objects) together: magnitude x Gaussian (x,y) errors for all mosaics (objects) together
+cat_error_all.dat                                 | output table for all mosaics (objects) together: magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones) 
+cat_flags_all.dat                                 | output table for all mosaics (objects) together: catalogue multiple flags: flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_all.dat                        | output table for all mosaics (objects) together: catalogue proper motions: 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_all.dat                              | output table for all mosaics (objects) together: catalogue matches: UCAC2 star, 2MASS star, USNOB1.0 star, Field star.
+**********************************************************************************************************************************************************************************
+list_xy_tx                                        | input list of xy files from single individual PRAIA reductions
+list_log_tx                                       | input list of log files from PRAIA global reductions
+list_cats_tx                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_tx.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_tx.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_tx.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_tx.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_tx.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_tx.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_tx.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_tx.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_tx.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_er                                        | input list of xy files from single individual PRAIA reductions
+list_log_er                                       | input list of log files from PRAIA global reductions
+list_cats_er                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_er.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_er.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_er.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_er.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_er.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_er.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_er.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_er.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_er.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_qu                                        | input list of xy files from single individual PRAIA reductions
+list_log_qu                                       | input list of log files from PRAIA global reductions
+list_cats_qu                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_qu.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_qu.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_qu.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_qu.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_qu.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_qu.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_qu.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_qu.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_qu.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_or                                        | input list of xy files from single individual PRAIA reductions
+list_log_or                                       | input list of log files from PRAIA global reductions
+list_cats_or                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_or.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_or.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_or.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_or.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_or.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_or.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_or.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_or.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_or.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_az                                        | input list of xy files from single individual PRAIA reductions
+list_log_az                                       | input list of log files from PRAIA global reductions
+list_cats_az                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_az.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_az.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_az.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_az.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_az.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_az.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_az.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_az.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_az.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_ha                                        | input list of xy files from single individual PRAIA reductions
+list_log_ha                                       | input list of log files from PRAIA global reductions
+list_cats_ha                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_ha.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_ha.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_ha.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_ha.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_ha.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_ha.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_ha.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_ha.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_ha.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_ix                                        | input list of xy files from single individual PRAIA reductions
+list_log_ix                                       | input list of log files from PRAIA global reductions
+list_cats_ix                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_ix.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_ix.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_ix.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_ix.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_ix.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_ix.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_ix.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_ix.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_ix.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_ma                                        | input list of xy files from single individual PRAIA reductions
+list_log_ma                                       | input list of log files from PRAIA global reductions
+list_cats_ma                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_ma.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_ma.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_ma.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_ma.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_ma.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_ma.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_ma.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_ma.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_ma.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_se                                        | input list of xy files from single individual PRAIA reductions
+list_log_se                                       | input list of log files from PRAIA global reductions
+list_cats_se                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_se.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_se.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_se.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_se.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_se.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_se.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_se.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_se.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_se.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+list_xy_va                                        | input list of xy files from single individual PRAIA reductions
+list_log_va                                       | input list of log files from PRAIA global reductions
+list_cats_va                                      | input list of final catalogs from PRAIA (global reductions, multiple-object filtering, proper motion computations) 
+dist_mag_va.dat                                   | output table: magnitude x No. catalogue stars  
+mag_gauss_va.dat                                  | output table: magnitude x Gaussian (x,y) errors
+sigmas_individual_va.dat                          | output table individual reductions: sigmas, No. frames, average No. of used reference stars
+sigmas_global_va.dat                              | output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+cat_error_va.dat                                  | output table : magnitude x intrinsic_catalog_error (s.d. of cat. pos. wrt individual ones)  
+cat_flags_va.dat                                  | output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+cat_proper_motions_va.dat                         | output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+cat_catstars_va.dat                               | output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+cat_radec_centers_va.dat                          | output table catalogue (RA,DEC) centers: average (RA,DEC) of vcatalogue stars                                                      
+00                                                | magnitude: minimum
+30                                                | magnitude: maximum
+0.5                                               | magnitude: bin
+0.001                                             | errors/sigmas: minimum
+0.120                                             | errors/sigmas: maximum
+**********************************************************************************************************************************************************************************
+
+
+
+
+
+1)  output table: magnitude x No. catalogue stars 
+
+
+   mag_bin, %, No., Total_No
+
+
+
+
+2)  output table: magnitude x Gaussian (x,y) errors
+
+
+   mag_bin, mean x, mean y, sigma_x, sigma_y , No, Total_num
+
+
+
+
+3) output table:  magnitude x intrinsic_catalog_error  (standard deviation of final position w.r.t. individual ones) 
+
+
+   mag_bin, mean x, mean y, sigma_x, sigma_y , No, Total_num
+
+
+
+
+4)  output table catalogue multiple flags: distribution of flags 0 ... 5 (see Assafin et al. 2010, A&A)
+
+
+    Total No.
+
+    flag (0-5), No, %
+
+
+
+
+5)  output table catalogue matches: UCAC2 star? 2MASS star? USNOB1.0 star? Field star.
+
+
+    Total No.
+
+    catalog,  No,  %
+
+
+
+6) output table catalogue proper motions: distribution of 1rst epoch positions (UCAC2, 2MASS, USNOB1.0, none)
+
+
+
+    Total No.
+
+   1rst epoch catalog, No,  %
+
+
+
+7) output table individual reductions: sigmas, No. frames, average No. of used reference stars
+
+
+
+  sigma_x, sigma_y , Sd_sx, Sd_sy, Average No. reference stars/frame, No. frames
+
+
+
+
+8)  output table global reductions: average (O-C)s and sigmas before/after global reduction, average No. of used UCAC2 stars
+
+
+
+ Before { mean_x, mean_y, sigma_x, sigma_y }, after {  sigma_x, sigma_y  }  , No mosaics, Average No. UCAC2 stars/mosaic
+

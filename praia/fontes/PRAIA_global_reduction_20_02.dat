@@ -1,0 +1,25 @@
+/home/marcelo/UCAC4/UCAC4/                        | root directory under which the main reference catalogue sub-directories lay (UCAC2, UCAC4)
+4                                                 | 1 - UCAC2 non-speedy extraction; 2 - UCAC2 speedy extraction; 3 - UCAC4  non-speedy ext.; 4 - UCAC4 speedy ext.
+lista_tno_xy                                      | input file  : list of xy files from PRAIA reduction
+targets_tno                                       | input file  : list of targets (moving or not, if any)
+1                                                 | exclude individual target positions from global reduction proccess? (recomended for moving targets)  1=Yes, 2=No
+global_reduction_tno.log                          | output file : log file with output of intermediary/main results from run
+catalog_tno_gr1                                   | output file : final "xy" catalog with all stars from global reduction
+targ_cat_global_reduction_tno_gr1                 | output file : target output results from global reduction position catalog
+targ_cat_single_reduction_tno_gr1                 | output file : target output results from single xy re-reduced fields            
+ucac4.gr1.xy                                      | extention of xy output files from final global reductions (12 characters!!)
+2                                                 | Global reduction final step: (RA,DEC) -> UCAC2   1 = rigid rotation  2 = tangent plane techinique
+0.200                                             | error radius (arcsec) for cross-identification of common stars among all xy fields
+0.500                                             | error radius (arcsec) for cross-identification of targets within all xy fields
+0.200                                             | error radius (arcsec) for cross-identification of UCAC2 stars with "averaged" field star positions
+0.120                                             | (O-C) cutoff for outliers in (RA,DEC) individual CCD reductions (arcsec)
+0.120                                             | (O-C) cutoff for outliers in (RA,DEC) transform towards the UCAC2 (arcsec)
+0.0002                                            | sigma of convergence between old/new positions in (RA,DEC) re-reductions iter. proccess
+200                                               | Maximum No. of global reduction iterations
+3                                                 | polynomial (x,y) <-> (X,Y) in FRAME (RA,DEC) reductions: 0 = 4 Ctes; 1 to 3 = complete order
+0                                                 | radial distortion of 3rd order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 3 = yes  (FRAMES)
+0                                                 | radial distortion of 5th order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 5 = yes  (FRAMES)
+3                                                 | polynomial (x,y) <-> (X,Y) in (RA,DEC) (tangent plane reductions only) : 0 = 4 Ctes; 1 to 3 = complete order
+0                                                 | radial distortion of 3rd order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 3 = yes  (tan. plane reds. only)
+0                                                 | radial distortion of 5th order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 5 = yes  (tan. plane reds. only)
+******************************************************************************************************************************************************************

@@ -1,0 +1,10 @@
+2                                                 | input  file type: 1 - xy PRAIA file ; 2 - offsets' PRAIA file ; 3 - MPC format
+3                                                 | output file type: 1 - xy PRAIA file ; 2 - offsets' PRAIA file ; 3 - MPC format
+list                                              | input list
+mpc                                               | extension name
+--------------------------------------------------| for MPC output format only (output option = 3)
+99942K04M04N  |-----------------------------------| object name
+C|------------------------------------------------| object type
+R|------------------------------------------------| magnitude bandpass
+586|----------------------------------------------| IAU code of observation site
+***********************************************************************************************************************************

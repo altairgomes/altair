@@ -1,0 +1,6 @@
+export iniciohetitle="Header Extraction"
+export iniciodirectory="Dossier où sont les images"
+export iniciosubdirectory="Rechercher dans les sous-dossiers"
+export hextractitle="HEADER EXTRACTION"
+export hextractoutput="Nom du fichier de sortie"
+export hextractfitsh="Fits Header"

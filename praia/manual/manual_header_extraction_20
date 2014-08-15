@@ -1,0 +1,60 @@
+input                                             | list of fits images for header extraction
+output                                            | extracted data from fits images
+10                                                | fits header built-in code
+***********************************************************************************************
+                                                     
+                                                     
+Fits headers built-in codes:
+
+
+01: - LNA CCDs 78, 106, 105, 301 (tels: 1.6m, 0.6m B&C, 0.6m Zeiss) ;
+
+    - OHP: 1.2m, 2.2m CCDs
+
+
+02: - ESO 1.2m Swiss CCD
+
+
+03: - ESO2p2/WFI mosaic
+
+
+04: - SOAR 4m/SOI CCDs
+
+
+05: - LNA SBIG-STL ;
+
+    - Observatorio astronomico de LA HITA (Toledo, Spain), 0.8m T77 (IAU 900@399) ;
+
+    - Alianza S4, Cerro Burek Observatory (0.45m) (IAU I08@399) ;
+
+    - ASH (Astrograph for the Southern Hemisphere), Cerro Burek (CASLEO), San Juan, Argentina,
+           0.45m f/2.8 (IAU I08@399) ;
+     
+    - Sierra Nevada Observatory, 1.5m telescope (J86@399) (edit RA,DEC)
+
+
+06: - CFHT MegaCam mosaic
+
+
+07: - Tubitak Observatory
+
+
+08: - Las Campanas 40cm Astrograph
+
+
+09: - LNA S800 
+
+
+10: - LNA IKON, IXON
+
+
+11: - Merlin/Raptor
+
+
+12: - Pic du Midi T1M  (Astrometrica)
+
+
+13: - PRECAM - DES Project
+
+14: - Pic du Midi T1M - debug
+

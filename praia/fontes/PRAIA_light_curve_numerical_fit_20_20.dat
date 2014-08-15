@@ -1,0 +1,39 @@
+02                                                | output curve:  1 = generated from L.S. fit  2 = generated from initial guess values (no fit)
+02                                                | event code: 01 - occultation .:. 02 = eclipse
+LC_num_fit_2009jul13_1e2_5.log                    | log of fit (adjusted parameters, errors, etc)
+LC_num_fit_2009jul13_1e2_5.dat                    | output fitted light curve (dif mag, flux ratio, instants, etc)
+2009jul13_1e2.plot                                | output file: plots relative path of occulting/umbra/penumbra with respect to occulted/eclipsed body
+2009jul13_1e2_sat_circle.plot                     | output file: plots relative path of occulting/umbra/penumbra with respect to occulted/eclipsed body
+2                                                 | output LC optional time unit : 1=ss 2=mm 3=hh 4=dd (JD) 5=mm 6=yrs
+1                                                 | output LC reference instant type: 1=Gregorian date; 2=JD; 3=MJD 
+08 39 11.816 13 07 2009                           | output LC reference instant: (hh mm ss dd mm yr) OR julian days (JD or MJD)
+V. Laney                                          | Ephemeris label   
+vetores_jup1e2_2009_jul_13.dat                    | extracted ephemeris
+curve_jup1e2_2009_jul_13_4.dat                    | observed light curve (LC) (flux ratios, instants, etc)
+03                                                | nth-column = instant of time (Julian Date)
+10                                                | nth-column = target flux ratio
+11                                                | nth-column = target flux ratio error
+1                                                 | background normalization: polynomial degree (max N=21)
+0                                                 | occulting/occulted albedo ratio : fit parameter ?  yes = 1  no = 0 
+1                                                 | impact parameter                : fit parameter ?  yes = 1  no = 0 
+1                                                 | central instant                 : fit parameter ?  yes = 1  no = 0 
+1                                                 | relative tangent velocity       : fit parameter ?  yes = 1  no = 0
+1    0.88                                         | initial guess target/reference albedo ratio   : 1 = automatic  or  2 = user  +  value
+1    0.023                                        | initial guess impact parameter (arcsec)       : 1 = automatic  or  2 = user  +  value
+1                                                 | initial guess instant type: 1=Gregorian date; 2=JD; 3=MJD 
+1    08 31 05.816 08 07 2009                      | initial guess central instant                 : 1 = automatic  or  2 = user  +  value
+1    0.0003                                       | initial guess relative tangent velocity ("/s) : 1 = automatic  or  2 = user  +  value
+10                                                | step size non-linear LS, parameter: occulting/occulted albedo ratio (percentage 0-100%)
+10                                                | step size non-linear LS, parameter: impact parameter (percentage of occulted body radius 0-100%)
+10                                                | step size non-linear LS, parameter: central instant (seconds)
+10                                                | step size non-linear LS, parameter: relative tangent velocity (percentage 0-100%)
+1821.6                                            | radius (occulting or eclipsing body) (Km)  (user-defined)
+1560.8                                            | radius (occulted or eclipsed  body)  (Km)  (user-defined)
+05                                                | number of internal iterations in non-linear L.S. procedures  
+2.0                                               | |O-C| cutoff (observed minus fitted curve) threshold for outlier (normalized flux)
+15                                                | spatial resolution of LC numerical model (km)
+*******************************************************************************************************************************************************
+Io        = 1821.6 +/- 0.5 km
+Europa    = 1560.8 +/- 0.5 km
+Ganymede  = 2631.2 +/- 1.7 km
+Calisto   = 2410.3 +/- 1.5 km

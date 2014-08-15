@@ -1,0 +1,5 @@
+export manidioma="pt"
+export twomass="/home/altair/Documentos/teste/praia"
+export ucac2="/home/altair/Documentos/teste/praia"
+export ucac4="/home/altair/Documentos/teste/praia"
+export usercat=""

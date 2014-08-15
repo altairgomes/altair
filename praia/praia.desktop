@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=PRAIA
+Exec=bash /usr/bin/praia
+Icon=/usr/share/icons/gnome/48x48/apps/icon_praia.png
+Type=Application
+Categories=Science;Astronomy;

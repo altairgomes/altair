@@ -1,0 +1,80 @@
+/home/altair/Documentos/Catalogos/2MASS/2MASS/    | root directory under which the 2MASS catalogue sub-directories lay 
+output                                            | extracted header data from fits images
+fdp.dat                                           | Field Distortion Pattern data file
+4                                                 | n nearest points for FDP computations 
+bpx.dat                                           | Bad pixel mask  (xmin xmax ymin ymax)  (common to all treated images)
+astrometry_findscale_04                           | pixel scale / error of each field
+2     0   0   0      0   0   0                    | field area for tp+pm reduction (key,dg,min,arcsec): key=1-2 CCD size;  key=0 areax=dg,m,s areay=dg,m,s 
+0.1   0.6                                         | (min max) pixel scale range (arcsec/pixel)
+0.010                                             | step resolution of pixel scale search (arcsec/pixel)
+65000                                             | ADU maximum counting cutoff for non-linear pixels (~saturation) (ex.: 32000, 65000, ...)
++0000                                             | ADU minimum counting cutoff for non-linear pixels (~sky background) (ex.: -10, 0 , ...)
+1                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.0d0                                             | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.0d0                                             | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix: -99 reads from image header; otherwise use 16, 32, 64, -32, -64 following FITS conventions
+2                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+00                                                | sky background flattening: degree of complete bi-variate 2-D polynomial model (1 - 15) (0 = no flattening)
+5                                                 | N for smoothing filter of (2N+1) channels in sky background computations (0 = no filter) (suggestion: N=5)
+0002.500                                          | sky background theshold factor: theshold = sky + FACTOR * sigma (objects ID)
+0.5  10.0                                         | minimum maximum FWHM (range of FWHMs) (objects ID)
+0500                                              | brightest 2MASS stars for cross-identification with brightest measured (x,y) objects
+10                                                | brightest measured (x,y) objects for cross-identification with brightest 2MASS stars
+01.0                                              | error radius (arcsec) for cross-identification between brightest catalogue/measured objs
+0.200                                             | (O-C) cutoff for outliers in (RA,DEC) reductions with 2MASS (original)
+1                                                 | polynomial (x,y) <-> (X,Y) in (RA,DEC) reductions: 0 = 4 Ctes; 1 to 3 = complete order
+0                                                 | radial distortion of 3rd order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 3 = yes  
+0                                                 | radial distortion of 5th order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 5 = yes
+00 00                                             | range of fits images to reduce from extracted header data file
+****************************************************************************************************************************************************************
+
+
+
+Typical pixel scales of some instruments (1x1 pixel binning)  (error = 0.01 arcsec/pixel or less)
+
+
+(arcsec/pixel) - instrument
+
+0.1765         - LNA 1.6m P&E / CCD105
+0.1710         - LNA 1.6m P&E / S800
+0.1800         - LNA 1.6m P&E / Ikon
+0.2940         - LNA 1.6m P&E / CCD106
+0.3100         - LNA 1.6m P&E / CCD301
+
+0.3460         - LNA 0.6m B&C / CCD105
+0.3500         - LNA 0.6m B&C / S800
+0.3352         - LNA 0.6m B&C / Ikon
+0.6166         - LNA 0.6m B&C / CCD 106
+0.6000         - LNA 0.6m B&C / CCD 301
+
+
+0.1850         - 3.6m MegaCam CFHT, Hawaii
+
+0.0770         - 4m SOAR/SOI, Chile
+
+0.2380         - 2.2m ESO2p2/WFI, Chile
+
+0.6800         - 2.2m Observatoire de Haute-Provence (OHP), France
+
+0.8600         - 1m Pic du Midi, France
+
+0.4572         - 1.5m Sierra Nevada, Spain
+
+0.5027         - 3.5m Calar Alto, Spain
+
+0.5248         - 2.2m Calar Alto CAFO, Spain
+
+0.5019         - 1.23m Calar Alto, Spain
+
+0.4350         - 40cm Las Campanas Astrograph, Chile
+
+0.6989         - 77cm La Hita, Spain 
+
+1.4698         - 45cm Astrograph for the Southern Hemisphere, Cerro Burek (CASLEO, San Juan), Argentina
+
+1.7523         - 70cm AZT8 Tubitak telescope, Turkey
+
+0.6187  (?)    - 1.5m Tubitak Russian-Turkish telescope, Turkey
+
+
+

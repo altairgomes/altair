@@ -1,0 +1,17 @@
+id_mp3_catalogo_plutao_2013_ucac2                 | input  file : final "xy" catalog with all stars from global reduction
+pluto2013_de413plu022.txt                         | input  file : ephemeris of occulting body
+1                                                 | ephemeris format: 1 - NAIF ; 2 - Horizons general format; 3 -  Horizons Pluto and satellites format
+DE413/PLU022                                      | Ephemeris label
+p6_micro_catalog_pluto_2013                       | output file : mini-catalog with only (RA,DEC)s of all stars from the input catalog
+p6_occ_catalog_pluto_2013                         | output file : candidate stars "xy" catalog
+p6_occ_data_pluto_2013                            | output file : star parameters of occultation (minimum geocentric distance,t_occ,t_initial,t_final, etc)
+p6_occ_data_pluto_2013_table                      | output file : star parameters of occultation (Bruno Sicardy data plot format)
+10.0000                                           | radius (arcsec) of projected search circle (~ projected Earth figure + occultation body)
+10.5000                                           | minimum outreach radius (arcsec) for fast elimination of farway ephemeris points
+12d0  12d0                                        | exclusion range of Local Solar Time (day light): min max (hours)
+2005                                              | to (years - see below)
+-00093.0000d0                                     | bofra   
++0.00000d0                                        | aofra        Linear (RA,DEC) ephemeris drift: offra = aofra * t + bofra   
++00188.00000d0                                    | bofde                                         offde = aofde * t + bofde
++0.000000d0                                       | aofde                                         offra, offde in (mas), t in years
+***********************************************************************************************************************************************************

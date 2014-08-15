@@ -1,0 +1,13 @@
+output1                                           | input : original header file
+target_VAL_StarOne_sol3                           | input : ephemeris of target in the FOV
+output2                                           | output: updated  header file
+0 name                                            | (key, value): replace object name   (1 = yes; 0 = no)
+0 filter                                          | (key, value): replace filter info   (1 = yes; 0 = no)
+0 30                                              | (key, value): replace exposure time (1 = yes; 0 = no)
+0 2010                                            | (key, value): replace year stamp    (1 = yes; 0 = no)
+0 10                                              | (key, value): time offset (seconds) (1 = yes; 0 = no)
+0                                                 | (key) multiply RA by cos(DEC)       (1 = yes; 0 = no)
+0                                                 | (key) divide   RA by cos(DEC)       (1 = yes; 0 = no)
+0                                                 | (key) precess (RA,DEC) to J2000     (1 = yes; 0 = no)
+1  0.1                                            | (key, box error in secs) replace (RA,DEC) by ephemeris (1 = yes; 0 = no)
+*****************************************************************************************************************************

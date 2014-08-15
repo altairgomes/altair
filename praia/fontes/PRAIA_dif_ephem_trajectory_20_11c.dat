@@ -1,0 +1,26 @@
+eris_teste_filtered                               | TNO offset file
+star_teste_filtered                               | star offset file
+target_eris_geo_occ_jpl28                         | geocentric TNO ephemeris file (PRAIA format); time span: occultation
+target_eris_top_obs_jpl28                         | topoentric TNO ephemeris file (PRAIA format); time span: observations 
+relative_coords_LNA_Eris_05Nov2010_filtered.dat   | relative (RA,Dec)s "TNO minus star" and instants
+teste_11c                                         | shadow trajectory log file (C/A, P/A, instant, errors)
+tno_LNA_Eris_05Nov2010.plot                       | file with shadow trajectory projected on Earth (Km)
+tno_LNA_Eris_05Nov2010.dat                        | file with shadow trajectory projected on Earth (Km)
+earth_LNA_Eris_05Nov2010.dat                      | file with Earth circumference (Km)
+06.0                                              | sigma threshold for elimination of outlier points (mas)
+01 39 09.9421  -04 21 12.119                      | (RA, Dec) reference star position
++45.5827                                          | geodetic longitude of observations (degrees)
+-22.535466                                        | geodetic latitude  of observations (degrees)
+1815.3193                                         | geodetic altitude of observations (meters)
+95.7376453361621                                  | TNO distance to Earth (AU)
+6371                                              | Earth radius (Km)
+1200                                              | TNO radius (Km)
+80000 80000                                       | (X,Y) plot sizes (Km)
+10                                                | Plot step size X (Km)
+17.7                                              | C/A reference (mas)
+167.57                                            | P/A reference (deg)
+-26.25                                            | velocity reference (km/s)
+2010 11 06 02 18 15.8                             | instant C/A reference  (yy mo dd hh mm ss UT)
+****************************************************************************************************************************
+2mass_tno_filtered                                | TNO offset file
+2mass_star_filtered                               | star offset file

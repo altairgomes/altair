@@ -1,0 +1,5 @@
+2002tx300                                         | target name for output results with PRAIA
+2                                                 | Ephemeris: 1 - NAIF format ; 2 - Horizons format
+JPL_2002tx300                                     | input ephemerides for target 
+target_2002tx300                                  | output ephemerides for target in PRAIA format 
+******************************************************************************************************

@@ -1,0 +1,35 @@
+  --astrometry
+    Open the graphic interface for PRAIA astrometry
+
+  --big-table
+    Open the graphic interface for PRAIA Big-Table
+
+  --global-red
+
+  --hextraction
+    
+  --hedit
+    
+  --findscale
+    
+
+  --eph-batch
+    
+
+  --tgt-jpl
+    
+  --tgt-search
+    
+  --uniform
+    
+  --script
+    Open the graphic interface for scripts in PRAIA
+
+  --config
+    Open the graphic interface for PRAIA configurations
+
+  --options
+    Print the entry options for PRAIA in terminal
+    
+  --version
+    Print the version of the PRAIA installed

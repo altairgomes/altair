@@ -1,0 +1,75 @@
+input.20130313                                    | input list of fits images for header extraction
+output.20130313                                   | output file with extracted information
+NAXIS1  |-----------------------------------------| FITS header key: dimension of axis 1     
+NAXIS2  |-----------------------------------------| FITS header key: dimension of axis 2     
+OBJECT  |-----------------------------------------| FITS header key: Object     
+FILTER  |-----------------------------------------| FITS header key: Filter     
+RA      |-----------------------------------------| FITS header key: Right Ascension
+DE      |-----------------------------------------| FITS header key: Declination 
+JD      |-----------------------------------------| FITS header key: Julian Date
+JDM     |-----------------------------------------| FITS header key: Modified Julian Date
+DATE-OBS|-----------------------------------------| FITS header key: Observation Date, UTC
+UT      |-----------------------------------------| FITS header key: Start instant of exposure, UT
+TIME-END|-----------------------------------------| FITS header key: End instant of exposure, UT
+TIME    |-----------------------------------------| FITS header key: Start and End exposure instants, UT
+EXPTIME |-----------------------------------------| FITS header key: Exposure time (seconds)
+01|-----------------------------------------------| Time stamp key            
+01|-----------------------------------------------| Right ascension stamp key            
+01|-----------------------------------------------| Declination stamp key                
+00 00 00.000                                      | Time offset (hh mm ss.sss)  
+**********************************************************************************************************
+                                                     
+                                                     
+** Choose the time stamp key according to one of the following options:
+
+
+01 - Date and start time furnished together in one key: yr mo day (day mo yr) and hh mm ss.sss (usually
+     at "DATE-OBS" key).
+
+
+02 - Date and start time in separate keys: yr mo day (day mo yr) usually furnished in "DATE-OBS" key.
+
+     If the exposure time is given, only the UT start time (hh mm ss.sss) is needed, and given in a
+     separate key (usually "UT" or "TIME-BEG" keys).
+
+     If the exposure time is not given, then the UT start and end exposure times must be furnished. They
+     can be evoked by separate keys (usually "UT"/"TIME-BEG" and "TIME-END" keys), or evoked by the same
+     key (user-defined, usually "TIME"), in the hh mm ss.sss format.
+
+
+03 - Start time in Julian Date (JD): the date is computed from the JD (usually furnished by the
+     "JD" key); the exposure time must be also furnished.
+
+
+04 - Start time in Modified Julian Date (MJD): the date is computed from the MJD (usually
+     furnished by the "MJD" key); the exposure time must be also furnished.
+
+
+
+
+** Choose the Right Ascension stamp key according to one of the following options:
+
+
+01 - RA in sexagesimal format:  hh mm ss.sss  (hours)
+
+02 - RA in sexagesimal format:  dg mm ss.sss  (degrees)
+
+03 - RA in hours and decimal fraction:  hh.hhhhh
+
+04 - RA in degrees and decimal fraction:  dg.dgdgdg
+
+05 - RA in radians:  rad.radradrad
+
+
+
+** Choose the declination stamp key according to one of the following options:
+
+
+01 - Dec in sexagesimal format:  dg mm ss.sss  (degrees)
+
+02 - Dec in degrees and decimal fraction:  dg.dgdgdg
+
+03 - Dec in radians: rad.radradrad
+
+
+

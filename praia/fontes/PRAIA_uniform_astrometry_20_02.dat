@@ -1,0 +1,8 @@
+testa_un.xy                                       | list of "xy" files to be reduced again with uniform set of reference stars
+ucac.uni.xy                                       | extension of output "xy" files of new reductions 
+100                                               | % of frames in which common reference stars must be present (0 - 100%)
+0.120                                             | (O-C) cutoff for selection of common reference stars
+1                                                 | polynomial (x,y) <-> (X,Y) in (RA,DEC) reductions: 0 = 4 Ctes; 1 to 3 = complete order
+0                                                 | radial distortion of 3rd order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 3 = yes  
+0                                                 | radial distortion of 5th order (x,y) <-> (X,Y) in (RA,DEC) reduction: 0 = no; 5 = yes
+************************************************************************************************************************************************

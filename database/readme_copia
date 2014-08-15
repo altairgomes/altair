@@ -1,0 +1,116 @@
+  Essa função faz uma cópia das imagens do banco de dados para
+algum diretório qualquer definido pelo usuário
+
+  Campos:
+
+--Diretório onde salvar as imagens:
+Clique no menu para selecionar o diretório onde salvar as imagens.
+Caso o diretório desejado não esteja no menu, clique em "Outro" (Other)
+e abrirá uma tela de seleção de diretório.
+Vá até o diretório desejado e clique em "Abrir" (Open).
+
+Saída no Diretório
+
+"Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/RAW/
+
+
+--Separar por Objeto:
+Se essa opção for marcada, ao copiar as imagens de objetos diferentes
+para o diretório escolhido, elas serão divididas por objeto, como no banco de dados.
+Se a opção não for marcada, as imagens de objetos diferentes poderão sair no
+mesmo diretório de acordo com os outros campos desejados e a saída será:
+     "Diretório"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/RAW/
+!!!!!!A seleção dos objetos desejados aparecerá na tela seguinte.!!!!!
+
+--Todos os Telescopios:
+Selecionada essa opção, será procurado imagens para os objetos desejados
+em todos os telescópios cadastrados.
+Caso não seja selecionado, será mostrado adiante uma tela onde
+o usuário poderá selecionar de quais telescópios deseja obter os dados.
+
+--Separar por Telecopio:
+Se essa opção for marcada, as imagens na saída serão divididas por telescópio.
+Se a opção não for marcada, as imagens de telescópios diferentes poderão sair no
+mesmo diretório de acordo com os outros campos desejados e a saída será:
+     "Diretório"/"Objeto"/"CCD"/"Filtro"/"Binagem"/"Data"/RAW/
+
+--Todos os CCDs:
+Selecionada essa opção, será procurado imagens para os objetos desejados
+em todos os CCDs cadastrados.
+Caso não seja selecionado, será mostrado adiante uma tela onde
+o usuário poderá selecionar de quais CCDs deseja obter os dados.
+
+--Separar por CCD:
+Se essa opção for marcada, as imagens na saída serão divididas por CCD.
+Se a opção não for marcada, as imagens de CCDs diferentes poderão sair no
+mesmo diretório de acordo com os outros campos desejados e a saída será:
+     "Diretório"/"Objeto"/"Telescópio"/"Filtro"/"Binagem"/"Data"/RAW/
+
+--Todos os Filtros:
+Selecionada essa opção, será procurado imagens para os objetos desejados
+em todos os filtros cadastrados.
+Caso não seja selecionado, será mostrado adiante uma tela onde
+o usuário poderá selecionar de quais filtros deseja obter os dados.
+
+--Separar por Filtro:
+Se essa opção for marcada, as imagens na saída serão divididas por filtro.
+Se a opção não for marcada, as imagens de CCDs diferentes poderão sair no
+mesmo diretório de acordo com os outros campos desejados e a saída será:
+     "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Binagem"/"Data"/RAW/
+
+--Todas as Binagens:
+Selecionada essa opção, será procurado imagens para os objetos desejados
+em todas as binagens cadastrados.
+Caso não seja selecionado, será mostrado adiante uma tela onde
+o usuário poderá selecionar de quais binagens deseja obter os dados.
+
+--Separar por Binagem:
+Se essa opção for marcada, as imagens na saída serão divididas por binagem.
+Se a opção não for marcada, as imagens de binagens diferentes poderão sair no
+mesmo diretório de acordo com os outros campos desejados e a saída será:
+     "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Data"/RAW/
+
+--Todas as datas disponiveis:
+Selecionada essa opção, será procurado imagens para os objetos desejados
+em todas as datas cadastrados.
+Caso não seja selecionado, será mostrado adiante uma tela onde
+o usuário poderá selecionar de quais datas deseja obter os dados.
+
+--Separar por Data:
+Se essa opção for marcada, as imagens na saída serão divididas por data.
+Se a opção não for marcada, as imagens de datas diferentes poderão sair no
+mesmo diretório de acordo com os outros campos desejados e a saída será:
+     "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/RAW/
+
+Importante lembrar que, todas as opções de separação são combináveis
+podem ter saída separada por todos os campos:
+      "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/RAW/
+e saídas separadas por nenhum campo onde todas as imagens de todos os objetos
+selecionados, todos os telescopios selecionados, todos os CCDs selecionados,
+todos os filtros selecionados, todas as binagens selecionadas e todas as
+datas selecionadas estarão juntas no mesmo diretório
+     "Diretório"/RAW/
+OBS: nesses casos em que não se deseja fazer separação, deve-se prestar atenção
+aos nomes das imagens, pois imagens de datas diferentes podem ter o mesmo nome,
+mas é dificil que isso ocorra em imagens separadas por telescópio e data.
+Exemplos:
+      "Diretório"/"Objeto"/"Telescópio"/"Data"/RAW/
+      "Diretório"/"Objeto"/"Telescópio"/"Filtro"/"Data"/RAW/
+      "Diretório"/"Telescópio"/"Filtro"/"Data"/RAW/
+
+--Copiar Bias e Flats para cada objeto:
+Marcando essa opção, será copiado as imagens de bias e flats.
+Dado os campos desejados serão obtidos o bias e flats correspondentes.
+BIAS:     "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/BIAS/
+FLAT:     "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/FLAT/
+Lembre-se que as separações dos diretórios se dará da mesma forma que para as imagens.
+
+--Copiar Arquivos de Reducao:
+Caso seja selecionado, serão copiados os arquivos de redução para
+      "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/REDUCTION/
+Lembre-se que as separações dos diretórios se dará da mesma forma que para as imagens.
+
+--Copiar Arquivos de Analise:
+Caso seja selecionado, serão copiados os arquivos de redução para
+      "Diretório"/"Objeto"/"Telescópio"/"CCD"/"Filtro"/"Binagem"/"Data"/ANALISE/
+Lembre-se que as separações dos diretórios se dará da mesma forma que para as imagens.

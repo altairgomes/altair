@@ -1,0 +1,181 @@
+instalação
+	por enquanto instalando direitinho
+
+Astrometria 
+	uma introdução da parte de leitura dos dados
+	-e			ok
+	-r			ok
+	-m
+	-s
+
+Big Table			ok
+	leitura dos dados 	ok - ver se não ha um jeito melhor
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis	ok
+	-e			ok
+	-r
+	-m
+	-s
+
+Coronografia
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Global Reduction
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Header Extraction
+	leitura dos dados 	ok
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Novo Header Extraction
+	adição de headers 	ok
+	edição de headers
+	leitura dos dados 	ok
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis	ok
+	-e			ok
+	-r			ok
+	-m
+	-s
+
+Header Edit
+	leitura dos dados 	ok
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis	ok
+	-e			ok
+	-r
+	-m
+	-s
+
+Data Juliana
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Ephem Batch
+	leitura dos dados 	ok
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis	ok
+	-e			ok
+	-r			ok
+	-m
+	-s
+
+Curva de Luz
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Busca de estrela de ocultação
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Movimentos Próprios
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+RADEC
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Estatísticas
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Targets JPL
+	leitura dos dados 	ok
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis	ok
+	-e			ok
+	-r
+	-m
+	-s
+
+Targets Search
+	leitura dos dados 	ok
+	escrevendo o .dat 	ok
+	rodando praia 		ok
+	salvar variaveis	ok
+	-e			ok
+	-r
+	-m
+	-s
+
+Trajetória
+	leitura dos dados
+	escrevendo o .dat
+	rodando praia
+	salvar variaveis
+	-e
+	-r
+	-m
+	-s
+
+Rodar Script   			ok
+	adição de script 	ok
+	rodar script 		ok
+
+Configuração
+	escolha de idiomas funcionando	ok
+	selecionar pastas dos catalogos	ok
+
+

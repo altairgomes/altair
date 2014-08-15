@@ -1,0 +1,14 @@
+star_19JUN_N04                                    | offset file target 1
+star_21JUN_N04                                    | offset file target 2
+17 02 00.5296   -25 00 32.151                     | (RA, Dec) reference position target 1
+17 01 51.0112   -25 00 25.872                     | (RA, Dec) reference position target 2
+17 02 00.5302   -25 00 32.190                     | (RA, Dec) observed position target 1
+17 01 51.0136   -25 00 25.917                     | (RA, Dec) observed position target 2
++45.5827                                          | geodetic longitude of observations (degrees)
+-22.535466                                        | geodetic latitude  of observations (degrees)
+1815.3193                                         | geodetic altitude  of observations (meters)
+2.0                                               | sigma clip factor for elimination of outlier points 
+results_ALL.log                                   | output log file: average relative distances, errors, etc 
+zenith_ALL_cr.plot                                | file for plot of adjustment: (O-C) .vs. zenith distance with color refraction correction   
+zenith_ALL_no.plot                                | file for plot of adjustment: (O-C) .vs. zenith distance without color refraction correction  
+***********************************************************************************************************************************************
