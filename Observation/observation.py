@@ -47,16 +47,43 @@ class Observation(object):
 
     def set_fuse(self, fuso):
         ### leitura do fuso horario ###
-        self.utcoffset = TimeDelta(fuso*3600, format='sec')
+        self.utcoffset = TimeDelta(fuso*3600, format='sec', scale='tai')
 
     def close_obj(self, limdist):
+        tamcampo = Angle(limdist*u.arcmin)
+        lista_campos = []
+        lista_coords = []
         ### identificando objetos no mesmo campo
         for idx, value in enumerate(self.coordenadas[:-1]):
-            campo = [idx]
             coordcampo = value
-            for idy, valuey in enumerate(self.coordenadas[idx+1:]):
-                sep = self.coordenadas[idx].separation(self.coordenadas[idx + 1 + idy])
-        
+            sep = self.coordenadas[idx].separation(self.coordenadas[idx+1:])
+            close = [i + 1 + idx for i in np.arange(len(sep)) if sep[i] < tamcampo]
+            combs = []
+            for i in np.arange(len(close),0, -1):
+            els = [list(x) for x in itertools.combinations(close, i)]
+            combs.append(els)
+            for i in combs:
+                midpoint
+#                for idy, valuey in enumerate(sep):
+#                    if valuey < tamcampo:
+#                        close = [idx + 1 + idy for i in sep if i < tamcampo]
+#                        print va
+            else:
+                d = False
+                for i in lista_campos:
+                    e = idx in i
+                    d = bool(d + e)
+                    if d == False:
+                        lista_campos.append([idx])
+    
+    def midpoint_coord(self, list_idx):
+        x = np.mean([np.cos(i.dec)*np.cos(i.ra) for i in list_idx])
+        y = np.mean([np.cos(i.dec)*np.sin(i.ra) for i in list_idx])
+        z = np.mean([np.sin(i.dec) for i in list_idx])
+        delta = np.arcsin(z/np.sqrt(x**2 + y**2 + z**2))*u.rad
+        alfa = np.arctan(y/x)*u.rad
+        mean_coord = SkyCoord(alfa, delta, frame='fk5')
+        return mean_coord
         
     def precess(self, time):
         ### precessando as coordenadas para a data #############
