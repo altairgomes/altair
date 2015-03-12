@@ -1,0 +1,5 @@
+lista_fits                                        # lista de imagens
+10                                               # numero de imagens a serem tiradas a media
+0                                                 # numero de imagens a serem eliminadas no comeco e no final
+saida_teste                                       # nome de saida da imagem final
+########################################################################################################
