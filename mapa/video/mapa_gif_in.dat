@@ -1,0 +1,45 @@
+08 55 46.6035 +18 18 27.328                       # star coordinate
+2015-03-17 20:30:09.0                             # occultation instant
+0.683                                             # c/a in arcsec
+22.26                                             # position angle in degrees
+4.49                                              # delta (distance) in Astronomical Units
+-8.57                                             # velocity in km/s
+0.0                                               # obj. offset in RA (mas)
+0.0                                               # obj. offset in DEC (mas)
+-3.0                                              # star offset in RA (mas)
+-606.0                                            # star offset in DEC (mas)
+15.3                                              # magR
+-0.9                                              # magK
+11                                                # long
+############## plot informations #####################################################################
+Pasiphae                                          # Name of the object
+60                                                # Diameter of the object in km
+40                                                # error in c/a in mas
+sites.dat                                         # observatories list
+l                                                 # resolution of boundary database to use. Can be ``c`` (crude), ``l`` (low), ``i`` (intermediate), ``h`` (high), ``f`` (full)
+46.0 38.0                                         # figure size in cm (x, y)
+3                                                 # map style. See below. Default = 1
+3                                                 # seconds of occultation per frame
+30                                                # frames per second of video
+######################################################################################################
+
+Map Stype
+
+1) Basic map 
+- colorless
+- grey scale
+
+2) Basic map
+- monocolor continent (coral)
+- monocolor oceans (aqua)
+
+3) Shadedrelief
+- colored map
+- continent relief
+
+4) Draw the NASA ‘Blue Marble’ image
+- Satellite image style
+
+5) Draw an etopo relief image
+- colored map
+- continent and ocean relief
