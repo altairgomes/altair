@@ -11,7 +11,7 @@ from astropy.coordinates import SkyCoord, Latitude, Longitude, FK5, EarthLocatio
 class Observation(object):
 
     def __init__(self):
-        fuse = 0
+        fuso = 0
         latitude = 0
         longitude = 0
         altitude = 0
@@ -59,7 +59,7 @@ class Observation(object):
         """
         tamcampo = Angle(limdist*u.arcmin)
         lista_campos = []
-        for idx, value in enumerate(coord[:-1]):
+        for idx, value in enumerate(coord):
             sep = coord[idx].separation(coord[idx+1:])
             close = [i + 1 + idx for i in np.arange(len(sep)) if sep[i] < tamcampo]
             combs = []
@@ -104,9 +104,10 @@ class Observation(object):
         coord_prec = coord.transform_to(fk5_data)
         return coord_prec
         
-    def sky_time(self, coord, tempo, limalt=0*u.deg, sitio=self.sitio):
+    def sky_time(self, coord, tempo, sitio=None, limalt=0*u.deg):
         """
         """
+        sitio = self.sitio
         tempo.delta_ut1_utc = 0
         tempo.location = sitio
         dif_h_sid = coord.ra - tempo.sidereal_time('mean')
@@ -125,9 +126,10 @@ class Observation(object):
         poente = culminacao + dtsg_np
         return culminacao, nascer, poente
         
-    def altura_time(self, coord, instante, sitio=self.sitio, limalt=0*u.deg):
+    def altura_time(self, coord, instante, sitio=None, limalt=0*u.deg):
         """
         """
+        sitio = self.sitio
         instante.location = sitio
         instante.delta_ut1_utc = 0
         hourangle = instante.sidereal_time('mean') - coord.ra
@@ -137,9 +139,10 @@ class Observation(object):
         time_rest = poente - instante
         return altura, time_rest
         
-    def create_plan(self, coord, obj, data, mag, horain, horafin, intinf, limalt=0*u.deg, limdist=0*u.deg sitio=self.sitio):
+    def create_plan(self, coord, obj, data, mag, horain, horafin, intinf, sitio=None, limalt=0*u.deg, limdist=0*u.deg):
         """
         """
+        sitio = self.sitio
         tempoin = Time(horain, format='iso', scale='utc', location=sitio) - self.utcoffset
         tempofin = Time(horafin, format='iso', scale='utc', location=sitio) + TimeDelta(0.5, format='sec')  - self.utcoffset
         intval = TimeDelta(intinf*60, format='sec')
