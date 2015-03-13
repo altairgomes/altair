@@ -1,0 +1,8 @@
+[Desktop Entry]
+_Name=Altair
+_Comment=Altair application
+Categories=GNOME;Utility;
+Exec=altair
+Icon=altair
+Terminal=false
+Type=Application

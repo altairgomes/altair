@@ -1,0 +1,8 @@
+[Desktop Entry]
+_Name=Praia Test
+_Comment=PraiaTest application
+Categories=GNOME;Utility;
+Exec=praia-test
+Icon=praia-test
+Terminal=false
+Type=Application
