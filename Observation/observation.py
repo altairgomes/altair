@@ -9,6 +9,8 @@ from astropy.coordinates import SkyCoord, Latitude, Longitude, FK5, EarthLocatio
 ######################################################################
 
 class Observation(object):
+    """
+    """
 
     def __init__(self):
         fuso = 0
@@ -16,7 +18,7 @@ class Observation(object):
         longitude = 0
         altitude = 0
         self.set_fuse(fuso)
-        self.set_sitio(longitude, latitude, altitude)
+        self.set_site(longitude, latitude, altitude)
         
     def read(self, arquivo):
         """
@@ -41,13 +43,17 @@ class Observation(object):
         coor = np.core.defchararray.add(alfa, [' '])
         coor = np.core.defchararray.add(coor, delta)
         coordenadas = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
-        data = {'object': dados['objeto'], 'coord': coordenadas, 'time_occ': time, 'mag': dados['mag']}
+        data = np.array([], dtype={'names': ('object', 'coord', 'time_occ', 'comment'),'formats': ('S30', object, object, 'S30')})
+        for i in np.arange(len(dados)):
+            a = [(dados['objeto'][i], coordenadas[i], time[i], dados['mag'][i])]
+            b = np.asarray(a, dtype={'names': ('object', 'coord', 'time_occ', 'comment'),'formats': ('S30', object, object, 'S30')})
+            data = np.append(data,b)
         return data
         
-    def set_sitio(self,longitude, latitude, altitude):
+    def set_site(self,longitude, latitude, altitude):
         """
         """
-        self.sitio = EarthLocation(longitude, latitude, altitude)
+        self.site = EarthLocation(longitude, latitude, altitude)
 
     def set_fuse(self, fuso):
         """
@@ -83,7 +89,10 @@ class Observation(object):
                 d = bool(d + e)
             if d == False:
                 lista_campos.append(np.array([idx]))
-        return lista_campos
+        campos = []
+        for i in lista_campos:
+            campos.append(coord[i])
+        return campos
     
     def midpoint_coord(self, coords):
         """
@@ -104,65 +113,97 @@ class Observation(object):
         coord_prec = coord.transform_to(fk5_data)
         return coord_prec
         
-    def sky_time(self, coord, tempo, sitio=None, limalt=0*u.deg):
+    def sky_time(self, coord, tempo, limalt=0*u.deg, site=None):
         """
         """
-        sitio = self.sitio
+        if site == None:
+            site = self.site
         tempo.delta_ut1_utc = 0
-        tempo.location = sitio
+        tempo.location = site
         dif_h_sid = coord.ra - tempo.sidereal_time('mean')
         dif_h_sid.wrap_at('180d', inplace=True)
         dif_h_sol = dif_h_sid * (23 + 56/60 + 4.0916/3600) / 24
         dif = TimeDelta(dif_h_sol.hour*60*60, format='sec')
+        hangle_lim = np.arccos((np.cos(90*u.deg-limalt) - np.sin(coord.dec)*np.sin(site.latitude)) / np.cos(coord.dec)*np.cos(site.latitude))
         culminacao = tempo + dif + self.utcoffset
         culminacao.delta_ut1_utc = 0
-        hangle_lim = np.arccos((np.cos(90*u.deg-limalt) - np.sin(coord.dec)*np.sin(sitio.latitude)) / np.cos(coord.dec)*np.cos(sitio.latitude))
         tsg_lim = coord.ra + hangle_lim
         dtsg_lim = tsg_lim - culminacao.sidereal_time('mean')
         dtsg_lim.wrap_at(360 * u.deg, inplace=True)
         dtsg_lim_sol = dtsg_lim * (23 + 56/60 + 4.0916/3600) / 24
         dtsg_np = TimeDelta(dtsg_lim_sol.hour*60*60, format='sec')
-        nascer = culminacao - dtsg_np
-        poente = culminacao + dtsg_np
-        return culminacao, nascer, poente
+        sunrise = culminacao - dtsg_np
+        sunset = culminacao + dtsg_np
+        return culminacao, sunrise, sunset
         
-    def altura_time(self, coord, instante, sitio=None, limalt=0*u.deg):
+    def altura_time(self, coord, instante, limalt=0*u.deg, site=None):
         """
         """
-        sitio = self.sitio
-        instante.location = sitio
+        if site == None:
+            site = self.site
+        instante.location = site
         instante.delta_ut1_utc = 0
         hourangle = instante.sidereal_time('mean') - coord.ra
-        distzen = np.arccos(np.sin(coord.dec)*np.sin(sitio.latitude) + np.cos(coord.dec)*np.cos(sitio.latitude)*np.cos(hourangle))
+        distzen = np.arccos(np.sin(coord.dec)*np.sin(site.latitude) + np.cos(coord.dec)*np.cos(site.latitude)*np.cos(hourangle))
         altura = 90*u.deg - distzen
-        poente = self.sky_time(coord, instante, limalt)[1]
+        poente = self.sky_time(i, instante, limalt, site)[2]
         time_rest = poente - instante
         return altura, time_rest
         
-    def create_plan(self, coord, obj, data, mag, horain, horafin, intinf, sitio=None, limalt=0*u.deg, limdist=0*u.deg):
+    def plan(self, coord, hora, obj=None, date=None, comment=None, culmination=None, limalt=0*u.deg, site=None):
+        if site == None:
+            site = self.site
+        if obj == None:
+            obj = ['']*len(coord)
+        if date == None:
+            date = ['']*len(coord)
+        if comment == None:
+            comment = ['']*len(coord)
+        a, b = [], []
+        for i in coord:
+            a.append(i.ra)
+            b.append(i.dec)
+        coord = SkyCoord(a,b, frame='fk5')
+        if culmination == None:
+            culmination = self.sky_time(coord, hora, site)[0]
+        altura, time_rest = self.altura_time(coord, hora)
+        obs_tot = np.array([], dtype={'names': ('coord', 'height', 'time_left', 'obj', 'date', 'comment', 'culmination'),'formats': (object, object, object, 'S30', 'S30', 'S30', object)})
+        for i in np.arange(len(altura)):
+            a = [(coord[i], altura[i], time_rest[i], obj[i], date[i], comment[i], culmination[i])]
+            b = np.asarray(a, dtype={'names': ('coord', 'height', 'time_left', 'obj', 'date', 'comment', 'culmination'),'formats': (object, object, object, 'S30', 'S30', 'S30', object)})
+            obs_tot = np.append(obs_tot,b)
+        obs = obs_tot[obs_tot['height'] >= limalt]
+        a = ''
+        for i in np.arange(len(obs)):
+            a = a + '{} {} ({})\n\tRA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n\tAltura: {:.1f}\n\tCulminacao: {} LT\n\tTempo restante para limite: {:02d}:{:02d}\n\n'\
+.format(obs['obj'][i], obs['data'][i], obs['comment'][i], obs['coord'][i].ra.hms.h, obs['coord'][i].ra.hms.m, obs['coord'][i].ra.hms.s, 
+obs['coord'][i].dec.dms.d, obs['coord'][i].dec.dms.m, obs['coord'][i].dec.dms.s, obs['height'][i], obs['culmination'][i].iso.split(' ')[1][0:5],
+int(obs['time_left'][i].sec/3600), int((obs['time_left'][i].sec - int(obs['time_left'][i].sec/3600)*3600)/60))
+        return a
+                    
+    def create_plan(self, coord, obj, date, comment, horain, horafin, intinf, limalt=0*u.deg, limdist=0*u.deg, site=None):
         """
         """
-        sitio = self.sitio
-        tempoin = Time(horain, format='iso', scale='utc', location=sitio) - self.utcoffset
-        tempofin = Time(horafin, format='iso', scale='utc', location=sitio) + TimeDelta(0.5, format='sec')  - self.utcoffset
+        if site == None:
+            site = self.site
+        tempoin = Time(horain, format='iso', scale='utc', location=site) - self.utcoffset
+        tempofin = Time(horafin, format='iso', scale='utc', location=site) + TimeDelta(0.5, format='sec')  - self.utcoffset
         intval = TimeDelta(intinf*60, format='sec')
-        coord = self.precess(coord, tempoin)
-        culminacao, nascer, poente = self.sky_time(coord, tempoin, limalt, sitio)
+        for i in coord:
+            a.append(i.ra)
+            b.append(i.dec)
+        coord = SkyCoord(a,b, frame='fk5')
+        culminacao, nascer, poente = self.sky_time(coord, tempoin, limalt, site)
         nome = 'Plano_{}'.format(horain.split(' ')[0])
         output = open(nome, 'w')
         output.write('Plano de observação da noite {}\n\n'.format(horain.split(' ')[0]))
-        output.write('Latitude: {}  Longitude: {}\nLimite de altura: {} deg\nTamanho do campo: {} arcmin\n\n'.format(sitio.latitude, sitio.longitude, limalt, limdist))
+        output.write('Latitude: {}  Longitude: {}\nLimite de altura: {} deg\nTamanho do campo: {} arcmin\n\n'.format(site.latitude, site.longitude, limalt, limdist))
         instante = tempoin
         while instante <= tempofin:
-            altura, time_rest = self.altura_time(instante)
             #### imprime os dados de cada objeto para cada instante ####
+            text = self.plan(coord, instante, obj, date, comment, culminacao, site=site, limalt=0*u.deg)
             output.write('\n---LT: {} (UT: {})----------------------------------------------------------------\n'.format((instante + self.utcoffset).iso.split(' ')[1][0:5], instante.iso.split(' ')[1][0:5]))
-            for idx, val in enumerate(altura):
-                if altura[idx] > limalt*u.deg:
-                    output.write('{} {} ({})\n\tRA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n\tAltura: {:.1f}\n\tCulminacao: {} LT\n\tTempo restante para limite: {:02d}:{:02d}\n\n'\
-.format(obj[idx], data[idx], mag[idx], coord[idx].ra.hms.h, coord[idx].ra.hms.m, coord[idx].ra.hms.s,
-coord[idx].dec.dms.d, coord[idx].dec.dms.m, coord[idx].dec.dms.s, altura[idx], culminacao[idx].iso.split(' ')[1][0:5],
-int(time_rest[idx].sec/3600), int((time_rest[idx].sec - int(time_rest[idx].sec/3600)*3600)/60))) 
+            output.write(text) 
             instante = instante + intval
         output.write('\n---Observabilidade dos Alvos----------------------------------------------------------------\n')
         for idx, val in enumerate(nascer):
@@ -189,7 +230,7 @@ limdist = 11					#### limite de distancia para field-of-view (arcmin)
 
 observation = Observation()
 dados = observation.read(arquivo)
-observation.set_sitio(longitude, latitude, altitude)
+observation.set_site(longitude, latitude, altitude)
 observation.set_fuse(fuso)
 #observation.create_plan(horain, horafin, intinf)
 
