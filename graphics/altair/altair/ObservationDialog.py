@@ -7,6 +7,7 @@ from gi.repository import Gtk # pylint: disable=E0611
 
 from altair_lib.helpers import get_builder
 from altair_lib.observation import Observation
+from astropy.time import Time, TimeDelta
 
 import gettext
 from gettext import gettext as _
@@ -37,13 +38,19 @@ class ObservationDialog(Gtk.Dialog):
         # Get a reference to the builder and set up the signals.
         self.builder = builder
         self.ui = builder.get_ui(self)
-        self.ui.horain.set_range(12.0,24.0)
-        self.ui.horain.set_value(18.0)
-        self.ui.horain.set_increments(0.5, 1.0)
+        self.ui.horain.set_range(12,23)
+        self.ui.horain.set_value(18)
+        self.ui.horain.set_increments(1, 1)
+        self.ui.horainmin.set_range(0,59)
+        self.ui.horainmin.set_value(0)
+        self.ui.horainmin.set_increments(1, 1)
         
-        self.ui.horafin.set_range(0.0,12.0)
-        self.ui.horafin.set_value(6.0)
-        self.ui.horafin.set_increments(0.5, 1.0)
+        self.ui.horafin.set_range(0,12)
+        self.ui.horafin.set_value(6)
+        self.ui.horafin.set_increments(1, 1)
+        self.ui.horafinmin.set_range(0,59)
+        self.ui.horafinmin.set_value(0)
+        self.ui.horafinmin.set_increments(1, 1)
         
         self.ui.intdata.set_range(0,120)
         self.ui.intdata.set_value(60)
@@ -60,19 +67,32 @@ class ObservationDialog(Gtk.Dialog):
         col_name = self.ui.col_name.get_text()
         col_coord = self.ui.col_coord.get_text()
         col_comment = self.ui.col_comment.get_text()
-        fuso = self.ui.fuso.get_text()
+        fuso = int(self.ui.fuso.get_text())
         latitude = self.ui.latitude.get_text()
         longitude = self.ui.longitude.get_text()
-        altitude = self.ui.altitude.get_text()
-        limalt = self.ui.limalt.get_text()
-        limdist = self.ui.limdist.get_text()
+        altitude = int(self.ui.altitude.get_text())
+        limalt = int(self.ui.limalt.get_text())
+        limdist = int(self.ui.limdist.get_text())
+        anoin, mesin, diain = self.ui.diainicio.get_date()
+        horain = self.ui.horain.get_value_as_int()
+        horainmin = self.ui.horainmin.get_value_as_int()
+        anofin, mesfin, diafin = self.ui.diafim.get_date()
+        horafin = self.ui.horafin.get_value_as_int()
+        horafinmin = self.ui.horafinmin.get_value_as_int()
+        intval = int(self.ui.intdata.get_value_as_int())
         
-        cols_n = map(int, col_name.split(','))
-        cols_c = map(int, col_coord.split(','))
-        cols_cm = map(int, col_comment.split(','))
+        cols_n, cols_c, cols_cm = None, None, None
+        if len(col_name) != 0:
+            cols_n = map(int, col_name.split(','))
+        if len(col_coord) != 0:
+            cols_c = map(int, col_coord.split(','))
+        if len(col_comment) != 0:
+            cols_cm = map(int, col_comment.split(','))
+        
         obs = Observation(fuso, latitude, longitude, altitude)
-        objs, coords, comments = observation.read(arqin, cols_n, cols_c, cols_cm)
-        observation.create_plan(coords,objs, comments, horain, horafin, intinf, limalt=limalt, size=limdist)
+        objs, coords, comments = obs.read(arqin, cols_n, cols_c, cols_cm)
+        obs.create_plan(coords,objs, comments, '{}-{}-{} {}:{}:00.000'.format(anoin,mesin,diain,horain,horainmin), '{}-{}-{} {}:{}:00.000'.format(anofin,mesfin,diafin,horafin,horafinmin),
+intval, limalt=limalt, size=limdist, path='/home/altair/Documentos', uipg=self.ui.progressbar)
 
     def on_btn_cancel_clicked(self, widget, data=None):
         """The user has elected cancel changes.

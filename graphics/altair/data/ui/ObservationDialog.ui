@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.1 -->
 <interface>
-  <requires lib="gtk+" version="3.0"/>
+  <!-- interface-requires gtk+ 3.0 -->
   <!-- interface-requires observation_dialog 1.0 -->
   <object class="ObservationDialog" id="observation_dialog">
     <property name="can_focus">False</property>
@@ -26,6 +25,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -41,6 +41,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -83,7 +84,7 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">0</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -108,7 +109,7 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">1</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -120,7 +121,7 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">2</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -132,7 +133,7 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">3</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -179,11 +180,12 @@
               <object class="GtkEntry" id="fuso">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="text" translatable="yes">-3</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">4</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -217,12 +219,12 @@
               <object class="GtkEntry" id="latitude">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="text" translatable="yes">00 00 00.0</property>
+                <property name="text" translatable="yes">-22 32 7.8</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">5</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -230,12 +232,12 @@
               <object class="GtkEntry" id="longitude">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="text" translatable="yes">00 00 00.0</property>
+                <property name="text" translatable="yes">314 25 2.5</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">6</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -243,12 +245,12 @@
               <object class="GtkEntry" id="altitude">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="text" translatable="yes">0</property>
+                <property name="text" translatable="yes">1864</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">7</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -269,7 +271,7 @@
               <object class="GtkLabel" id="label9">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Limite de Altura</property>
+                <property name="label" translatable="yes">Limite de Altura (deg)</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -282,7 +284,7 @@
               <object class="GtkLabel" id="label10">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Limite de distância</property>
+                <property name="label" translatable="yes">Limite de distância (arcmin)</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -295,11 +297,12 @@
               <object class="GtkEntry" id="limalt">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="text" translatable="yes">30</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">8</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -307,11 +310,12 @@
               <object class="GtkEntry" id="limdist">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="text" translatable="yes">11</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">9</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -326,7 +330,7 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">10</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -341,7 +345,7 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">12</property>
-                <property name="width">1</property>
+                <property name="width">2</property>
                 <property name="height">1</property>
               </packing>
             </child>
@@ -352,7 +356,6 @@
                 <property name="width_chars">0</property>
                 <property name="xalign">1</property>
                 <property name="progress_pulse_step">0</property>
-                <property name="digits">1</property>
                 <property name="numeric">True</property>
                 <property name="update_policy">if-valid</property>
               </object>
@@ -370,8 +373,8 @@
                 <property name="width_chars">0</property>
                 <property name="xalign">1</property>
                 <property name="progress_pulse_step">0</property>
-                <property name="digits">1</property>
                 <property name="numeric">True</property>
+                <property name="update_policy">if-valid</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -397,7 +400,7 @@
               <object class="GtkLabel" id="label12">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Hora inicial</property>
+                <property name="label" translatable="yes">Hora inicial (hora, minuto)</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -423,7 +426,7 @@
               <object class="GtkLabel" id="label14">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Hora final</property>
+                <property name="label" translatable="yes">Hora final (hora, minuto)</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -455,7 +458,54 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">14</property>
+                <property name="width">2</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="horainmin">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="width_chars">0</property>
+                <property name="xalign">1</property>
+                <property name="progress_pulse_step">0</property>
+                <property name="numeric">True</property>
+                <property name="update_policy">if-valid</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">11</property>
                 <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="horafinmin">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="width_chars">0</property>
+                <property name="xalign">1</property>
+                <property name="progress_pulse_step">0</property>
+                <property name="numeric">True</property>
+                <property name="update_policy">if-valid</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">13</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkProgressBar" id="progressbar">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="pulse_step">0</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">15</property>
+                <property name="width">3</property>
                 <property name="height">1</property>
               </packing>
             </child>

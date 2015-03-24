@@ -171,7 +171,7 @@ class Observation(object):
             return altura, time_rest
         return altura
         
-    def plan(self, coord, time, obj=None, comment=None, limalt=0.0*u.arcmin, size=0.0*u.deg, site=None):
+    def plan(self, coord, time, obj=None, comment=None, limalt=0.0*u.deg, size=0.0*u.arcmin, site=None):
         if site == None:
             site = self.site
         if obj == None:
@@ -219,9 +219,9 @@ class Observation(object):
         obs = np.sort(obs_tot[obs_tot['height']*u.deg >= limalt], order='time_left')
         a = '\n---LT: {} (UT: {})----------------------------------------------------------------\n'.format(time.iso.split(' ')[1][0:5], timeut.iso.split(' ')[1][0:5])
         for i in np.arange(len(obs)):
-            a = a + '{} {}\n\tRA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n\tHeight: {:.1f}\n\tCulmination: {} LT\n\tTime left to reach min height: {:02d}:{:02d}\n'\
+            a = a + '{} {}\n\tRA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n\tHeight: {:.1} deg\n\tCulmination: {} LT\n\tTime left to reach min height: {:02d}:{:02d}\n'\
 .format(obs['obj'][i], obs['comment'][i], obs['coord'][i].ra.hms.h, obs['coord'][i].ra.hms.m, obs['coord'][i].ra.hms.s, 
-obs['coord'][i].dec.dms.d, np.absolute(obs['coord'][i].dec.dms.m), np.absolute(obs['coord'][i].dec.dms.s), obs['height'][i]*u.deg, obs['culmination'][i].iso.split(' ')[1][0:5],
+obs['coord'][i].dec.dms.d, np.absolute(obs['coord'][i].dec.dms.m), np.absolute(obs['coord'][i].dec.dms.s), obs['height'][i], obs['culmination'][i].iso.split(' ')[1][0:5],
 int(obs['time_left'][i].sec/3600), int((obs['time_left'][i].sec - int(obs['time_left'][i].sec/3600)*3600)/60))
             if len(obs['tam_campo'][i]) > 1:
                 for k in obs['tam_campo'][i]:
@@ -230,7 +230,7 @@ coord[k].ra.hms.m, coord[k].ra.hms.s, coord[k].dec.dms.d, np.absolute(coord[k].d
             a = a + '\n'
         return a
     
-    def resume_night(self, coord, time, name, site=None):
+    def resume_night(self, coord, time, name, limalt=0*u.deg, site=None):
         if site == None:
             site = self.site
         timeut = time - self.fuse
@@ -239,31 +239,39 @@ coord[k].ra.hms.m, coord[k].ra.hms.s, coord[k].dec.dms.d, np.absolute(coord[k].d
         culminacao, nascer, poente = self.sky_time(coord_prec, timeut, limalt, site)
         a = '\n---Observability of the Targets----------------------------------------------------------------\n'
         for i in np.arange(len(nascer)):
-            a = a + 'RA: {:02.0f} {:02.0f} {:07.4f}, DEC: {:+03.0f} {:02.0f} {:06.3f}, Sunrise: {} TL, Culmination: {} TL, Sunset: {} TL, {:10s}\n'\
+            a = a + 'RA: {:02.0f} {:02.0f} {:07.4f}, DEC: {:+03.0f} {:02.0f} {:06.3f}, Rise: {} TL, Culmination: {} TL, Set: {} TL, {:10s}\n'\
 .format(coord[i].ra.hms.h, coord[i].ra.hms.m, coord[i].ra.hms.s, coord[i].dec.dms.d, np.absolute(coord[i].dec.dms.m), np.absolute(coord[i].dec.dms.s),
 nascer[i].iso.split(' ')[1][0:5], culminacao[i].iso.split(' ')[1][0:5], poente[i].iso.split(' ')[1][0:5], name[i])
         a = a + '\n'
         return a
     
-    def create_plan(self, coord, obj, comment, horain, horafin, intinf, limalt=0.0*u.deg, size=0*u.arcmin, site=None, path='.'):
+    def create_plan(self, coord, obj, comment, horain, horafin, intinf, limalt=0.0, size=0, site=None, path='.', uipg=None):
         """
         """
+        limalt = limalt*u.deg
+        size = size*u.arcmin
         if site == None:
             site = self.site
         tempoin = Time(horain, format='iso', scale='utc', location=site)
         tempofin = Time(horafin, format='iso', scale='utc', location=site) + TimeDelta(0.5, format='sec')
         intval = TimeDelta(intinf*60, format='sec')
-        nome = '{}/Plano_{}'.format(path, horain.split(' ')[0])
+        nome = '{}/Plano_{}'.format(path, tempoin.iso.split(' ')[0])
         output = open(nome, 'w')
-        output.write('Observational Plan to the night: {}\n\n'.format(horain.split(' ')[0]))
+        output.write('Observational Plan to the night: {}\n\n'.format(tempoin.iso.split(' ')[0]))
         output.write('Latitude: {}  Longitude: {}\nMinimun height: {}\nField Size: {}\n\n'.format(site.latitude, site.longitude, limalt, size))
         instante = tempoin
+        tam = int((tempofin-tempoin).sec/intval.sec)+2
+        count = 0
         while instante <= tempofin:
             #### imprime os dados de cada objeto para cada instante ####
             text = self.plan(coord, instante, obj, comment, site=site, limalt=limalt, size=size)
             output.write(text) 
             instante = instante + intval
-        a = self.resume_night(coord, tempoin, obj)
+            count = count + 1
+            uipg.set_fraction(float(count)/float(tam))
+        a = self.resume_night(coord, tempoin, obj, limalt=limalt)
+        count = count + 1
+        uipg.set_fraction(float(count)/float(tam))
         output.write(a)
         output.close()
         
