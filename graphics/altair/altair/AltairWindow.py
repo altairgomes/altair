@@ -13,6 +13,7 @@ from altair_lib import Window
 from altair.AboutAltairDialog import AboutAltairDialog
 from altair.PreferencesAltairDialog import PreferencesAltairDialog
 from altair.MapaDialog import MapaDialog
+from altair.ObservationDialog import ObservationDialog
 
 # See altair_lib.Window.py for more details about how this class works
 class AltairWindow(Window):
@@ -31,5 +32,8 @@ class AltairWindow(Window):
         if title == 'Mapa':
             Mapa = MapaDialog()
             result = Mapa.run()
+        elif title == 'Observation':
+            Obs = ObservationDialog()
+            result = Obs.run()
         else:
             print title

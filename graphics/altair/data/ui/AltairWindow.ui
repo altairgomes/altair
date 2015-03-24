@@ -241,7 +241,7 @@
             <items>
               <item id="0" translatable="yes">Mapa</item>
               <item id="1" translatable="yes">Binagem</item>
-              <item id="2" translatable="yes">Teste3</item>
+              <item id="2" translatable="yes">Observation</item>
             </items>
           </object>
           <packing>
