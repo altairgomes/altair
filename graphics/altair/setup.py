@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
 ### BEGIN LICENSE
-# Copyright (C) 2015 Altair Ramos altaigomesjr@gmail.com
+# Copyright (C) 2015 Altair Ramos altairgomesjr@gmail.com
 # This program is free software: you can redistribute it and/or modify it 
 # under the terms of the GNU General Public License version 3, as published 
 # by the Free Software Foundation.
@@ -138,9 +138,9 @@ DistUtilsExtra.auto.setup(
     name='altair',
     version='0.1',
     license='GPL-3',
-    #author='Your Name',
-    #author_email='email@ubuntu.com',
-    #description='UI for managing …',
+    author='Altair Ramos Gomes Junior',
+    author_email='altairgomesjr@gmail.com',
+    description='Rodar alguns programas que eu fiz …',
     #long_description='Here a longer description',
     #url='https://launchpad.net/altair',
     cmdclass={'install': InstallAndUpdateDataDirectory}
