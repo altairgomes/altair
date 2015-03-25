@@ -219,7 +219,7 @@ class Observation(object):
         obs = np.sort(obs_tot[obs_tot['height']*u.deg >= limalt], order='time_left')
         a = '\n---LT: {} (UT: {})----------------------------------------------------------------\n'.format(time.iso.split(' ')[1][0:5], timeut.iso.split(' ')[1][0:5])
         for i in np.arange(len(obs)):
-            a = a + '{} {}\n\tRA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n\tHeight: {:.1} deg\n\tCulmination: {} LT\n\tTime left to reach min height: {:02d}:{:02d}\n'\
+            a = a + '{} {}\n\tRA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n\tHeight: {:.1f} deg\n\tCulmination: {} LT\n\tTime left to reach min height: {:02d}:{:02d}\n'\
 .format(obs['obj'][i], obs['comment'][i], obs['coord'][i].ra.hms.h, obs['coord'][i].ra.hms.m, obs['coord'][i].ra.hms.s, 
 obs['coord'][i].dec.dms.d, np.absolute(obs['coord'][i].dec.dms.m), np.absolute(obs['coord'][i].dec.dms.s), obs['height'][i], obs['culmination'][i].iso.split(' ')[1][0:5],
 int(obs['time_left'][i].sec/3600), int((obs['time_left'][i].sec - int(obs['time_left'][i].sec/3600)*3600)/60))

@@ -38,6 +38,9 @@ class ObservationDialog(Gtk.Dialog):
         # Get a reference to the builder and set up the signals.
         self.builder = builder
         self.ui = builder.get_ui(self)
+        
+        self.def_tooltips()
+        
         self.ui.horain.set_range(12,23)
         self.ui.horain.set_value(18)
         self.ui.horain.set_increments(1, 1)
@@ -56,6 +59,24 @@ class ObservationDialog(Gtk.Dialog):
         self.ui.intdata.set_value(60)
         self.ui.intdata.set_increments(5, 20)
 
+    def def_tooltips(self):
+        self.ui.inputfile.set_tooltip_markup('Arquivo com os dados de entrada')
+        self.ui.col_name.set_tooltip_markup('Números das colunas que serao os nomes dos objetos separados por virgula')
+        self.ui.col_coord.set_tooltip_markup('Números das colunas que contem as coordenadas dos objetos separados por virgula')
+        self.ui.col_comment.set_tooltip_markup('Números das colunas que serao comentarios dos objetos separados por virgula')
+        self.ui.fuso.set_tooltip_markup('Fuso local')
+        self.ui.latitude.set_tooltip_markup('Latitude do local')
+        self.ui.longitude.set_tooltip_markup('Longitude do local')
+        self.ui.altitude.set_tooltip_markup('Altitude do local')
+        self.ui.limalt.set_tooltip_markup('Altura minima de observacao')
+        self.ui.limdist.set_tooltip_markup('Tamanho do campo: Objetos proximos serao identificados')
+        self.ui.diainicio.set_tooltip_markup('Dia do inicio da observacao')
+        self.ui.horain.set_tooltip_markup('Hora do inicio da observacao')
+        self.ui.horainmin.set_tooltip_markup('Minuto do inicio da observacao')
+        self.ui.diafim.set_tooltip_markup('Dia do fim da observacao')
+        self.ui.horafin.set_tooltip_markup('Hora do fim da observacao')
+        self.ui.horafinmin.set_tooltip_markup('Minuto do fim da observacao')
+        self.ui.intdata.set_tooltip_markup('Passo em que os dados serao mostrados')
         
 
     def on_btn_ok_clicked(self, widget, data=None):
@@ -92,7 +113,7 @@ class ObservationDialog(Gtk.Dialog):
         obs = Observation(fuso, latitude, longitude, altitude)
         objs, coords, comments = obs.read(arqin, cols_n, cols_c, cols_cm)
         obs.create_plan(coords,objs, comments, '{}-{}-{} {}:{}:00.000'.format(anoin,mesin,diain,horain,horainmin), '{}-{}-{} {}:{}:00.000'.format(anofin,mesfin,diafin,horafin,horafinmin),
-intval, limalt=limalt, size=limdist, path='/home/altair/Documentos', uipg=self.ui.progressbar)
+intval, limalt=limalt, size=limdist, path='/home/altairjunior/Documentos', uipg=self.ui.progressbar)
 
     def on_btn_cancel_clicked(self, widget, data=None):
         """The user has elected cancel changes.
