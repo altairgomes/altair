@@ -166,8 +166,8 @@ elif option == '2':
     magR = [float(in_data[14].rsplit()[0])]
     magK = [float(in_data[15].rsplit()[0])]
     longi = [float(in_data[16].rsplit()[0])]
-    dca = off_ra*np.sin(pa) + off_de*np.cos(pa)
-    dt = int(((off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/vel).value)*u.s
+    dca = off_ra*np.sin(pa) - off_de*np.cos(pa)
+    dt = int(((-off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/vel).value)*u.s
     ca = ca + dca
     datas = datas + dt
     vals = [0]
