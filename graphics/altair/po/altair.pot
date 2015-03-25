@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-03-25 01:44-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../altair/__init__.py:32
+msgid "Show debug messages (-vv debugs altair_lib also)"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:1
+msgid "Arquivo"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:2
+msgid "Colunas do nome do alvo"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:3
+msgid "Colunas coordenadas"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:4
+msgid "Colunas comentários"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:5
+msgid "Fuso"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:6
+msgid "-3"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:7
+msgid "Latitude"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:8
+msgid "Longitude"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:9
+msgid "-22 32 7.8"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:10
+msgid "314 25 2.5"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:11
+msgid "1864"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:12
+msgid "Altitude (m)"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:13
+msgid "Limite de Altura (deg)"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:14
+msgid "Limite de distância (arcmin)"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:15
+msgid "30"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:16
+msgid "11"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:17
+msgid "Dia inicial"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:18
+msgid "Hora inicial (hora, minuto)"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:19
+msgid "Dia final"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:20
+msgid "Hora final (hora, minuto)"
+msgstr ""
+
+#: ../data/ui/ObservationDialog.ui.h:21
+msgid "Intervalo dos dados (min)"
+msgstr ""
+
+#: ../data/ui/MapaDialog.ui.h:1
+msgid "Até aqui ta tudo certo"
+msgstr ""
+
+#: ../data/ui/AboutAltairDialog.ui.h:1
+msgid ""
+"# Copyright (C) 2015 Altair Ramos altaigomesjr@gmail.com\n"
+"# This program is free software: you can redistribute it and/or modify it \n"
+"# under the terms of the GNU General Public License version 3, as "
+"published \n"
+"# by the Free Software Foundation.\n"
+"# \n"
+"# This program is distributed in the hope that it will be useful, but \n"
+"# WITHOUT ANY WARRANTY; without even the implied warranties of \n"
+"# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR \n"
+"# PURPOSE.  See the GNU General Public License for more details.\n"
+"# \n"
+"# You should have received a copy of the GNU General Public License along \n"
+"# with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+msgstr ""
+
+#: ../data/ui/AboutAltairDialog.ui.h:14
+msgid "Copyright (C) 2015 Altair Ramos altaigomesjr@gmail.com"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:1 ../altair.desktop.in.h:1
+msgid "Altair"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:2
+msgid "_File"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:3
+msgid "_Edit"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:4
+msgid "_View"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:5
+msgid "_Help"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:6
+msgid "Contents"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:7
+msgid "Mapa"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:8
+msgid "Binagem"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:9
+msgid "Observation"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:10
+msgid "OK"
+msgstr ""
+
+#: ../data/ui/AltairWindow.ui.h:11
+msgid "Status Area"
+msgstr ""
+
+#: ../altair.desktop.in.h:2
+msgid "Altair application"
+msgstr ""
+
+#: ../data/ui/PreferencesAltairDialog.ui.h:1
+msgid "Altair Preferences"
+msgstr ""
+
+#: ../data/ui/PreferencesAltairDialog.ui.h:2
+msgid "_Example entry:"
+msgstr ""

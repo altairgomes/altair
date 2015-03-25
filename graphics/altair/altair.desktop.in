@@ -4,5 +4,5 @@ _Comment=Altair application
 Categories=GNOME;Astronomy;
 Exec=altair
 Icon=altair
-Terminal=true
+Terminal=false
 Type=Application

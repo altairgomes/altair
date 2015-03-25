@@ -1,0 +1,12 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: altair
+Upstream-Contact: Altair Ramos Gomes Junior <altairgomesjr@gmail.com>
+Source: UNKNOWN
+
+Files: *
+Copyright: (C) 2015 Altair Ramos altaigomesjr@gmail.com
+Copyright: (C) 2015 Altair Ramos altaigomesjr@gmail.com</property><property name="can_focus">False</property>
+Copyright: (C) 2015 Altair Ramos altairgomesjr@gmail.com
+License: GPL-3
+ The full text of the GPL is distributed in
+ /usr/share/common-licenses/GPL-3 on Debian systems.

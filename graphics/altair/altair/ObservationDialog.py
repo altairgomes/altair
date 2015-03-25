@@ -19,6 +19,7 @@ from gi.repository import Gtk # pylint: disable=E0611
 from altair_lib.helpers import get_builder
 from altair_lib.observation import Observation
 from astropy.time import Time, TimeDelta
+import os
 
 import gettext
 from gettext import gettext as _
@@ -113,6 +114,8 @@ class ObservationDialog(Gtk.Dialog):
         horafinmin = self.ui.horafinmin.get_value_as_int()
         intval = int(self.ui.intdata.get_value_as_int())
         
+        path = os.path.dirname(os.path.realpath(arqin))
+        
         cols_n, cols_c, cols_cm = None, None, None
         if len(col_name) != 0:
             cols_n = map(int, col_name.split(','))
@@ -124,7 +127,7 @@ class ObservationDialog(Gtk.Dialog):
         obs = Observation(fuso, latitude, longitude, altitude)
         objs, coords, comments = obs.read(arqin, cols_n, cols_c, cols_cm)
         obs.create_plan(coords,objs, comments, '{}-{}-{} {}:{}:00.000'.format(anoin,mesin,diain,horain,horainmin), '{}-{}-{} {}:{}:00.000'.format(anofin,mesfin,diafin,horafin,horafinmin),
-intval, limalt=limalt, size=limdist, path='/home/altairjunior/Documentos', uipg=self.ui.progressbar)
+intval, limalt=limalt, size=limdist, path=path, uipg=self.ui.progressbar)
 
     def on_btn_cancel_clicked(self, widget, data=None):
         """The user has elected cancel changes.
