@@ -153,7 +153,7 @@ class Observation(object):
             sunset1 = culminacao + dtsg_np
             sunrise, sunset = [], []
             for i in np.arange(len(sunset1)):
-                if hangle_lim[i] != np.nan:
+                if not np.isnan(hangle_lim[i]):
                     sunrise.append(sunrise1[i])
                     sunset.append(sunset1[i])
                     continue
@@ -164,7 +164,6 @@ class Observation(object):
                     sunrise.append('Never')
                     sunset.append('Never')
             culminacao = culminacao + self.fuse
-            print sunrise
             return culminacao, sunrise, sunset
         culminacao = culminacao + self.fuse
         return culminacao
@@ -188,7 +187,7 @@ class Observation(object):
                 if type(i) == Time:
                     time_rest.append(i - time)
                 else:
-                    time_rest.append(time + TimeDelta(2, format='jd'))
+                    time_rest.append(TimeDelta(2, format='jd'))
             return altura, time_rest
         return altura
         
@@ -287,7 +286,7 @@ coord[k].ra.hms.m, coord[k].ra.hms.s, coord[k].dec.dms.d, np.absolute(coord[k].d
             else:
                 nas = nascer[i].iso.split(' ')[1][0:5]
                 poe = poente[i].iso.split(' ')[1][0:5]
-            a = a + 'RA: {:02.0f} {:02.0f} {:07.4f}, DEC: {:+03.0f} {:02.0f} {:06.3f}, Sunrise: {} TL, Culmination: {} TL, Sunset: {} TL, {:10s}\n'\
+            a = a + 'RA: {:02.0f} {:02.0f} {:07.4f}, DEC: {:+03.0f} {:02.0f} {:06.3f}, Rise: {} TL, Culmination: {} TL, Set: {} TL, {:10s}\n'\
 .format(coord[i].ra.hms.h, coord[i].ra.hms.m, coord[i].ra.hms.s, coord[i].dec.dms.d, np.absolute(coord[i].dec.dms.m), np.absolute(coord[i].dec.dms.s),
 nas, culminacao[i].iso.split(' ')[1][0:5], poe, name[i])
         a = a + '\n'
@@ -326,7 +325,7 @@ fuso = -3					#### fuso horario do local
 latitude = '-22 32 7.8'				#### latitude do local
 longitude = '314 25 2.5'			#### longitude do local
 altitude = 1864					#### altitude em metros
-limalt = 30.0					#### limite de altura para mostrar (graus)
+limalt = 0.0					#### limite de altura para mostrar (graus)
 limdist = 11					#### limite de distancia para field-of-view (arcmin)
 
 ########################################################################
