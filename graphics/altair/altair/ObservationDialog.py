@@ -127,7 +127,7 @@ class ObservationDialog(Gtk.Dialog):
         obs = Observation(fuso, latitude, longitude, altitude)
         objs, coords, comments = obs.read(arqin, cols_n, cols_c, cols_cm)
         obs.create_plan(coords,objs, comments, '{}-{}-{} {}:{}:00.000'.format(anoin,mesin,diain,horain,horainmin), '{}-{}-{} {}:{}:00.000'.format(anofin,mesfin,diafin,horafin,horafinmin),
-intval, limalt=limalt, size=limdist, path=path, uipg=self.ui.progressbar)
+intval, limalt=limalt, size=limdist, path=path)
 
     def on_btn_cancel_clicked(self, widget, data=None):
         """The user has elected cancel changes.

@@ -15,14 +15,14 @@ Changes:
  .
    * Initial release.
 Checksums-Sha1: 
- 9e79fbb30f7397ea82b080460568166c2dd9d696 548 altair_0.1.dsc
- 9a627e42bdfa70f6f16a694e0a0a391a5734eff0 47523 altair_0.1.tar.gz
- 7a99a0f5d0c6e2f2ef0386bb5d7b314f32924239 31108 altair_0.1_all.deb
+ 651ad80c99d9f61b1e6d52b7c65896789e0c800e 548 altair_0.1.dsc
+ 9f12d7c34ceef2542216c22b03b0fa55f714aa41 47922 altair_0.1.tar.gz
+ d063aa362dd3255c252feed200bd347c42bef321 31432 altair_0.1_all.deb
 Checksums-Sha256: 
- 939b8454ba8b1b2a5bb7db7e555c36346c2931156ef43bc92da4367ec1cae94a 548 altair_0.1.dsc
- fa3179a924c207a91915c72ffd92706235579dd9db101c09dfcaa8ea6df2f5e1 47523 altair_0.1.tar.gz
- 904fc66e31d6efba9390b6647ae43f6526ecdcef891e80f923b6f4e959400275 31108 altair_0.1_all.deb
+ 2579741cd3b59b606adb8701b490d250af7d43a75c39b069f72d0aff0c55a8d5 548 altair_0.1.dsc
+ 3c5bda99e97faa2861a3380b227cc389529f734e434c543f61934f9c68a42d16 47922 altair_0.1.tar.gz
+ 95be5982e41d778e15e6bf157ff3c991d53068490f0de303831c8d00f81e77d0 31432 altair_0.1_all.deb
 Files: 
- 811d2c760efc3a4548433a753e9d228e 548 python extra altair_0.1.dsc
- 0bb9156f1d40b872514b945b14f91544 47523 python extra altair_0.1.tar.gz
- 4d19ebdca3ece99a0c356bff4fdd7424 31108 python extra altair_0.1_all.deb
+ 11d0f8ba2859e616ccab6a415b5ba2bb 548 python extra altair_0.1.dsc
+ 022c83d2426f779ac1e83554d1bd5e53 47922 python extra altair_0.1.tar.gz
+ 6ae08dd4f0c182839e9b222588129bb6 31432 python extra altair_0.1_all.deb
