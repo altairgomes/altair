@@ -4,7 +4,7 @@ import numpy as np
 import itertools
 from astropy.time import Time, TimeDelta
 import astropy.units as u
-from astropy.coordinates import SkyCoord, Latitude, Longitude, FK5, EarthLocation, Angle
+from astropy.coordinates import SkyCoord, FK5, EarthLocation
 
 ######################################################################
 
@@ -29,9 +29,9 @@ class Observation(object):
     def read(self, datafile, name_col=None, coord_col=None, comment_col=None):
         """
         """
-        nome, coord, comment, retornar = None, None, None, []
+        nome, coord, comment = None, None, None
         if name_col != None:
-            if type(name_col) != list and type(name_col) != tuple and type(name_col) != numpy.ndarray:
+            if type(name_col) != list and type(name_col) != tuple and type(name_col) != np.ndarray:
                 name_col = [name_col]
             nomes = np.loadtxt(datafile, usecols=(name_col), unpack=True, dtype ='S30', ndmin=1)
             if len(name_col) > 1:
@@ -42,7 +42,7 @@ class Observation(object):
             else:
                 nome = nomes
         if coord_col != None:
-            if type(coord_col) != list and type(coord_col) != tuple and type(coord_col) != numpy.ndarray:
+            if type(coord_col) != list and type(coord_col) != tuple and type(coord_col) != np.ndarray:
                 coord_col = [coord_col]
             coords = np.loadtxt(datafile, usecols=(coord_col), unpack=True, dtype ='S20', ndmin=1)
             coor = coords[0]
@@ -51,7 +51,7 @@ class Observation(object):
                 coor = np.core.defchararray.add(coor, coords[i])
             coord = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
         if comment_col != None:
-            if type(comment_col) != list and type(comment_col) != tuple and type(comment_col) != numpy.ndarray:
+            if type(comment_col) != list and type(comment_col) != tuple and type(comment_col) != np.ndarray:
                 comment_col = [comment_col]
             comments = np.loadtxt(datafile, usecols=(comment_col), unpack=True, dtype ='S30', ndmin=1)
             if len(comment_col) > 1:
