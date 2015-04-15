@@ -145,15 +145,15 @@ class Observation(object):
         if rise_set == True:
             hangle_lim = np.arccos((np.cos(90.0*u.deg-limalt) - np.sin(coord.dec)*np.sin(site.latitude)) / (np.cos(coord.dec)*np.cos(site.latitude)))
             tsg_lim = coord.ra + hangle_lim
-            dtsg_lim = tsg_lim - culminacao.sidereal_time('mean')
+            dtsg_lim = tsg_lim.T - culminacao.sidereal_time('mean')
             dtsg_lim.wrap_at(360 * u.deg, inplace=True)
             dtsg_lim_sol = dtsg_lim * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
-            dtsg_np = TimeDelta(dtsg_lim_sol.hour*u.h)
+            dtsg_np = TimeDelta(([[i if not np.isnan(i) else 48.0 for i in dtsg_lim_sol.T[0].hour]]*u.h).T)
             sunrise1 = culminacao - dtsg_np
             sunset1 = culminacao + dtsg_np
             sunrise, sunset = [], []
             for i in np.arange(len(sunset1)):
-                if not np.isnan(hangle_lim[i]):
+                if not np.all(np.isnan(hangle_lim[i])):
                     sunrise.append(sunrise1[i])
                     sunset.append(sunset1[i])
                     continue
