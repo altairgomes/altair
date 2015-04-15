@@ -104,7 +104,7 @@ def geramapa(idx):
         path2.append((lats2[i], lons2[i]))
     mymap.addpath(path1,"#0000FF")
     mymap.addpath(path2,"#0000FF")
-    mymap.draw('./mymap.html')
+    mymap.draw('./{}_{}.html'.format(obj, datas.isot))
 #    fig = plt.figure(figsize=(mapsize[0].to(u.imperial.inch).value, mapsize[1].to(u.imperial.inch).value))
 #    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution,llcrnrx=-1000000.,llcrnry=-750000.,urcrnrx=1000000.,urcrnry=750000.)
 ##    m = Basemap(projection='ortho',lat_0=stars[idx].dec.value,lon_0=lon.value,resolution=resolution)

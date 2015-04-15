@@ -2,12 +2,12 @@
 ############## input (1)  ################################################################################
 g4_occ_datauc4_Ceres_2013_table                   # praia_occ_search output file
 ############## input (2)  #############################################################################
-11 05 26.6037 +07 14  32.030                       # star coordinate
-2015-10-23 07:54:50.0                             # occultation instant
-1.017                                             # c/a in arcsec
-201.33                                             # position angle in degrees
-6.12                                              # delta (distance) in Astronomical Units
-36.11                                              # velocity in km/s
+11 57 52.7641 +09 07  49.835                       # star coordinate
+2013-10-25 09:43:04.0                             # occultation instant
+0.760                                             # c/a in arcsec
+20.43                                             # position angle in degrees
+3.28                                              # delta (distance) in Astronomical Units
+42.6                                              # velocity in km/s
 32.7                                              # obj. offset in RA (mas) 32.7
 05.4                                              # obj. offset in DEC (mas) 05.4
 0.0                                               # star offset in RA (mas)
@@ -17,7 +17,7 @@ g4_occ_datauc4_Ceres_2013_table                   # praia_occ_search output file
 -47                                               # long
 ############## plot informations #####################################################################
 Ceres                                            # Name of the object
-170                                               # Diameter of the object in km
+972                                               # Diameter of the object in km
 1000                                              # error in c/a in mas
 sites.dat                                         # observatories list
 l                                                 # resolution of boundary database to use. Can be ``c`` (crude), ``l`` (low), ``i`` (intermediate), ``h`` (high), ``f`` (full)
