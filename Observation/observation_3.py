@@ -290,16 +290,16 @@ class Observation(object):
                 midcoord.append(midpoint_coord(self.coords[i])[0])
                 a = ''
                 for k in self.names[i][:-1]:
-                    a  = a + k + ' + '
+                    a = a + k + ' + '
                 a = a + self.names[i][-1]
-                midobj.append([a])
-                midcomment.append(np.array(['']))
+                midobj.append(a)
+                midcomment.append('')
             else:
                 midobj.append(self.names[i][0])
                 midcoord.append(self.coords[i][0])
                 midcomment.append(self.comments[i][0])
         midcoord = coord_pack(midcoord)
-        self.samefov = {'coords': midcoord, 'names': midobj, 'comments': midcomment, 'fov': fov}
+        self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
     
 #    def precess(self, coord, time):
 #        """
@@ -324,23 +324,26 @@ class Observation(object):
         coord_prec = precess(self.samefov['coords'], self.instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, self.instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, self.instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
-        self.titles = '\n\n---LT: ' + np.char.array(self.instants.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + ' (UT: ' + np.char.array((self.instants-self.fuse).iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] +\
-'), N_objects=' + '----------------------------------------------------------------\n'
+        self.titles = []
         self.text = []
+        ra_formatter = lambda x: "%07.4f" %x
+        dec_formatter = lambda x: "%06.3f" %x
+        alt_formatter = lambda x: "%.1f" %x
+        int_formatter = lambda x: "%02d" %x
+        int2_formatter = lambda x: "%+03d" %x
         for i in np.arange(len(self.instants)):
-#            x = np.argsort(time_rest[i].sec)
-#            k = np.where(altura[i,x] >= self.limheight)
-            q = np.where(altura[i] >= self.limheight)
-#            print x
-#            print k
-#            print q
-            a = '\n\n' + np.char.array(self.names[q]) + ' (' + np.char.array(self.comments[q]) + ')\n\tRA:' + np.char.array(self.samefov['coords'][q].ra.hms.h.astype(int)) + \
-' ' + np.char.array(self.samefov['coords'][q].ra.hms.m.astype(int)) + ' ' + np.char.array(self.samefov['coords'][q].ra.hms.s) + '\tDEC: ' + \
-np.char.array(self.samefov['coords'][q].dec.dms.d.astype(int)) + ' ' + np.char.array(np.absolute(self.samefov['coords'][q].dec.dms.m).astype(int)) + \
-' ' + np.char.array(np.absolute(self.samefov['coords'][q].dec.dms.s)) + '\n\tHeight: ' + np.char.array(altura[i,q].value) + ' deg\n\tCulmination: ' + \
-np.char.array(culmination[0,q].iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + ' LT\n\tTime left to reach min height: ' + \
-np.char.array((time_rest[i,q].sec/3600.0).astype(int)) + ':' + np.char.array(((time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60).astype(int)) + '\n\n'
+            x = np.argsort(time_rest[i].sec)
+            k = np.where(altura[i,x] >= self.limheight)
+            q = x[k]
+            a = '\n\n' + np.char.array(self.samefov['names'][q]) + ' (' + np.char.array(self.samefov['comments'][q]) + ')\n\tRA: ' + np.char.array([int_formatter(j) for j in self.samefov['coords'][q].ra.hms.h]) + \
+' ' + np.char.array([int_formatter(j) for j in self.samefov['coords'][q].ra.hms.m]) + ' ' + np.char.array([ra_formatter(j) for j in self.samefov['coords'][q].ra.hms.s]) + '\tDEC: ' + \
+np.char.array([int2_formatter(j) for j in self.samefov['coords'][q].dec.dms.d]) + ' ' + np.char.array([int_formatter(j) for j in np.absolute(self.samefov['coords'][q].dec.dms.m)]) + \
+' ' + np.char.array([dec_formatter(j) for j in np.absolute(self.samefov['coords'][q].dec.dms.s)]) + '\n\tHeight: ' + np.char.array([alt_formatter(j) for j in altura[i,q].value]) + ' deg\n\tCulmination: ' + \
+np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0] + ' LT\n\tTime left to reach min height: ' + \
+np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]) + '\n\n'
             self.text.append(a)
+            b = '\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------\n'.format(self.instants[i,0].iso.split(' ')[1][0:5], (self.instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
+            self.titles.append(b)
 #                if len(obs['tam_campo'][i]) > 1:
 #                    for k in obs['tam_campo'][i]:
 #                        a = a + '\t\t{} {}\n\t\t  RA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n'.format(self.names[k], self.comments[k], self.coords[k].ra.hms.h,
@@ -371,8 +374,8 @@ np.char.array((time_rest[i,q].sec/3600.0).astype(int)) + ':' + np.char.array(((t
         output.write('Observational Plan to the night: {}\n\n'.format(tempoin.iso.split(' ')[0]))
         output.write('Latitude: {}  Longitude: {}\nMinimun height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
         for i in np.arange(len(self.instants)):
-            output.write(self.titles[i,0])
-            for j in self.text[i][0]:
+            output.write(self.titles[i])
+            for j in self.text[i]:
                 output.write(j)
         self.resume_night()
         output.write('\n---Observability of the Targets----------------------------------------------------------------\n')
