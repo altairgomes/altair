@@ -202,7 +202,6 @@ def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocati
     timeut.delta_ut1_utc = 0
     ra, ts = np.meshgrid(coord.ra.deg, timeut.sidereal_time('mean').deg )
     hourangle = Angle((ts-ra)*u.deg)
-#    hourangle = timeut.sidereal_time('mean') - coord.ra
     distzen = np.arccos(np.sin(coord.dec)*np.sin(site.latitude) + np.cos(coord.dec)*np.cos(site.latitude)*np.cos(hourangle))
     altura = 90*u.deg - distzen
     if time_left == True:
@@ -321,6 +320,10 @@ class Observation(object):
         self.instants.delta_ut1_utc = 0
         
     def plan(self):
+        if 'samefov' not in globals():
+            self.close_obj()
+        if 'instants' not in globals():
+            self.instant_list(Time.now() + self.fuse)
         coord_prec = precess(self.samefov['coords'], self.instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, self.instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, self.instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
@@ -363,10 +366,10 @@ np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.
         tempofin = Time(horafin, format='iso', scale='utc', location=self.site)
         intval = TimeDelta(intinf*60, format='sec')
         self.instant_list(tempoin,tempofin,intval)
-        a = Time.now()
+        j = Time.now()
         self.close_obj()
-        b = Time.now()
-        print 'tempo close_obs: {}'.format((b-a).sec)
+        l = Time.now()
+        print 'tempo close_obs: {}'.format((j-l).sec)
         nome = '{}/Plano_{}.dat'.format(path, tempoin.iso.split(' ')[0])
         self.plan()
         #### imprime os dados de cada objeto para cada instante ####
