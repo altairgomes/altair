@@ -8,6 +8,12 @@ from astropy.coordinates import SkyCoord, FK5, EarthLocation, Angle
 
 ######################################################################
 
+ra_formatter = lambda x: "%07.4f" %x
+dec_formatter = lambda x: "%06.3f" %x
+alt_formatter = lambda x: "%.1f" %x
+int_formatter = lambda x: "%02d" %x
+int2_formatter = lambda x: "%+03d" %x
+
 def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd'):
     """
     Parameters
@@ -80,7 +86,9 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
     
 def coord_pack(coord):
     if type(coord) == SkyCoord:
-        return coord
+        if not coord.isscalar:
+            return coord
+        return SkyCoord([coord.ra], [coord.dec], frame=coord.frame)
     a, b = [], []
     for i in coord:
         a.append(i.ra)
@@ -225,13 +233,18 @@ def resume_night(coord, time, name, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.
     coord = coord_pack(coord)
     coord_prec = precess(coord, timeut)
     culminacao, nascer, poente, alwaysup, neverup = sky_time(coord_prec, time, rise_set=True, limalt=limalt, site=site)
-    night = '\nRA: ' + np.char.array(coord.ra.hms.h.astype(int)) + ' ' + np.char.array(coord.ra.hms.m.astype(int)) + ' ' +  np.char.array(coord.ra.hms.s) + \
-', DEC: ' +  np.char.array(coord.dec.dms.d.astype(int)) + ' ' + np.char.array(np.absolute(coord.dec.dms.m).astype(int)) + ' ' + np.char.array(np.absolute(coord.dec.dms.s)) + \
-', Rise: ' + np.char.array(nascer.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + ' TL, Culmination: ' + \
+    ra, dec = text_coord(coord)
+    night = '\nRA: ' + ra + ', DEC: ' +  dec + ', Rise: ' + np.char.array(nascer.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Culmination: ' + \
 np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Set: ' + np.char.array(poente.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + \
-' TL, ' + np.char.array(name) + '\n'
+' TL, ' + np.char.array(name)
     return night
-
+    
+def text_coord(coord):
+    coord = coord_pack(coord)
+    ra = np.char.array([int_formatter(j) for j in coord.ra.hms.h]) + ' ' + np.char.array([int_formatter(j) for j in coord.ra.hms.m]) + ' ' + np.char.array([ra_formatter(j) for j in coord.ra.hms.s])
+    sign = np.char.array(np.sign(coord.dec)).replace('-1.0', '-').replace('1.0', '+').replace('0.0', '+')
+    dec = sign + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.d)]) + ' ' + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.m)]) + ' ' + np.char.array([dec_formatter(j) for j in np.absolute(coord.dec.dms.s)])
+    return ra, dec
 
 class Observation(object):
     """
@@ -320,39 +333,45 @@ class Observation(object):
         self.instants.delta_ut1_utc = 0
         
     def plan(self):
-        if 'samefov' not in globals():
-            self.close_obj()
-        if 'instants' not in globals():
+        coords = self.coords
+        names = self.names
+        comments = self.comments
+        if hasattr(self, 'samefov'):
+            coords = self.samefov['coords']
+            names = self.samefov['names']
+            comments = self.samefov['comments']
+        if not hasattr(self, 'instants'):
             self.instant_list(Time.now() + self.fuse)
-        coord_prec = precess(self.samefov['coords'], self.instants[0])
+        coord_prec = precess(coords, self.instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, self.instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, self.instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
         self.titles = []
         self.text = []
-        ra_formatter = lambda x: "%07.4f" %x
-        dec_formatter = lambda x: "%06.3f" %x
-        alt_formatter = lambda x: "%.1f" %x
-        int_formatter = lambda x: "%02d" %x
-        int2_formatter = lambda x: "%+03d" %x
+        ra, dec = text_coord(coords)
         for i in np.arange(len(self.instants)):
             x = np.argsort(time_rest[i].sec)
             k = np.where(altura[i,x] >= self.limheight)
             q = x[k]
-            a = '\n\n' + np.char.array(self.samefov['names'][q]) + ' (' + np.char.array(self.samefov['comments'][q]) + ')\n\tRA: ' + np.char.array([int_formatter(j) for j in self.samefov['coords'][q].ra.hms.h]) + \
-' ' + np.char.array([int_formatter(j) for j in self.samefov['coords'][q].ra.hms.m]) + ' ' + np.char.array([ra_formatter(j) for j in self.samefov['coords'][q].ra.hms.s]) + '\tDEC: ' + \
-np.char.array([int2_formatter(j) for j in self.samefov['coords'][q].dec.dms.d]) + ' ' + np.char.array([int_formatter(j) for j in np.absolute(self.samefov['coords'][q].dec.dms.m)]) + \
-' ' + np.char.array([dec_formatter(j) for j in np.absolute(self.samefov['coords'][q].dec.dms.s)]) + '\n\tHeight: ' + np.char.array([alt_formatter(j) for j in altura[i,q].value]) + ' deg\n\tCulmination: ' + \
+            a = '\n\n' + np.char.array(names[q]) + ' (' + np.char.array(comments[q]) + ')\n\tRA: ' + ra[q] + '\tDEC: ' + \
+dec[q] + '\n\tHeight: ' + np.char.array([alt_formatter(j) for j in altura[i,q].value]) + ' deg\n\tCulmination: ' + \
 np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0] + ' LT\n\tTime left to reach min height: ' + \
-np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]) + '\n\n'
+np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]) + ' '*300
             self.text.append(a)
-            b = '\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------\n'.format(self.instants[i,0].iso.split(' ')[1][0:5], (self.instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
+            b = '\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(self.instants[i,0].iso.split(' ')[1][0:5], (self.instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
             self.titles.append(b)
-#                if len(obs['tam_campo'][i]) > 1:
-#                    for k in obs['tam_campo'][i]:
-#                        a = a + '\t\t{} {}\n\t\t  RA:{:02.0f} {:02.0f} {:07.4f}\tDEC: {:+03.0f} {:02.0f} {:06.3f}\n'.format(self.names[k], self.comments[k], self.coords[k].ra.hms.h,
-#self.coords[k].ra.hms.m, self.coords[k].ra.hms.s, self.coords[k].dec.dms.d, np.absolute(self.coords[k].dec.dms.m), np.absolute(self.coords[k].dec.dms.s))
-#                a = a + '\n'
-#            self.text.append(a)
+            if hasattr(self, 'samefov'):
+                for t in np.arange(len(q)):
+                    p = q[t]
+                    if len(self.samefov['fov'][p]) == 1:
+                        continue
+                    c = '\n\n' + np.char.array(names[p]) + '\n\tRA mean: ' + ra[p] + '\tDEC mean: ' + \
+dec[p] + '\n\tHeight: ' + np.char.array(alt_formatter(altura[i,p].value)) + ' deg\n\tCulmination: ' + \
+np.char.array(culmination[0,p].iso).rpartition(' ')[:,2].rpartition(':')[:,0] + ' LT\n\tTime left to reach min height: ' + \
+np.char.array(int_formatter(time_rest[i,p].sec/3600.0)) + ':' + np.char.array(int_formatter((time_rest[i,p].sec - np.int(time_rest[i,p].sec/3600.0)*3600)/60)) 
+                    for z in self.samefov['fov'][p]:
+                        ra1, dec1 = text_coord(self.coords[z])
+                        c = c + '\n\t\t' + self.names[z] + ' (' + np.char.array(self.comments[z]) + ')\n\t\t  RA: ' + ra1 + '\tDEC: ' + dec1
+                    a[t] = c[0]
     
     def resume_night(self):
         """
@@ -366,10 +385,7 @@ np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.
         tempofin = Time(horafin, format='iso', scale='utc', location=self.site)
         intval = TimeDelta(intinf*60, format='sec')
         self.instant_list(tempoin,tempofin,intval)
-        j = Time.now()
         self.close_obj()
-        l = Time.now()
-        print 'tempo close_obs: {}'.format((j-l).sec)
         nome = '{}/Plano_{}.dat'.format(path, tempoin.iso.split(' ')[0])
         self.plan()
         #### imprime os dados de cada objeto para cada instante ####
@@ -408,7 +424,7 @@ altitude = 1864					#### altitude em metros
 
 a = Time.now()
 obs = Observation(fuso, latitude, longitude, altitude)
-obs.read('alvos2015', name_col=[0], coord_col=[1,2,3,4,5,6], comment_col=[7])
+obs.read('alvos', name_col=[0], coord_col=[1,2,3,4,5,6], comment_col=[7])
 obs.set_limheight(30)
 obs.set_limdist(11)
 #obs.close_obj()
