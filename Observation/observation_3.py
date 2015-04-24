@@ -5,6 +5,7 @@ import itertools
 from astropy.time import Time, TimeDelta
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5, EarthLocation, Angle
+import os
 
 ######################################################################
 
@@ -218,9 +219,15 @@ def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocati
         return altura, time_rest
     return altura
 
-def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec')):
+def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec'), fmt='iso'):
+    if not type(time_begin) == Time:
+        time_begin = Time(time_begin, format=fmt, scale='utc')
     if time_end == None:
         time_end = time_begin
+    if not type(time_end) == Time:
+        time_end = Time(time_end, format=fmt, scale='utc')
+    if not type(time_step) == TimeDelta:
+        time_step = TimeDelta(time_step, format='sec')
     a = []
     tempo = time_begin
     while tempo <= time_end + TimeDelta(1,format='sec'):
@@ -313,21 +320,6 @@ class Observation(object):
         midcoord = coord_pack(midcoord)
         self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
     
-#    def precess(self, coord, time):
-#        """
-#        """
-#        return precess(coord, time)time = Time([time.iso], format='iso', scale='utc')
-        
-#    def sky_time(self, coord, time, rise_set=False):
-#        """
-#        """
-#        return sky_time(self, coord, time, rise_set=False, limalt=self.limheight, site=self.site, fuse=self.fuse)
-        
-#    def height_time(self, coord, time, time_left=False):
-#        """
-#        """
-#        return height_time(coord, time, time_left=False, limalt=self.limheight, site=self.site, fuse=self.fuse)
-        
     def instant_list(self, time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec')):
         self.instants = Time([[i] for i in instant_list(time_begin, time_end, time_step).jd], format='jd', scale='utc', location=self.site)
         self.instants.delta_ut1_utc = 0
@@ -341,10 +333,10 @@ class Observation(object):
             names = self.samefov['names']
             comments = self.samefov['comments']
         if not hasattr(self, 'instants') or now == True:
-            instants = instant_list(Time.now() + self.fuse)
+            instants = Time([[i] for i in instant_list(Time.now() + self.fuse).jd], format='jd', scale='utc', location=self.site)
         else:
             instants = self.instants
-        coord_prec = precess(coords, self.instants[0])
+        coord_prec = precess(coords, instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
         self.titles = []
@@ -357,9 +349,9 @@ class Observation(object):
             b = '\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(instants[i,0].iso.split(' ')[1][0:5], (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
             self.titles.append(b)
             if len(q) == 0:
-                self.obs[instants[i,0].iso] = {'names': '', 'comments': '', 'ra': '', 'dec': '', 'height': '', 'culmination': '', 'time_left': '', 'rest': ''}
+                self.obs[instants[i,0].iso] = {'names': np.array([]), 'comments': np.char.array(comments[q]), 'ra': np.char.array(comments[q]), 'dec': np.char.array(comments[q]), 'height': np.char.array(comments[q]), 'culmination': np.char.array(comments[q]), 'time_left': np.char.array(comments[q]), 'rest': []}
                 continue
-            self.obs[instants[i,0].iso] = {'names': np.char.array(names[q]), 'comments': '(' + np.char.array(comments[q]) + ')', 'ra': ra[q], 'dec': dec[q], 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
+            self.obs[instants[i,0].iso] = {'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'ra': ra[q], 'dec': dec[q], 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
 'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],\
 'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]), 'rest': ['']*len(q)}
             for j in alwaysup:
@@ -383,19 +375,16 @@ class Observation(object):
         """
         self.night = resume_night(self.coords, self.instants[0], self.names, limalt=self.limheight, site=self.site, fuse=self.fuse)
             
-    def create_plan(self, horain, horafin, intinf, path='.'):
+    def create_plan(self, path='.', now=False):
         """
         """
-        tempoin = Time(horain, format='iso', scale='utc', location=self.site)
-        tempofin = Time(horafin, format='iso', scale='utc', location=self.site)
-        intval = TimeDelta(intinf*60, format='sec')
-        self.instant_list(tempoin,tempofin,intval)
-        self.close_obj()
-        nome = '{}/Plano_{}.dat'.format(path, tempoin.iso.split(' ')[0])
+        if not hasattr(self, 'instants') or now == True:
+            self.instant_list(Time.now() + self.fuse)
+        nome = '{}/Plano_{}.dat'.format(path, self.instants[0][0].iso.split(' ')[0])
         self.plan()
         #### imprime os dados de cada objeto para cada instante ####
         output = open(nome, 'w')
-        output.write('Observational Plan to the night: {}\n\n'.format(tempoin.iso.split(' ')[0]))
+        output.write('Observational Plan to the night: {}\n\n'.format(self.instants[0][0].iso.split(' ')[0]))
         output.write('Latitude: {}  Longitude: {}\nMinimun height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
         for i in np.arange(len(self.instants)):
             obs = self.obs[self.instants[i,0].iso]
@@ -410,6 +399,55 @@ class Observation(object):
         for i in self.night[0]:
             output.write(i)
         output.close()
+        
+    def __region__(self, radius=10*u.arcsec):
+        """
+        """
+        a = 'icrs\n'
+        for i in np.arange(len(self.coords)):
+            a = a + 'circle({}, {}, {}) # text = '.format(self.coords[i].ra.deg, self.coords[i].dec.deg, (radius.to(u.deg)).value) + '{' + self.names[i] +'}\n'
+        f = open('ds9.reg', 'w')
+        f.write(a)
+        f.close()
+        
+    def chart(self, force_reg=False, size=None):
+        """
+        """
+        if size == None:
+            size = self.limdist.to(u.arcmin).value
+        if not os.path.isfile('ds9.reg') or force_reg == True:
+            self.__region__()
+        if hasattr(self, 'obs'):
+            p=0
+        elif hasattr(self, 'samefov'):
+            p =1
+            names = self.samefov['names']
+            ra, dec = text_coord(self.samefov['coords'])
+        else:
+            p=2
+            names = self.names
+            ra, dec = text_coord(self.coords)
+        a = 0
+        while a == 0:
+            p = p + 1
+            if p == 1:
+                key = self.obs.keys()[0]
+                names = self.obs[key]['names']
+                ra, dec = self.obs[key]['ra'], self.obs[key]['dec']
+            elif p == 2:
+                names = self.samefov['names']
+                ra, dec = text_coord(self.samefov['coords'])
+            elif p == 3:
+                names = self.names
+                ra, dec = text_coord(self.coords)
+            else:
+                return
+            names = np.concatenate((['List all objects'], names))
+            print '\n'
+            for i in np.arange(len(names)):
+                print '{}: {}'.format(i, names[i])
+            a = input('Digite o numero referente ao alvo: ')
+        os.system('ds9 -dsseso size {} {} -dsseso coord {} {} -region ds9.reg'.format(size, size, ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
 #####################################################################
 
@@ -431,13 +469,13 @@ altitude = 1864					#### altitude em metros
 #observation.create_plan(coords,objs, comments, horain, horafin, intinf, limalt=limalt, size=limdist)
 #print observation.plan(coord, tempoin, objs, comments, limalt=30.0*u.deg, size=11.0*u.arcmin)
 
-a = Time.now()
-obs = Observation(fuso, latitude, longitude, altitude)
-obs.read('alvos', name_col=[0], coord_col=[1,2,3,4,5,6], comment_col=[7])
-obs.set_limheight(30)
-obs.set_limdist(11)
-obs.close_obj()
-##obs.instant_list(Time('2015-03-08 18:00:00', format='iso', scale='utc', location=obs.site), Time('2015-03-08 20:00:00', format='iso', scale='utc', location=obs.site))
-obs.create_plan(horain, horafin, intinf)
-b = Time.now()
-print 'tempo de reducao: {}'.format((b-a).sec)
+#a = Time.now()
+#obs = Observation(fuso, latitude, longitude, altitude)
+#obs.read('alvos', name_col=[0], coord_col=[1,2,3,4,5,6], comment_col=[7])
+#obs.set_limheight(30)
+#obs.set_limdist(11)
+#obs.close_obj()
+#obs.instant_list(horain, horafin, intinf*60)
+#obs.create_plan()
+#b = Time.now()
+#print 'tempo de reducao: {}'.format((b-a).sec)
