@@ -257,11 +257,11 @@ class Observation(object):
     """
     """
 
-    def __init__(self, fuse = 0, latitude = 0.0, longitude = 0.0, height = 0.0):
+    def __init__(self, fuse = 0, latitude = 0.0, longitude = 0.0, height = 0.0, limheight=0.0, limdist=0.0):
         self.set_fuse(fuse)
         self.set_site(longitude, latitude, height)
-        self.set_limheight(0.0)
-        self.set_limdist(0.0)
+        self.set_limheight(limheight)
+        self.set_limdist(limdist)
         
     def set_site(self,longitude, latitude, height=0.0*u.m):
         """
@@ -333,9 +333,8 @@ class Observation(object):
             names = self.samefov['names']
             comments = self.samefov['comments']
         if not hasattr(self, 'instants') or now == True:
-            instants = Time([[i] for i in instant_list(Time.now() + self.fuse).jd], format='jd', scale='utc', location=self.site)
-        else:
-            instants = self.instants
+            self.instant_list(Time.now() + self.fuse)
+        instants = self.instants
         coord_prec = precess(coords, instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
@@ -349,7 +348,7 @@ class Observation(object):
             b = '\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(instants[i,0].iso.split(' ')[1][0:5], (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
             self.titles.append(b)
             if len(q) == 0:
-                self.obs[instants[i,0].iso] = {'names': np.array([]), 'comments': np.char.array(comments[q]), 'ra': np.char.array(comments[q]), 'dec': np.char.array(comments[q]), 'height': np.char.array(comments[q]), 'culmination': np.char.array(comments[q]), 'time_left': np.char.array(comments[q]), 'rest': []}
+                self.obs[instants[i,0].iso] = {'names': np.char.array([]), 'comments': np.char.array([]), 'ra': np.char.array([]), 'dec': np.char.array([]), 'height': np.char.array([]), 'culmination': np.char.array([]), 'time_left': np.char.array([]), 'rest': []}
                 continue
             self.obs[instants[i,0].iso] = {'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'ra': ra[q], 'dec': dec[q], 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
 'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],\
@@ -390,7 +389,7 @@ class Observation(object):
             obs = self.obs[self.instants[i,0].iso]
             output.write(self.titles[i])
             if len(obs['names']) > 0:
-                a = '\n\n' + obs['names'] + obs['comments'] + '\n\tRA: ' + obs['ra'] + '\tDEC: ' + obs['dec'] + '\n\tHeight: ' + obs['height'] + \
+                a = '\n\n' + np.char.array(obs['names']) + obs['comments'] + '\n\tRA: ' + obs['ra'] + '\tDEC: ' + obs['dec'] + '\n\tHeight: ' + obs['height'] + \
 ' deg\n\tCulmination: ' + obs['culmination'] + ' LT\n\tTime left to reach min height: ' + obs['time_left'] + obs['rest']
                 for j in a:
                     output.write(j)
@@ -410,7 +409,7 @@ class Observation(object):
         f.write(a)
         f.close()
         
-    def chart(self, force_reg=False, size=None):
+    def chart(self, size=None, force_reg=False):
         """
         """
         if size == None:
@@ -421,12 +420,8 @@ class Observation(object):
             p=0
         elif hasattr(self, 'samefov'):
             p =1
-            names = self.samefov['names']
-            ra, dec = text_coord(self.samefov['coords'])
         else:
             p=2
-            names = self.names
-            ra, dec = text_coord(self.coords)
         a = 0
         while a == 0:
             p = p + 1
@@ -449,16 +444,74 @@ class Observation(object):
             a = input('Digite o numero referente ao alvo: ')
         os.system('ds9 -dsseso size {} {} -dsseso coord {} {} -region ds9.reg'.format(size, size, ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
+    def show_text(self):
+        k = self.instants[:,0].iso
+        if len(k) == 1:
+            i = 0
+        else:
+            for l in np.arange(len(k)):
+                print '{}: {} LT'.format(l, k[l])
+            i = input('Digite o numero da data que deseja ver: ')
+        j = k[i]
+        a = '\n\n' + np.char.array(self.obs[j]['names']) + self.obs[j]['comments'] + '\n\tRA: ' + self.obs[j]['ra'] + '\tDEC: ' + self.obs[j]['dec'] + '\n\tHeight: ' + self.obs[j]['height'] + \
+' deg\n\tCulmination: ' + self.obs[j]['culmination'] + ' LT\n\tTime left to reach min height: ' + self.obs[j]['time_left'] + self.obs[j]['rest']
+        b = self.titles[i]
+        for i in a:
+            b = b + i
+        print b
+        
+    def observe(self, edit=False):
+        if edit == True:
+            p=-1
+        elif hasattr(self, 'obs'):
+            p=0
+        elif hasattr(self, 'samefov'):
+            p=1
+        else:
+            p=2
+        a = 0
+        while a == 0:
+            p = p + 1
+            if p == 0:
+                names = self.observed
+            elif p == 1:
+                key = self.obs.keys()[0]
+                names = self.obs[key]['names']
+                ra, dec = self.obs[key]['ra'], self.obs[key]['dec']
+            elif p == 2:
+                names = self.samefov['names']
+                ra, dec = text_coord(self.samefov['coords'])
+            elif p == 3:
+                names = self.names
+                ra, dec = text_coord(self.coords)
+            else:
+                return
+            names = np.concatenate((['List all objects'], names))
+            print '\n'
+            if edit == False:
+                for i in np.arange(len(names)):
+                    print '{}: {}'.format(i, names[i])
+                a = input('Digite o numero referente ao alvo: ')
+            else:
+                for i in np.arange(len(names))[1:]:
+                    print '{}: {}'.format(i, names[i])
+                a = input('Digite o numero referente ao alvo: ')
+        if edit == False:
+            if not hasattr(self, 'observed'):
+                self.observed = [names[a]]
+            else:
+                self.observed.append(names[a])
+        
 #####################################################################
 
 #arquivo = 'alvos'				#### arquivo de alvos
-horain = '2015-03-08 18:00:00'			#### hora inicial local da observacao
-horafin = '2015-03-09 06:00:00'			#### hora final local da observacao
-intinf = 60					#### intervalo entre as informacoes (minutos)
-fuso = -3					#### fuso horario do local
-latitude = '-22 32 7.8'				#### latitude do local
-longitude = '314 25 2.5'			#### longitude do local
-altitude = 1864					#### altitude em metros
+#horain = '2015-03-08 18:00:00'			#### hora inicial local da observacao
+#horafin = '2015-03-09 06:00:00'			#### hora final local da observacao
+#intinf = 60					#### intervalo entre as informacoes (minutos)
+#fuso = -3					#### fuso horario do local
+#latitude = '-22 32 7.8'				#### latitude do local
+#longitude = '314 25 2.5'			#### longitude do local
+#altitude = 1864					#### altitude em metros
 #limalt = 30.0					#### limite de altura para mostrar (graus)
 #limdist = 11					#### limite de distancia para field-of-view (arcmin)
 
