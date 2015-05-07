@@ -6,49 +6,56 @@ import astropy.units as u
 from astropy.time import Time, TimeDelta
 from astropy.coordinates import SkyCoord, EarthLocation
 
+####################################### definindo funcoes ##################################################################
+
+def coord_pack(coord):
+    if type(coord) == SkyCoord:
+        if not coord.isscalar:
+            return coord
+        return SkyCoord([coord.ra], [coord.dec], frame=coord.frame)
+    a, b = [], []
+    for i in coord:
+        a.append(i.ra)
+        b.append(i.dec)
+    coord = SkyCoord(a,b, frame='fk5')
+    return coord
+
 ######################################### lendo arquivo de dados da ocultacao e de observatorios ##############################
 
-def lerdados():
-    dados = np.loadtxt(arquivo, skiprows=41, usecols=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 18, 19, 20, 21, 22, 25, 26, 28, 29), \
-        dtype={'names': ('dia', 'mes', 'ano', 'hor', 'min', 'sec', 'afh', 'afm', 'afs', 'ded', 'dem', 'des', 'ca', 'pa', 'vel', 'delta', 'mR', 'mK', 'long', 'ora', 'ode'), 
-        'formats': ('S30', 'S30', 'S30','S30', 'S30', 'f8','i4', 'i4', 'f8','i4', 'i4', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8')})
+class Map(object):
+    
+    def readfile(self, arquivo):
+        dados = np.loadtxt(arquivo, skiprows=41, usecols=(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 18, 19, 20, 21, 22, 25, 26, 28, 29), \
+            dtype={'names': ('dia', 'mes', 'ano', 'hor', 'min', 'sec', 'afh', 'afm', 'afs', 'ded', 'dem', 'des', 'ca', 'pa', 'vel', 'delta', 'mR', 'mK', 'long', 'ora', 'ode'), 
+            'formats': ('S30', 'S30', 'S30','S30', 'S30', 'S30','S20', 'S20', 'S20','S20', 'S20', 'S20', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8')}, ndmin=1)
 
 ################## lendo coordenadas #################
 
-    alfa = np.core.defchararray.add(np.array(map(str, dados['afh'])), [' '])
-    alfa = np.core.defchararray.add(alfa, np.array(map(str, dados['afm'])))
-    alfa = np.core.defchararray.add(alfa, [' '])
-    alfa = np.core.defchararray.add(alfa, np.array(map(str, dados['afs'])))
-    delta = np.core.defchararray.add(np.array(map(str, dados['ded'])), [' '])
-    delta = np.core.defchararray.add(delta, np.array(map(str, dados['dem'])))
-    delta = np.core.defchararray.add(delta, [' '])
-    delta = np.core.defchararray.add(delta, np.array(map(str, dados['des'])))
-    coor = np.core.defchararray.add(alfa, [' '])
-    coor = np.core.defchararray.add(coor, delta)
-    stars = SkyCoord(coor, frame='icrs', unit=(u.hourangle, u.degree))
+        coor = dados['afh']
+        for i in ['afm', 'afs', 'ded', 'dem', 'des']:
+            coor = np.core.defchararray.add(coor, ' ')
+            coor = np.core.defchararray.add(coor, dados[i])
+        self.stars = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
 
 ################### lendo tempo ########################
 
-    tempo = np.core.defchararray.add(np.array(dados['ano']), ['-'])
-    tempo = np.core.defchararray.add(tempo, np.array(dados['mes']))
-    tempo = np.core.defchararray.add(tempo, ['-'])
-    tempo = np.core.defchararray.add(tempo, np.array(dados['dia']))
-    tempo = np.core.defchararray.add(tempo, [' '])
-    tempo = np.core.defchararray.add(tempo, np.array(dados['hor']))
-    tempo = np.core.defchararray.add(tempo, [':'])
-    tempo = np.core.defchararray.add(tempo, np.array(dados['min']))
-    tempo = np.core.defchararray.add(tempo, [':'])
-    tempo = np.core.defchararray.add(tempo, np.array(map(str, dados['sec'])))
-    datas = Time(tempo, format='iso', scale='utc')
+        tim=dados['ano']
+        len_iso = ['-', '-', ' ', ':',':']
+        arr = ['mes', 'dia', 'hor', 'min', 'sec']
+        for i in np.arange(len(arr)):
+            tim = np.core.defchararray.add(tim, len_iso[i]) 
+            tim = np.core.defchararray.add(tim, dados[arr[i]])
+        tim = np.char.array(tim) + '000'
+        print tim
+        self.datas = Time(tim, format='iso', scale='utc')
 
 ############### definindo parametros #############
-    ca = dados['ca']*u.arcsec
-    pa = dados['pa']*u.deg
-    vel = dados['vel']*(u.km/u.s)
-    dist = dados['delta']*u.AU
-    off_ra = dados['ora']*u.mas
-    off_de = dados['ode']*u.mas
-    return stars, datas, ca, pa, vel, dist, off_ra, off_de, dados['mR'], dados['mK'], dados['long']
+        self.ca = dados['ca']*u.arcsec
+        self.pa = dados['pa']*u.deg
+        self.vel = dados['vel']*(u.km/u.s)
+        self.dist = dados['delta']*u.AU
+        self.off_ra = dados['ora']*u.mas
+        self.off_de = dados['ode']*u.mas
 
 ################################### definido funcao que imprime o mapa #############################################
 
@@ -181,7 +188,7 @@ if os.path.isfile(sitearq) == True:
 
 ###################### rodando o programa ######################
 
-map(geramapa, vals)
+#map(geramapa, vals)
 
 os.system('notify-send "Terminou de gerar os mapas" --icon=dialog-information')
 
