@@ -20,8 +20,42 @@ def coord_pack(coord):
     coord = SkyCoord(a,b, frame='fk5')
     return coord
 
-######################################### lendo arquivo de dados da ocultacao e de observatorios ##############################
+def calcfaixa(vel, data, star, dist, ca, pa, tamanho, ring=None):
+    g = np.arange(int(-8000/(np.absolute(vel[0].value))), int(8000/(np.absolute(vel[0].value))), 10)
+    latlon{clat}{lon}, latlon{clat}{lat}, latlon{clat}{lab}, latlon{lats}{lon}, latlon{lats}{lat}, latlon{lats}{lon2}, latlon{lats}{lat2} = [], [], [], [], [], [], []
+    paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
+    for delt in g:
+        deltatime = delt*u.s
+        datas1 = data + TimeDelta(deltatime)
+        datas1.delta_ut1_utc = 0
+        lon = star.ra - datas1.sidereal_time('mean', 'greenwich')
+        m = Basemap(projection='ortho',lat_0=star.dec.value,lon_0=lon.value,resolution=None)
+        a, b = m(lon.value, star.dec.value)
+        a = a*u.m
+        b = b*u.m
+        dista = (dist.to(u.km)*ca.to(u.rad)).value*u.km
+        ax = a + dista*np.sin(pa) + (deltatime*vel)*np.cos(paplus)
+        by = b + dista*np.cos(pa) - (deltatime*vel)*np.sin(paplus)
+        ax2 = ax - tamanho/2*np.sin(paplus)
+        by2 = by - tamanho/2*np.cos(paplus)
+        ax3 = ax + tamanho/2*np.sin(paplus)
+        by3 = by + tamanho/2*np.cos(paplus)
+        clon1, clat1 = m(ax.value, by.value, inverse=True)
+        lab.append(datas1.iso.split()[1][0:8])
+        latlon{clat}{lon}.append(clon1)
+        latlon{clat}{lat}.append(clat1)
+        latlon{clat}{lab}.append(lab)
+        lon1, lat1 = m(ax2.value, by2.value, inverse=True)
+        latlon{lats}{lon}.append(lon1) 
+        latlon{lats}{lat}.append(lat1)
+        lon2, lat2 = m(ax3.value, by3.value, inverse=True)
+        latlon{lats}{lon2}.append(lon2) 
+        latlon{lats}{lat2}.append(lat2)
+        if not erro == None:
+            
+    return latlon
 
+######################################### lendo arquivo de dados da ocultacao e de observatorios ##############################
 class Map(object):
     
     def readfile(self, arquivo):
@@ -46,7 +80,6 @@ class Map(object):
             tim = np.core.defchararray.add(tim, len_iso[i]) 
             tim = np.core.defchararray.add(tim, dados[arr[i]])
         tim = np.char.array(tim) + '000'
-        print tim
         self.datas = Time(tim, format='iso', scale='utc')
 
 ############### definindo parametros #############
@@ -54,8 +87,51 @@ class Map(object):
         self.pa = dados['pa']*u.deg
         self.vel = dados['vel']*(u.km/u.s)
         self.dist = dados['delta']*u.AU
-        self.off_ra = dados['ora']*u.mas
-        self.off_de = dados['ode']*u.mas
+        self.ob_off_ra = dados['ora']*u.mas
+        self.ob_off_de = dados['ode']*u.mas
+        self.st_off_ra = self.st_off_de = 0.0*u.mas
+        self.magR = dados['mR']
+        self.magK = dados['mK']
+        self.longi = dados['long']
+
+    def infile(self, entrada='mapa_in.dat'):
+        f = open(entrada, 'r')
+        in_data = f.readlines()
+        option = in_data[0].rsplit()[0]
+        self.obj = in_data[18].rsplit()[0]
+        self.tamanho = int(in_data[19].rsplit()[0])*u.km
+        self.erro = float(in_data[20].rsplit()[0])*u.mas
+        self.sitearq = in_data[21].rsplit()[0]
+        self.resolution = in_data[22].rsplit()[0]
+        self.mapsize = map(float, in_data[23].rsplit()[0:2])*u.cm
+        self.mapstyle = in_data[24].rsplit()[0]
+        if option == '1':
+            arquivo = in_data[2].rsplit()[0]
+            readfile(arquivo)
+            st_off_ra = st_off_de = 0.0*u.mas
+        elif option == '2':
+            self.stars = SkyCoord([in_data[4].rsplit('#')[0]], frame='icrs', unit=(u.hourangle, u.degree))
+            datas = Time([in_data[5].rsplit('#')[0]], format='iso', scale='utc')
+            ca = [float(in_data[6].rsplit('#')[0])]*u.arcsec
+            self.pa = [float(in_data[7].rsplit('#')[0])]*u.deg
+            self.dist = [float(in_data[8].rsplit('#')[0])]*u.AU
+            self.vel = [float(in_data[9].rsplit('#')[0])]*(u.km/u.s)
+            self.ob_off_ra = [float(in_data[10].rsplit('#')[0])]*u.mas
+            self.ob_off_de = [float(in_data[11].rsplit('#')[0])]*u.mas
+            self.st_off_ra = [float(in_data[12].rsplit('#')[0])]*u.mas
+            self.st_off_de = [float(in_data[13].rsplit('#')[0])]*u.mas
+            self.off_ra = ob_off_ra - st_off_ra
+            self.off_de = ob_off_de - st_off_de
+            self.magR = [float(in_data[14].rsplit()[0])]
+            self.magK = [float(in_data[15].rsplit()[0])]
+            self.longi = [float(in_data[16].rsplit()[0])]
+            dca = off_ra*np.sin(pa) + off_de*np.cos(pa)
+            dt = int(((off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/vel).value)*u.s
+            self.ca = ca + dca
+            self.datas = datas + dt
+        f.close()
+        paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
+
 
 ################################### definido funcao que imprime o mapa #############################################
 

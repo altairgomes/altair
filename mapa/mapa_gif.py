@@ -9,6 +9,38 @@ from multiprocessing import Pool
 
 ################################### definido funcao que imprime o mapa #############################################
 
+def calcfaixa(idx):
+    g = np.arange(int(-8000/(np.absolute(vel[0].value))), int(8000/(np.absolute(vel[0].value))), 10)
+    lons1, lats1, lons2, lats2, clon, clat, lab = [], [], [], [], [], [], []
+    for delt in g:
+        deltatime = delt*u.s
+        datas1 = datas + TimeDelta(deltatime)
+        datas1.delta_ut1_utc = 0
+        lon = stars[idx].ra - datas1.sidereal_time('mean', 'greenwich')
+        m = Basemap(projection='ortho',lat_0=stars[idx].dec.value,lon_0=lon.value,resolution=None)
+        a, b = m(lon.value, stars[idx].dec.value)
+        a = a*u.m
+        b = b*u.m
+        dista = (dist[idx].to(u.km)*ca[idx].to(u.rad)).value*u.km
+        ax = a + dista*np.sin(pa[idx]) + (deltatime*vel[idx])*np.cos(paplus[idx])
+        by = b + dista*np.cos(pa[idx]) - (deltatime*vel[idx])*np.sin(paplus[idx])
+        ax2 = ax - tamanho/2*np.sin(paplus[idx])
+        by2 = by - tamanho/2*np.cos(paplus[idx])
+        ax3 = ax + tamanho/2*np.sin(paplus[idx])
+        by3 = by + tamanho/2*np.cos(paplus[idx])
+        clon1, clat1 = m(ax.value, by.value, inverse=True)
+        if deltatime.value%15 == 10:
+            clon.append(clon1)
+            clat.append(clat1)
+#            lab.append(datas1.iso.split()[1][0:8])
+        lon1, lat1 = m(ax2.value, by2.value, inverse=True)
+        lons1.append(lon1) 
+        lats1.append(lat1)
+        lon2, lat2 = m(ax3.value, by3.value, inverse=True)
+        lons2.append(lon2) 
+        lats2.append(lat2)
+    return lons1, lats1, lons2, lats2, clon, clat
+
 def geramapa(delt):
     deltatime = delt*u.s
     datas1 = datas[idx] + TimeDelta(deltatime)
@@ -56,10 +88,43 @@ def geramapa(delt):
     b = b*u.m
     dista = (dist[idx].to(u.km)*ca[idx].to(u.rad)).value*u.km
     disterr = (dist[idx].to(u.km)*erro.to(u.rad)).value*u.km
-    ax = a + dista*np.sin(pa[idx]) + (deltatime*vel[idx])*np.cos(pa[idx])
-    by = b + dista*np.cos(pa[idx]) - (deltatime*vel[idx])*np.sin(pa[idx])
-    m.plot(ax,by, 'o', color=ptcolor, markersize=mapsize[0].value*20/46)
+    kx = a + dista*np.sin(pa[idx]) + (deltatime*vel[idx])*np.cos(paplus[idx])
+    ky = b + dista*np.cos(pa[idx]) - (deltatime*vel[idx])*np.sin(paplus[idx])
+    m.plot(kx,ky, 'o', color=ptcolor, markersize=mapsize[0].value*20/46)
 #    plt.legend(fontsize=mapsize[0].value*21/46)
+
+    vec = np.arange(0,7000,(np.absolute(vel)*(30*u.s)).value)*u.km + np.absolute(vel)*(30*u.s)
+    vec = np.concatenate((vec.value,-vec.value), axis=0)*u.km
+
+    ax = a + dista*np.sin(pa[idx])
+    ax2 = ax + vec*np.cos(pa[idx])
+    ax3 = ax2 - tamanho/2*np.sin(pa[idx])
+    ax4 = ax2 + tamanho/2*np.sin(pa[idx])
+    ax5 = a + (dista-disterr)*np.sin(pa[idx]) + vec*np.cos(pa[idx])
+    ax6 = a + (dista+disterr)*np.sin(pa[idx]) + vec*np.cos(pa[idx])
+    by = b + dista*np.cos(pa[idx])
+    by2 = by - vec*np.sin(pa[idx])
+    by3 = by2 - tamanho/2*np.cos(pa[idx])
+    by4 = by2 + tamanho/2*np.cos(pa[idx])
+    by5 = b + (dista-disterr)*np.cos(pa[idx]) - vec*np.sin(pa[idx])
+    by6 = b + (dista+disterr)*np.cos(pa[idx]) - vec*np.sin(pa[idx])
+
+    xs, ys = m(lons1, lats1)
+    xs = [i for i in xs if i < 1e+30]
+    ys = [i for i in ys if i < 1e+30]
+    m.plot(xs, ys, 'b')
+    xt, yt = m(lons2, lats2)
+    xt = [i for i in xt if i < 1e+30]
+    yt = [i for i in yt if i < 1e+30]
+    m.plot(xt, yt, 'b')
+    xc, yc = m(clon, clat)
+#    labe = [lab[i] for i in np.arange(len(lab)) if xc[i] < 1e+30]
+    xc = [i for i in xc if i < 1e+30]
+    yc = [i for i in yc if i < 1e+30]
+    m.plot(xc, yc, 'or')
+
+    m.plot(ax3.to(u.m), by3.to(u.m), color='red')
+    m.plot(ax4.to(u.m), by4.to(u.m), color='red')
 
     fig = plt.gcf()
     fig.set_size_inches(mapsize[0].to(u.imperial.inch).value, mapsize[1].to(u.imperial.inch).value)
@@ -110,8 +175,11 @@ ca = ca + dca
 datas = datas + dt
 idx = 0
 
+paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
+
 f.close()
 
+lons1, lats1, lons2, lats2, clon, clat = calcfaixa(idx)
 
 if os.path.isfile(sitearq) == True:
     sites = np.loadtxt(sitearq,  dtype={'names': ('lat', 'lon', 'alt', 'nome'), 'formats': ('f8', 'f8', 'f8', 'S30')})
