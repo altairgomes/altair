@@ -20,9 +20,17 @@ def coord_pack(coord):
     coord = SkyCoord(a,b, frame='fk5')
     return coord
 
-def calcfaixa(vel, data, star, dist, ca, pa, tamanho, ring=None):
-    g = np.arange(int(-8000/(np.absolute(vel[0].value))), int(8000/(np.absolute(vel[0].value))), 10)
-    latlon{clat}{lon}, latlon{clat}{lat}, latlon{clat}{lab}, latlon{lats}{lon}, latlon{lats}{lat}, latlon{lats}{lon2}, latlon{lats}{lat2} = [], [], [], [], [], [], []
+def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None, atm=None):
+    g = np.arange(int(-8000/(np.absolute(vel.value))), int(8000/(np.absolute(vel.value))), step)
+    latlon = {'clat':{'lon':[], 'lat':[], 'lab': []}, 'lats': {'lon':[], 'lat':[], 'lon2':[], 'lat2':[]}}
+    if not erro == None:
+        latlon['erro'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
+        err = erro*u.mas
+        errd = (dist.to(u.km)*err.to(u.rad)).value*u.km
+    if not ring == None:
+        latlon['ring'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
+    if not atm == None:
+        latlon['atm'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
     paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
     for delt in g:
         deltatime = delt*u.s
@@ -41,20 +49,156 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, ring=None):
         ax3 = ax + tamanho/2*np.sin(paplus)
         by3 = by + tamanho/2*np.cos(paplus)
         clon1, clat1 = m(ax.value, by.value, inverse=True)
-        lab.append(datas1.iso.split()[1][0:8])
-        latlon{clat}{lon}.append(clon1)
-        latlon{clat}{lat}.append(clat1)
-        latlon{clat}{lab}.append(lab)
+        if clon1 < 1e+30:
+            latlon['clat']['lon'].append(clon1)
+            latlon['clat']['lat'].append(clat1)
+            latlon['clat']['lab'].append(datas1.iso.split()[1][0:8])
         lon1, lat1 = m(ax2.value, by2.value, inverse=True)
-        latlon{lats}{lon}.append(lon1) 
-        latlon{lats}{lat}.append(lat1)
+        if lon1 < 1e+30:
+            latlon['lats']['lon'].append(lon1) 
+            latlon['lats']['lat'].append(lat1)
         lon2, lat2 = m(ax3.value, by3.value, inverse=True)
-        latlon{lats}{lon2}.append(lon2) 
-        latlon{lats}{lat2}.append(lat2)
+        if lon2 < 1e+30:
+            latlon['lats']['lon2'].append(lon2) 
+            latlon['lats']['lat2'].append(lat2)
         if not erro == None:
-            
+            ax2 = ax - errd*np.sin(paplus)
+            by2 = by - errd*np.cos(paplus)
+            ax3 = ax + errd*np.sin(paplus)
+            by3 = by + errd*np.cos(paplus)
+            lon1, lat1 = m(ax2.value, by2.value, inverse=True)
+            if lon1 < 1e+30:
+                latlon['erro']['lon'].append(lon1) 
+                latlon['erro']['lat'].append(lat1)
+            lon2, lat2 = m(ax3.value, by3.value, inverse=True)
+            if lon2 < 1e+30:
+                latlon['erro']['lon2'].append(lon2) 
+                latlon['erro']['lat2'].append(lat2)
+        if not ring == None:
+            rng = ring*u.km
+            ax2 = ax - rng*np.sin(paplus)
+            by2 = by - rng*np.cos(paplus)
+            ax3 = ax + rng*np.sin(paplus)
+            by3 = by + rng*np.cos(paplus)
+            lon1, lat1 = m(ax2.value, by2.value, inverse=True)
+            if lon1 < 1e+30:
+                latlon['ring']['lon'].append(lon1) 
+                latlon['ring']['lat'].append(lat1)
+            lon2, lat2 = m(ax3.value, by3.value, inverse=True)
+            if lon2 < 1e+30:
+                latlon['ring']['lon2'].append(lon2) 
+                latlon['ring']['lat2'].append(lat2)
+        if not atm == None:
+            atmo = atm*u.km
+            ax2 = ax - atmo*np.sin(paplus)
+            by2 = by - atmo*np.cos(paplus)
+            ax3 = ax + atmo*np.sin(paplus)
+            by3 = by + atmo*np.cos(paplus)
+            lon1, lat1 = m(ax2.value, by2.value, inverse=True)
+            if lon1 < 1e+30:
+                latlon['atm']['lon'].append(lon1) 
+                latlon['atm']['lat'].append(lat1)
+            lon2, lat2 = m(ax3.value, by3.value, inverse=True)
+            if lon2 < 1e+30:
+                latlon['atm']['lon2'].append(lon2) 
+                latlon['atm']['lat2'].append(lat2)
     return latlon
 
+def geramapa(star, data, centermap=None, resolution='l', lats=None, erro=None, ring=None, atm=None):
+    lons1, lats1, lons2, lats2, clon, clat, lab = calcfaixa(idx)
+    lon = star.ra - data.sidereal_time('mean', 'greenwich')
+    center_map = EarthLocation(lon.value, star.dec.value)
+    if not centermap = None:
+        center_map = EarthLocation(centermap[0],centermap[1])
+        lati = centermap[1]
+#    fig = plt.figure(figsize=(mapsize[0].to(u.imperial.inch).value, mapsize[1].to(u.imperial.inch).value))
+    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution)
+#    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution,llcrnrx=-2000000.,llcrnry=-1500000.,urcrnrx=2000000.,urcrnry=1500000.)
+#    kx = fig.add_axes([-0.003,-0.001,1.006,1.002])
+#    kx.set_rasterization_zorder(1)
+    m.nightshade(data.datetime, alpha=0.2, zorder=0.5)
+    m.drawcoastlines(linewidth=0.5)
+    m.drawcountries(linewidth=0.5)
+    m.drawstates(linewidth=0.5)
+    m.drawmeridians(np.arange(0,360,30))
+    m.drawparallels(np.arange(-90,90,30))
+    m.drawmapboundary()
+    ptcolor = 'red'
+    lncolor = 'black'
+    dscolor = 'black'
+    if mapstyle == '2':
+        m.drawmapboundary(fill_color='aqua')
+        m.fillcontinents(color='coral',lake_color='aqua')
+        ptcolor = 'red'
+        lncolor = 'blue'
+        dscolor = 'red'
+    elif mapstyle == '3':
+        m.shadedrelief()
+        ptcolor = 'red'
+        lncolor = 'blue'
+        dscolor = 'red'
+    elif mapstyle == '4':
+        m.bluemarble()
+        ptcolor = 'red'
+        lncolor = 'red'
+        dscolor = 'red'
+    elif mapstyle == '5':
+        m.etopo()
+        ptcolor = 'red'
+        lncolor = 'red'
+        dscolor = 'red'
+    xs, ys = m(lons1, lats1)
+    xs = [i for i in xs if i < 1e+30]
+    ys = [i for i in ys if i < 1e+30]
+    m.plot(xs, ys, 'b')
+    xt, yt = m(lons2, lats2)
+    xt = [i for i in xt if i < 1e+30]
+    yt = [i for i in yt if i < 1e+30]
+    m.plot(xt, yt, 'b')
+    xc, yc = m(clon, clat)
+    labe = [lab[i] for i in np.arange(len(lab)) if xc[i] < 1e+30]
+    xc = [i for i in xc if i < 1e+30]
+    yc = [i for i in yc if i < 1e+30]
+    m.plot(xc, yc, 'or')
+
+#    m.plot(ax,by, 'o', color=ptcolor, markersize=int(mapsize[0].value*20/46))
+#    m.plot(ax2.to(u.m),by2.to(u.m), 'o', color=ptcolor, markersize=int(mapsize[0].value*12/46))
+#    m.plot(ax3.to(u.m), by3.to(u.m), color='red')
+#    m.plot(ax4.to(u.m), by4.to(u.m), color='red')
+#    m.quiver(a-0*u.m,b-600000*u.m, 20, 0, width=0.005)
+
+#    ax2 = a + dista*np.sin(pa) + [(i - datas).sec for i in temposplot]*u.s*vel*np.cos(paplus)
+#    by2 = b + dista*np.cos(pa) - [(i - datas).sec for i in temposplot]*u.s*vel*np.sin(paplus)
+#
+#    labels = [i.iso.split()[1][0:8] for i in temposplot]
+#    m.plot(ax2, by2, 'ro')
+    
+#    for label, axpt, bypt in zip(labe, xc, yc):
+#        kx.text(axpt + 0, bypt + 350000, label, rotation=60, weight='bold')
+
+
+#    if os.path.isfile(sitearq) == True:
+#        xpt,ypt = m(sites['lon'],sites['lat'])
+#        m.plot(xpt,ypt,'bo')
+#        offset = [[xpt[0] + 100000,xpt[0] + 100000,xpt[0] + 100000,xpt[3] + 400000,xpt[3] +400000,xpt[3] +400000,xpt[3] +400000,xpt[3] +400000,xpt[3] +400000],[10000,-30000,-60000,70000,30000,-20000,-70000,-30000,-70000]]
+#        for i in np.arange(len(xpt)):
+#            ax.text(offset[0][i],ypt[i]+offset[1][i],sites['nome'][i], weight='bold')
+
+#    m.plot(ax5.to(u.m), by5.to(u.m), '--', color=dscolor, label='+-{} error'.format(erro))
+#    m.plot(ax6.to(u.m), by6.to(u.m), '--', color=dscolor)
+#    plt.legend(fontsize=mapsize[0].value*21/46)
+
+#    fig = plt.gcf()
+#    fig.set_size_inches(mapsize[0].to(u.imperial.inch).value, mapsize[1].to(u.imperial.inch).value)
+#    plt.title('Objeto       Diam   dots <>  ra_off_obj_de  ra_of_star_de\n{:10s} {:4.0f} km  60 s <> {:+6.1f} {:+6.1f}  {:+6.1f} {:+6.1f} \n'
+#        .format(obj, tamanho.value, ob_off_ra[idx].value, ob_off_de[idx].value, st_off_ra[idx].value, st_off_de[idx].value), fontsize=mapsize[0].value*25/46, fontproperties='FreeMono', weight='bold')
+#    plt.xlabel('\n year-m-d    h:m:s UT     ra__dec__J2000__candidate    C/A    P/A    vel   Delta   R*   K*  long\n\
+#{}  {:02d} {:02d} {:07.4f} {:+02d} {:02d} {:06.3f} {:6.3f} {:6.2f} {:6.2f}  {:5.2f} {:5.1f} {:4.1f}  {:3.0f}'
+#        .format(datas[idx].iso, int(stars[idx].ra.hms.h), int(stars[idx].ra.hms.m), stars[idx].ra.hms.s, int(stars[idx].dec.dms.d), np.absolute(int(stars[idx].dec.dms.m)), np.absolute(stars[idx].dec.dms.s),
+#        ca[idx].value, pa[idx].value, vel[idx].value, dist[idx].value, magR[idx], magK[idx], longi[idx]), fontsize=mapsize[0].value*21/46, fontproperties='FreeMono', weight='bold')
+    plt.savefig('{}_{}.png'.format(obj, datas.isot), format='png', dpi=100)
+    print 'Gerado: {}_{}.png'.format(obj, datas.isot)
+    plt.clf()
 ######################################### lendo arquivo de dados da ocultacao e de observatorios ##############################
 class Map(object):
     
@@ -100,7 +244,6 @@ class Map(object):
         option = in_data[0].rsplit()[0]
         self.obj = in_data[18].rsplit()[0]
         self.tamanho = int(in_data[19].rsplit()[0])*u.km
-        self.erro = float(in_data[20].rsplit()[0])*u.mas
         self.sitearq = in_data[21].rsplit()[0]
         self.resolution = in_data[22].rsplit()[0]
         self.mapsize = map(float, in_data[23].rsplit()[0:2])*u.cm
@@ -120,18 +263,22 @@ class Map(object):
             self.ob_off_de = [float(in_data[11].rsplit('#')[0])]*u.mas
             self.st_off_ra = [float(in_data[12].rsplit('#')[0])]*u.mas
             self.st_off_de = [float(in_data[13].rsplit('#')[0])]*u.mas
-            self.off_ra = ob_off_ra - st_off_ra
-            self.off_de = ob_off_de - st_off_de
+            off_ra = self.ob_off_ra - self.st_off_ra
+            off_de = self.ob_off_de - self.st_off_de
             self.magR = [float(in_data[14].rsplit()[0])]
             self.magK = [float(in_data[15].rsplit()[0])]
             self.longi = [float(in_data[16].rsplit()[0])]
             dca = off_ra*np.sin(pa) + off_de*np.cos(pa)
-            dt = int(((off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/vel).value)*u.s
+            dt = int(((off_ra*np.cos(self.pa) - off_de*np.sin(self.pa)).to(u.rad)*self.dist.to(u.km)/self.vel).value)*u.s
             self.ca = ca + dca
             self.datas = datas + dt
         f.close()
-        paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
+#        paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
 
+    def calcfaixa(self, step=1, erro=None, ring=None, atm=None):
+        self.latlon = {}
+        for i in np.arange(len(self.stars)):
+            self.latlon[self.datas[i].iso] = calcfaixa(self.vel[i], self.datas[i], self.stars[i], self.dist[i], self.ca[i], self.pa[i], self.tamanho, step=step, erro=erro, ring=ring, atm=atm)
 
 ################################### definido funcao que imprime o mapa #############################################
 
