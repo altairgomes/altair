@@ -23,7 +23,7 @@ def coord_pack(coord):
 
 def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None, atm=None):
     g = np.arange(int(-8000/(np.absolute(vel.value))), int(8000/(np.absolute(vel.value))), step)
-    latlon = {'clat':{'lon':[], 'lat':[], 'lab': []}, 'lats': {'lon':[], 'lat':[], 'lon2':[], 'lat2':[]}}
+    latlon = {'clat':{'lon':[], 'lat':[], 'lab': []}, 'lats': {'lon':[], 'lat':[], 'lon2':[], 'lat2':[], 'x': [], 'y': [], 'x2':[], 'y2':[]}}
     if not erro == None:
         latlon['erro'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
         err = erro*u.mas
@@ -58,10 +58,16 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None
         if lon1 < 1e+30:
             latlon['lats']['lon'].append(lon1) 
             latlon['lats']['lat'].append(lat1)
+        else:
+            latlon['lats']['x'].append(ax2.value) 
+            latlon['lats']['y'].append(by2.value)
         lon2, lat2 = m(ax3.value, by3.value, inverse=True)
         if lon2 < 1e+30:
             latlon['lats']['lon2'].append(lon2) 
             latlon['lats']['lat2'].append(lat2)
+        else:
+            latlon['lats']['x2'].append(ax3.value) 
+            latlon['lats']['y2'].append(by3.value)
         if not erro == None:
             ax2 = ax - errd*np.sin(paplus)
             by2 = by - errd*np.cos(paplus)
@@ -105,7 +111,7 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None
                 latlon['atm']['lat2'].append(lat2)
     return latlon
 
-def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', centermap=None, lats=None, erro=None, ring=None, atm=None, clat=None, sitearq=None, fmt='png', dpi=100, mapsize=None):
+def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', centermap=None, lats=None, erro=None, ring=None, atm=None, clat=None, sitearq=None, fmt='png', dpi=100, mapsize=None, cpoints=60):
     lon = star.ra - data.sidereal_time('mean', 'greenwich')
     center_map = EarthLocation(lon.value, star.dec.value)
     if not centermap == None:
@@ -114,7 +120,7 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
 #    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution,llcrnrx=-2000000.,llcrnry=-1500000.,urcrnrx=2000000.,urcrnry=1500000.)
 #    kx = fig.add_axes([-0.003,-0.001,1.006,1.002])
 #    kx.set_rasterization_zorder(1)
-    m.nightshade(data.datetime, alpha=0.2, zorder=0.5)
+    m.nightshade(data.datetime, alpha=0.3, zorder=0.5)
     m.drawcoastlines(linewidth=0.5)
     m.drawcountries(linewidth=0.5)
     m.drawstates(linewidth=0.5)
@@ -144,6 +150,8 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         xt = [i for i in xt if i < 1e+30]
         yt = [i for i in yt if i < 1e+30]
         m.plot(xt, yt, color=style[mapstyle]['lncolor'])
+        m.plot(lats[4], lats[5], color=style[mapstyle]['lncolor'], zorder=0.1)
+        m.plot(lats[6], lats[7], color=style[mapstyle]['lncolor'], zorder=0.1)
     if not erro == None:
         xs, ys = m(erro[0], erro[1])
         xs = [i for i in xs if i < 1e+30]
@@ -172,11 +180,12 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         yt = [i for i in yt if i < 1e+30]
         m.plot(xt, yt, color=style[mapstyle]['atcolor'])
     if not clat == None:
-        xc, yc = m(clon, clat)
-        labe = [lab[i] for i in np.arange(len(lab)) if xc[i] < 1e+30]
-        xc = [i for i in xc if i < 1e+30]
-        yc = [i for i in yc if i < 1e+30]
-        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'])
+        xc, yc = m(clat[0], clat[1])
+#        labe = [lab[i] for i in np.arange(len(lab)) if xc[i] < 1e+30]
+#        xc = [i for i in xc if i < 1e+30]
+#        yc = [i for i in yc if i < 1e+30]
+#        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'])
+#        cp = Time(clat[2], format='iso')
 
 #    m.plot(ax,by, 'o', color=ptcolor, markersize=int(mapsize[0].value*20/46))
 #    m.plot(ax2.to(u.m),by2.to(u.m), 'o', color=ptcolor, markersize=int(mapsize[0].value*12/46))
@@ -214,10 +223,10 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
     plt.clf()
     
 def offset(datas, ca, pa, dist, vel, ob_off_ra, ob_off_de, st_off_ra, st_off_de):
-    off_ra = self.ob_off_ra - self.st_off_ra
-    off_de = self.ob_off_de - self.st_off_de
-    dca = off_ra*np.sin(self.pa) + off_de*np.cos(self.pa)
-    dt = int(((off_ra*np.cos(self.pa) - off_de*np.sin(self.pa)).to(u.rad)*self.dist.to(u.km)/self.vel).value)*u.s
+    off_ra = ob_off_ra - st_off_ra
+    off_de = ob_off_de - st_off_de
+    dca = off_ra*np.sin(pa) + off_de*np.cos(pa)
+    dt = int(((off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/vel).value)*u.s
     ca = ca + dca
     datas = datas + dt
     return ca, datas
@@ -271,7 +280,7 @@ class Map(object):
             self.longi = dados['long']
         elif option == '2':
             self.stars = SkyCoord([in_data[4].rsplit('#')[0]], frame='icrs', unit=(u.hourangle, u.degree))
-            datas = Time([in_data[5].rsplit('#')[0]], format='iso', scale='utc')
+            self.datas = Time([in_data[5].rsplit('#')[0]], format='iso', scale='utc')
             ca = [float(in_data[6].rsplit('#')[0])]*u.arcsec
             self.pa = [float(in_data[7].rsplit('#')[0])]*u.deg
             self.dist = [float(in_data[8].rsplit('#')[0])]*u.AU
@@ -283,7 +292,7 @@ class Map(object):
             self.magR = [float(in_data[14].rsplit()[0])]
             self.magK = [float(in_data[15].rsplit()[0])]
             self.longi = [float(in_data[16].rsplit()[0])]
-            self.ca, self.datas_off = offset(self.datas, self.ca, self.pa, self.dist, self.vel, self.ob_off_ra, self.ob_off_de, self.st_off_ra, self.st_off_de)
+            self.ca, self.datas_off = offset(self.datas, ca, self.pa, self.dist, self.vel, self.ob_off_ra, self.ob_off_de, self.st_off_ra, self.st_off_de)
         self.datas.delta_ut1_utc = 0
         self.datas_off.delta_ut1_utc = 0
 #        paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
@@ -311,13 +320,19 @@ int(self.stars[i].ra.hms.h), int(self.stars[i].ra.hms.m), self.stars[i].ra.hms.s
         for i in np.arange(len(self.stars)):
 #        def callgeramapa(i, lats=None, erro=None, ring=None, atm=None, clat=None):
             if 'lats' in self.latlon[self.datas_off[i].iso]:
-                lats = [self.latlon[self.datas_off[i].iso]['lats']['lon'], self.latlon[self.datas_off[i].iso]['lats']['lat'], self.latlon[self.datas_off[i].iso]['lats']['lon2'], self.latlon[self.datas_off[i].iso]['lats']['lat2']]
+                l = self.latlon[self.datas_off[i].iso]['lats']
+                lats = [l['lon'], l['lat'], l['lon2'], l['lat2'], l['x'], l['y'], l['x2'], l['x2']]
+                c = self.latlon[self.datas_off[i].iso]['clat']
+                clat = [c['lon'], c['lat'], c['lab']]
             if 'erro' in self.latlon[self.datas_off[i].iso]:
-                erro = [self.latlon[self.datas_off[i].iso]['erro']['lon'], self.latlon[self.datas_off[i].iso]['erro']['lat'], self.latlon[self.datas_off[i].iso]['erro']['lon2'], self.latlon[self.datas_off[i].iso]['erro']['lat2']]
+                e = self.latlon[self.datas_off[i].iso]['erro']
+                erro = [e['lon'], e['lat'], e['lon2'], e['lat2']]
             if 'ring' in self.latlon[self.datas_off[i].iso]:
-                ring = [self.latlon[self.datas_off[i].iso]['ring']['lon'], self.latlon[self.datas_off[i].iso]['ring']['lat'], self.latlon[self.datas_off[i].iso]['ring']['lon2'], self.latlon[self.datas_off[i].iso]['ring']['lat2']]
+                r = self.latlon[self.datas_off[i].iso]['ring']
+                ring = [r['lon'], r['lat'], r['lon2'], r['lat2']]
             if 'atm' in self.latlon[self.datas_off[i].iso]:
-                atm = [self.latlon[self.datas_off[i].iso]['atm']['lon'], self.latlon[self.datas_off[i].iso]['atm']['lat'], self.latlon[self.datas_off[i].iso]['atm']['lon2'], self.latlon[self.datas_off[i].iso]['atm']['lat2']]
+                a = self.latlon[self.datas_off[i].iso]['atm']
+                atm = [a['lon'], a['lat'], a['lon2'], a['lat2']]
             geramapa(self.stars[i], self.datas_off[i], self.title[i], self.labelx[i], self.nameimg[i], mapstyle=self.mapstyle, resolution=self.resolution, centermap=None, lats=lats, erro=erro, ring=ring, atm=atm, clat=clat, sitearq=None, fmt='png', dpi=100, mapsize=self.mapsize)
 #        vals = np.arange(len(self.stars))
 #        pool = Pool(processes=10)
