@@ -2,26 +2,26 @@
 ############## input (1)  ################################################################################
 g4_occ_datauc4_CARME_2015_table                   # praia_occ_search output file
 ############## input (2)  #############################################################################
-17 18 29.0080 -27 26 38.890                       # star coordinate
-2010-08-17 22:40:55.0                             # occultation instant
-0.250                                             # c/a in arcsec
-24.18                                             # position angle in degrees
-2.29                                              # delta (distance) in Astronomical Units
-3.92                                              # velocity in km/s
-83.0                                               # obj. offset in RA (mas) 83.0
--6.6                                               # obj. offset in DEC (mas) -6.6
-0.0                                               # star offset in RA (mas)
-0.0                                               # star offset in DEC (mas)
-9.9                                               # magR
-7.4                                               # magK
--47                                               # long
+09 10 38.6352 +17 45 26.467                       # star coordinate
+2015-03-03 00:39:25.0                             # occultation instant
+0.714                                             # c/a in arcsec
+195.15                                            # position angle in degrees
+4.50                                              # delta (distance) in Astronomical Units
+-10.94                                            # velocity in km/s
+1.0                                               # obj. offset in RA (mas)
+8.0                                               # obj. offset in DEC (mas)
+30.0                                              # star offset in RA (mas)
+-20.0                                             # star offset in DEC (mas)
+14.1                                              # magR
+-0.7                                              # magK
+327                                               # long
 ############## plot informations #####################################################################
-Ceres                                            # Name of the object
-972                                               # Diameter of the object in km
-1000                                              # error in c/a in mas
+Himalia                                           # Name of the object
+170                                               # Diameter of the object in km
+40                                                # error in c/a in mas
 sites.dat                                         # observatories list
 l                                                 # resolution of boundary database to use. Can be ``c`` (crude), ``l`` (low), ``i`` (intermediate), ``h`` (high), ``f`` (full)
-20.0 15.0                                         # figure size in cm (x, y)
+46.0 38.0                                         # figure size in cm (x, y)
 1                                                 # map style. See below. Default = 1
 ######################################################################################################
 

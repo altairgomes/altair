@@ -23,7 +23,7 @@ def coord_pack(coord):
 
 def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None, atm=None):
     g = np.arange(int(-8000/(np.absolute(vel.value))), int(8000/(np.absolute(vel.value))), step)
-    latlon = {'clat':{'lon':[], 'lat':[], 'lab': []}, 'lats': {'lon':[], 'lat':[], 'lon2':[], 'lat2':[], 'x': [], 'y': [], 'x2':[], 'y2':[]}}
+    latlon = {'clat':{'lon':[], 'lat':[], 'lab': [], 'x': [], 'y': [], 'labx': []}, 'lats': {'lon':[], 'lat':[], 'lon2':[], 'lat2':[], 'x': [], 'y': [], 'x2':[], 'y2':[]}}
     if not erro == None:
         latlon['erro'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
         err = erro*u.mas
@@ -54,6 +54,10 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None
             latlon['clat']['lon'].append(clon1)
             latlon['clat']['lat'].append(clat1)
             latlon['clat']['lab'].append(datas1.iso)
+        else:
+            latlon['clat']['x'].append(ax.value)
+            latlon['clat']['y'].append(by.value)
+            latlon['clat']['labx'].append(datas1.iso)
         lon1, lat1 = m(ax2.value, by2.value, inverse=True)
         if lon1 < 1e+30:
             latlon['lats']['lon'].append(lon1) 
@@ -111,7 +115,7 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None
                 latlon['atm']['lat2'].append(lat2)
     return latlon
 
-def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', centermap=None, lats=None, erro=None, ring=None, atm=None, clat=None, sitearq=None, fmt='png', dpi=100, mapsize=None, cpoints=60):
+def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', centermap=None, lats=None, erro=None, ring=None, atm=None, clat=None, sitearq=None, fmt='png', dpi=100, mapsize=None, cpoints=60, off=0):
     lon = star.ra - data.sidereal_time('mean', 'greenwich')
     center_map = EarthLocation(lon.value, star.dec.value)
     if not centermap == None:
@@ -120,18 +124,18 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
 #    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution,llcrnrx=-2000000.,llcrnry=-1500000.,urcrnrx=2000000.,urcrnry=1500000.)
 #    kx = fig.add_axes([-0.003,-0.001,1.006,1.002])
 #    kx.set_rasterization_zorder(1)
-    m.nightshade(data.datetime, alpha=0.3, zorder=0.5)
-    m.drawcoastlines(linewidth=0.5)
-    m.drawcountries(linewidth=0.5)
-    m.drawstates(linewidth=0.5)
-    m.drawmeridians(np.arange(0,360,30))
-    m.drawparallels(np.arange(-90,90,30))
-    m.drawmapboundary()
-    style = {'1': {'ptcolor': 'red', 'lncolor': 'blue', 'ercolor':'blue', 'rncolor':'blue', 'atcolor':'blue'},
-             '2': {'ptcolor': 'red', 'lncolor': 'blue', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black'},
-             '3': {'ptcolor': 'red', 'lncolor': 'blue', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black'},
-             '4': {'ptcolor': 'red', 'lncolor': 'red', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black'},
-             '5': {'ptcolor': 'red', 'lncolor': 'red', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black'}}
+    m.nightshade(data.datetime, alpha=0.3, zorder=0.5)  ## desenha a sombra da noite
+    m.drawcoastlines(linewidth=0.5)  ## desenha as linhas da costa
+    m.drawcountries(linewidth=0.5)  ## desenha os paises
+    m.drawstates(linewidth=0.5)    ## Desenha os estados
+    m.drawmeridians(np.arange(0,360,30))  ## desenha os meridianos
+    m.drawparallels(np.arange(-90,90,30))  ## desenha os paralelos
+    m.drawmapboundary()  ## desenha o contorno do mapa
+    style = {'1': {'ptcolor': 'red', 'lncolor': 'blue', 'ercolor':'blue', 'rncolor':'blue', 'atcolor':'blue', 'outcolor':'red'},
+             '2': {'ptcolor': 'red', 'lncolor': 'blue', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black', 'outcolor':'red'},
+             '3': {'ptcolor': 'red', 'lncolor': 'blue', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black', 'outcolor':'red'},
+             '4': {'ptcolor': 'red', 'lncolor': 'red', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black', 'outcolor':'red'},
+             '5': {'ptcolor': 'red', 'lncolor': 'red', 'ercolor':'red', 'rncolor':'black', 'atcolor':'black', 'outcolor':'red'}}
     if mapstyle == '2':
         m.drawmapboundary(fill_color='aqua')
         m.fillcontinents(color='coral',lake_color='aqua')
@@ -150,8 +154,11 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         xt = [i for i in xt if i < 1e+30]
         yt = [i for i in yt if i < 1e+30]
         m.plot(xt, yt, color=style[mapstyle]['lncolor'])
-        m.plot(lats[4], lats[5], color=style[mapstyle]['lncolor'], zorder=0.1)
-        m.plot(lats[6], lats[7], color=style[mapstyle]['lncolor'], zorder=0.1)
+        m.plot(lats[4], lats[5], color=style[mapstyle]['outcolor'], clip_on=False, zorder=-0.2)
+        m.plot(lats[6], lats[7], color=style[mapstyle]['outcolor'], clip_on=False, zorder=-0.2)
+#    else:
+#        m.plot(lats[4], lats[5], color=style[mapstyle]['outcolor'], clip_on=False, zorder=0.2)
+#        m.plot(lats[6], lats[7], color=style[mapstyle]['outcolor'], clip_on=False, zorder=0.2)
     if not erro == None:
         xs, ys = m(erro[0], erro[1])
         xs = [i for i in xs if i < 1e+30]
@@ -180,12 +187,43 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         yt = [i for i in yt if i < 1e+30]
         m.plot(xt, yt, color=style[mapstyle]['atcolor'])
     if not clat == None:
-        xc, yc = m(clat[0], clat[1])
+        xc, yc, lab = [], [], []
+        cp = Time(clat[2], format='iso')
+        vec = np.arange(0, (cp[-1] - data).sec, cpoints)
+        vec = np.sort(np.concatenate((vec,-vec[1:]), axis=0))*u.s
+        for i in vec:
+            g = data + TimeDelta(i) + TimeDelta(off*u.s)
+            if g.iso in clat[2]:
+                a = np.where(clat[2] == g.iso)
+                x, y = m(clat[0][a], clat[1][a])
+                xc.append(x)
+                yc.append(y)
+                lab.append(g.iso.split()[1][0:8])
+            elif g.iso in clat[5]:
+                a = np.where(clat[5] == g.iso)
+                xc.append(clat[3][a])
+                yc.append(clat[3][a])
+                lab.append(g.iso.split()[1][0:8])
+            else:
+                a = np.argsort(np.absolute(cp - g))[0:2]
+                if not 0 in a or not len(cp)-1 in a:
+                    b = np.absolute((cp[a] - g).sec)
+                    x, y = m(clat[0][a], clat[1][a])
+                    xc.append(np.mean(x*(1/b)))
+                    yc.append(np.mean(y*(1/b)))
+                    lab.append(g.iso.split()[1][0:8])
+                else:
+                    co = Time(clat[5], format='iso')
+                    a = np.argsort(np.absolute(co - g))[0:2]
+                    b = np.absolute((co[a] - g).sec)
+                    xc.append(np.mean(np.array(clat[3][a])*(1/b)))
+                    yc.append(np.mean(np.array(clat[4][a])*(1/b)))
+                    lab.append(g.iso.split()[1][0:8])
+        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'])
 #        labe = [lab[i] for i in np.arange(len(lab)) if xc[i] < 1e+30]
 #        xc = [i for i in xc if i < 1e+30]
 #        yc = [i for i in yc if i < 1e+30]
 #        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'])
-#        cp = Time(clat[2], format='iso')
 
 #    m.plot(ax,by, 'o', color=ptcolor, markersize=int(mapsize[0].value*20/46))
 #    m.plot(ax2.to(u.m),by2.to(u.m), 'o', color=ptcolor, markersize=int(mapsize[0].value*12/46))
@@ -321,9 +359,9 @@ int(self.stars[i].ra.hms.h), int(self.stars[i].ra.hms.m), self.stars[i].ra.hms.s
 #        def callgeramapa(i, lats=None, erro=None, ring=None, atm=None, clat=None):
             if 'lats' in self.latlon[self.datas_off[i].iso]:
                 l = self.latlon[self.datas_off[i].iso]['lats']
-                lats = [l['lon'], l['lat'], l['lon2'], l['lat2'], l['x'], l['y'], l['x2'], l['x2']]
+                lats = [l['lon'], l['lat'], l['lon2'], l['lat2'], l['x'], l['y'], l['x2'], l['y2']]
                 c = self.latlon[self.datas_off[i].iso]['clat']
-                clat = [c['lon'], c['lat'], c['lab']]
+                clat = [c['lon'], c['lat'], c['lab'], c['x'], c['y'], c['labx']]
             if 'erro' in self.latlon[self.datas_off[i].iso]:
                 e = self.latlon[self.datas_off[i].iso]['erro']
                 erro = [e['lon'], e['lat'], e['lon2'], e['lat2']]
