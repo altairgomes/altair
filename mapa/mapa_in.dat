@@ -21,7 +21,7 @@ Ceres                                            # Name of the object
 1000                                              # error in c/a in mas
 sites.dat                                         # observatories list
 l                                                 # resolution of boundary database to use. Can be ``c`` (crude), ``l`` (low), ``i`` (intermediate), ``h`` (high), ``f`` (full)
-20.0 15.0                                         # figure size in cm (x, y)
+46.0 38.0                                         # figure size in cm (x, y)
 1                                                 # map style. See below. Default = 1
 ######################################################################################################
 

@@ -188,42 +188,44 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         m.plot(xt, yt, color=style[mapstyle]['atcolor'])
     if not clat == None:
         xc, yc, lab = [], [], []
-        cp = Time(clat[2], format='iso')
+        cp = Time(clat[5], format='iso')
         vec = np.arange(0, (cp[-1] - data).sec, cpoints)
         vec = np.sort(np.concatenate((vec,-vec[1:]), axis=0))*u.s
         for i in vec:
             g = data + TimeDelta(i) + TimeDelta(off*u.s)
             if g.iso in clat[2]:
-                a = np.where(clat[2] == g.iso)
-                x, y = m(clat[0][a], clat[1][a])
+                a = np.where(np.array(clat[2]) == g.iso)
+                x, y = m(np.array(clat[0])[a], np.array(clat[1])[a])
                 xc.append(x)
                 yc.append(y)
                 lab.append(g.iso.split()[1][0:8])
             elif g.iso in clat[5]:
-                a = np.where(clat[5] == g.iso)
-                xc.append(clat[3][a])
-                yc.append(clat[3][a])
+                a = np.where(np.array(clat[5]) == g.iso)
+                xc.append(np.array(clat[3])[a])
+                yc.append(np.array(clat[4])[a])
                 lab.append(g.iso.split()[1][0:8])
             else:
                 a = np.argsort(np.absolute(cp - g))[0:2]
                 if not 0 in a or not len(cp)-1 in a:
                     b = np.absolute((cp[a] - g).sec)
-                    x, y = m(clat[0][a], clat[1][a])
-                    xc.append(np.mean(x*(1/b)))
-                    yc.append(np.mean(y*(1/b)))
+                    x, y = m(np.array(clat[0])[a], np.array(clat[1])[a])
+                    xc.append(np.mean(x*(1/b))/np.sum(b))
+                    yc.append(np.mean(y*(1/b))/np.sum(b))
                     lab.append(g.iso.split()[1][0:8])
                 else:
                     co = Time(clat[5], format='iso')
                     a = np.argsort(np.absolute(co - g))[0:2]
                     b = np.absolute((co[a] - g).sec)
-                    xc.append(np.mean(np.array(clat[3][a])*(1/b)))
-                    yc.append(np.mean(np.array(clat[4][a])*(1/b)))
+                    xc.append(np.mean(np.array(clat[3])[a]*(1/b))/np.sum(b))
+                    yc.append(np.mean(np.array(clat[4])[a]*(1/b))/np.sum(b))
                     lab.append(g.iso.split()[1][0:8])
-        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'])
-#        labe = [lab[i] for i in np.arange(len(lab)) if xc[i] < 1e+30]
-#        xc = [i for i in xc if i < 1e+30]
-#        yc = [i for i in yc if i < 1e+30]
-#        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'])
+        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'], clip_on=False)
+
+#    for label, axpt, bypt in zip(lab, xc, yc):
+#        plt.text(axpt + 0, bypt + 350000, label, rotation=60, weight='bold')
+
+
+
 
 #    m.plot(ax,by, 'o', color=ptcolor, markersize=int(mapsize[0].value*20/46))
 #    m.plot(ax2.to(u.m),by2.to(u.m), 'o', color=ptcolor, markersize=int(mapsize[0].value*12/46))
@@ -236,10 +238,6 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
 #
 #    labels = [i.iso.split()[1][0:8] for i in temposplot]
 #    m.plot(ax2, by2, 'ro')
-    
-#    for label, axpt, bypt in zip(labe, xc, yc):
-#        kx.text(axpt + 0, bypt + 350000, label, rotation=60, weight='bold')
-
 
 #    if os.path.isfile(sitearq) == True:
 #        xpt,ypt = m(sites['lon'],sites['lat'])
@@ -251,6 +249,8 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
 #    m.plot(ax5.to(u.m), by5.to(u.m), '--', color=dscolor, label='+-{} error'.format(erro))
 #    m.plot(ax6.to(u.m), by6.to(u.m), '--', color=dscolor)
 #    plt.legend(fontsize=mapsize[0].value*21/46)
+
+
 
     fig = plt.gcf()
     fig.set_size_inches(mapsize[0].to(u.imperial.inch).value, mapsize[1].to(u.imperial.inch).value)
@@ -354,7 +354,7 @@ int(self.stars[i].ra.hms.h), int(self.stars[i].ra.hms.m), self.stars[i].ra.hms.s
             self.labelx.append(labelx)
             self.nameimg.append(nameimg)
             
-    def geramapa(self, lats=None, erro=None, ring=None, atm=None, clat=None):
+    def geramapa(self, lats=None, erro=None, ring=None, atm=None, clat=None, cpoints=60, off=0):
         for i in np.arange(len(self.stars)):
 #        def callgeramapa(i, lats=None, erro=None, ring=None, atm=None, clat=None):
             if 'lats' in self.latlon[self.datas_off[i].iso]:
@@ -371,7 +371,7 @@ int(self.stars[i].ra.hms.h), int(self.stars[i].ra.hms.m), self.stars[i].ra.hms.s
             if 'atm' in self.latlon[self.datas_off[i].iso]:
                 a = self.latlon[self.datas_off[i].iso]['atm']
                 atm = [a['lon'], a['lat'], a['lon2'], a['lat2']]
-            geramapa(self.stars[i], self.datas_off[i], self.title[i], self.labelx[i], self.nameimg[i], mapstyle=self.mapstyle, resolution=self.resolution, centermap=None, lats=lats, erro=erro, ring=ring, atm=atm, clat=clat, sitearq=None, fmt='png', dpi=100, mapsize=self.mapsize)
+            geramapa(self.stars[i], self.datas_off[i], self.title[i], self.labelx[i], self.nameimg[i], mapstyle=self.mapstyle, resolution=self.resolution, centermap=None, lats=lats, erro=erro, ring=ring, atm=atm, clat=clat, sitearq=None, fmt='png', dpi=100, mapsize=self.mapsize, cpoints=cpoints, off=off)
 #        vals = np.arange(len(self.stars))
 #        pool = Pool(processes=10)
 #        pool.map(callgeramapa, vals)
