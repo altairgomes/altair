@@ -22,7 +22,8 @@ def coord_pack(coord):
     return coord
 
 def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None, atm=None):
-    g = np.arange(int(-8000/(np.absolute(vel.value))), int(8000/(np.absolute(vel.value))), step)
+    vec = np.arange(0, int(8000/(np.absolute(vel.value))), step)
+    g = np.sort(np.concatenate((vec,-vec[1:]), axis=0))
     latlon = {'clat':{'lon':[], 'lat':[], 'lab': [], 'x': [], 'y': [], 'labx': []}, 'lats': {'lon':[], 'lat':[], 'lon2':[], 'lat2':[], 'x': [], 'y': [], 'x2':[], 'y2':[]}}
     if not erro == None:
         latlon['erro'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
@@ -50,6 +51,8 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None
         ax3 = ax + tamanho/2*np.sin(paplus)
         by3 = by + tamanho/2*np.cos(paplus)
         clon1, clat1 = m(ax.value, by.value, inverse=True)
+        if delt == 0:
+            latlon['clat']['cxy'] = [ax.value, by.value]
         if clon1 < 1e+30:
             latlon['clat']['lon'].append(clon1)
             latlon['clat']['lat'].append(clat1)
@@ -205,21 +208,26 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
                 yc.append(np.array(clat[4])[a])
                 lab.append(g.iso.split()[1][0:8])
             else:
-                a = np.argsort(np.absolute(cp - g))[0:2]
-                if not 0 in a or not len(cp)-1 in a:
-                    b = np.absolute((cp[a] - g).sec)
+                if len(clat[2]) == 0:
+                    a = [0]
+                else:
+                    co = Time(clat[2], format='iso')
+                    a = np.argsort(np.absolute(co - g))[0:2]
+                if 0 not in a and len(co)-1 not in a:
+                    b = np.absolute((co[a] - g).sec)
                     x, y = m(np.array(clat[0])[a], np.array(clat[1])[a])
-                    xc.append(np.mean(x*(1/b))/np.sum(b))
-                    yc.append(np.mean(y*(1/b))/np.sum(b))
+                    xc.append(np.sum(x*(1/b))/np.sum(1/b))
+                    yc.append(np.sum(y*(1/b))/np.sum(1/b))
                     lab.append(g.iso.split()[1][0:8])
                 else:
                     co = Time(clat[5], format='iso')
                     a = np.argsort(np.absolute(co - g))[0:2]
                     b = np.absolute((co[a] - g).sec)
-                    xc.append(np.mean(np.array(clat[3])[a]*(1/b))/np.sum(b))
-                    yc.append(np.mean(np.array(clat[4])[a]*(1/b))/np.sum(b))
+                    xc.append(np.sum(np.array(clat[3])[a]*(1/b))/np.sum(1/b))
+                    yc.append(np.sum(np.array(clat[4])[a]*(1/b))/np.sum(1/b))
                     lab.append(g.iso.split()[1][0:8])
-        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'], clip_on=False)
+        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'], clip_on=False, markersize=mapsize[0].value*8/46)
+        m.plot(clat[6][0], clat[6][1], 'o', color=style[mapstyle]['ptcolor'], markersize=mapsize[0].value*20/46)
 
 #    for label, axpt, bypt in zip(lab, xc, yc):
 #        plt.text(axpt + 0, bypt + 350000, label, rotation=60, weight='bold')
@@ -361,7 +369,7 @@ int(self.stars[i].ra.hms.h), int(self.stars[i].ra.hms.m), self.stars[i].ra.hms.s
                 l = self.latlon[self.datas_off[i].iso]['lats']
                 lats = [l['lon'], l['lat'], l['lon2'], l['lat2'], l['x'], l['y'], l['x2'], l['y2']]
                 c = self.latlon[self.datas_off[i].iso]['clat']
-                clat = [c['lon'], c['lat'], c['lab'], c['x'], c['y'], c['labx']]
+                clat = [c['lon'], c['lat'], c['lab'], c['x'], c['y'], c['labx'], c['cxy']]
             if 'erro' in self.latlon[self.datas_off[i].iso]:
                 e = self.latlon[self.datas_off[i].iso]['erro']
                 erro = [e['lon'], e['lat'], e['lon2'], e['lat2']]
