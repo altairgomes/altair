@@ -227,7 +227,7 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
                     yc.append(np.sum(np.array(clat[4])[a]*(1/b))/np.sum(1/b))
                     lab.append(g.iso.split()[1][0:8])
         m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'], clip_on=False, markersize=mapsize[0].value*8/46)
-        m.plot(clat[6][0], clat[6][1], 'o', color=style[mapstyle]['ptcolor'], markersize=mapsize[0].value*20/46)
+        m.plot(clat[6][0], clat[6][1], 'o', color=style[mapstyle]['ptcolor'], clip_on=False, markersize=mapsize[0].value*20/46)
 
 #    for label, axpt, bypt in zip(lab, xc, yc):
 #        plt.text(axpt + 0, bypt + 350000, label, rotation=60, weight='bold')
