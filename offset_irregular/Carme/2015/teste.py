@@ -24,9 +24,9 @@ x = np.vstack([y[0], y[5]])
 linearde = odrpack.Model(f)
 #mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
 mydata = odrpack.RealData(x, z[1], sy=z[3])
-print "Declinacao"
 myodr = odrpack.ODR(mydata, linearde, beta0=[1.78854119e-03, -1.21822344e+00, 9.88555083e+00, -6.08946292e+00])
 myoutput = myodr.run()
+print 'Declinacao\n'
 myoutput.pprint()
 
 #print p[0]
@@ -64,9 +64,9 @@ x = np.vstack([y[0], y[5]])
 linearra = odrpack.Model(g)
 #mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
 mydata = odrpack.RealData(x, z[0], sy=z[2])
-print "Ascensao Reta"
 myodr = odrpack.ODR(mydata, linearra, beta0=[3.62659327e-04,7.82345630e+00, -6.40102501e-01, -2.83655752e-01, -9.32980254e-02])
 myoutput = myodr.run()
+print '\n\nAscensao Reta\n'
 myoutput.pprint()
 
 #print q[0]
