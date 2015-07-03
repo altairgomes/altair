@@ -5,10 +5,10 @@ from astropy.time import Time
 import scipy.odr.odrpack as odrpack
 
 ######################################################################
-y = np.loadtxt('Carme_ephem.dat', skiprows=3, usecols=(2, 20, 21, 37, 16, 36), unpack=True) ## 2: JD; 20: dist_prim X; 21: dist_prim Y; 37: anom. verd.; 16: distancia; 36: anom. med.
-z = np.loadtxt('Carme_total', usecols=(0, 1, 2, 3), unpack=True) ## 0: off RA; 1: off DEC; 2: off_err RA; 3: off_err DEC
+y = np.loadtxt('Pasiphae_ephem.dat', skiprows=3, usecols=(2, 20, 21, 37, 16, 36), unpack=True) ## 2: JD; 20: dist_prim X; 21: dist_prim Y; 37: anom. verd.; 16: distancia; 36: anom. med.
+z = np.loadtxt('Pasiphae_total', usecols=(0, 1, 2, 3), unpack=True) ## 0: off RA; 1: off DEC; 2: off_err RA; 3: off_err DEC
 
-eph = np.loadtxt('Carme.eph', skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
+eph = np.loadtxt('Pasiphae.eph', skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
 
 k = np.arange(361)
 
@@ -42,7 +42,7 @@ def f2(B, x): ## tempo, seno*cos, sen, cos, constante
 def f3(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
     return B[0]*(x[0] - 2451544.5) + B[1]*(np.sin(x[1]*u.deg)**2) + B[2]*(np.cos(x[1]*u.deg)**2) + B[3]*np.sin(x[1]*u.deg)*np.cos(x[1]*u.deg) + B[4]*np.sin(x[1]*u.deg) + B[5]*np.cos(x[1]*u.deg) + B[6]
     
-def f4(B, x): ## tempo, (c+t)*sen, (c+t)*cos, constante
+def f4(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
     return B[0]*(x[0] - 2451544.5) + (B[1]+B[2]*(x[0] - 2451544.5))*np.sin(x[1]*u.deg) + (B[3]+B[4]*(x[0] - 2451544.5))*np.cos(x[1]*u.deg) + B[5]
 
 
