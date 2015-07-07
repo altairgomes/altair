@@ -45,6 +45,9 @@ def f3(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
 def f4(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
     return B[0]*(x[0] - 2451544.5) + (B[1]+B[2]*(x[0] - 2451544.5))*np.sin(x[1]*u.deg) + (B[3]+B[4]*(x[0] - 2451544.5))*np.cos(x[1]*u.deg) + B[5]
 
+def f5(B, x): ## tempo, seno, cosseno, constante
+    return B[0]*np.sin(2*np.pi*(1/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+
 
 ############## Declinacao ############################################
 
@@ -100,10 +103,10 @@ q = np.linalg.lstsq(g2, z[0])
 
 x = np.vstack([y[0], y[3]])
 
-linearra = odrpack.Model(f2)
+linearra = odrpack.Model(f5)
 #mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
 mydatara = odrpack.RealData(x, z[0], sy=z[2])
-myodrra = odrpack.ODR(mydatara, linearra, beta0=q[0])
+myodrra = odrpack.ODR(mydatara, linearra, beta0=[200.0, 11.8, 0.0, 1.0, 1.0, 1.0])
 myodrra.set_job(fit_type=2)
 myoutputra = myodrra.run()
 print '\n\nAscensao Reta\n'
@@ -114,7 +117,7 @@ myoutputra.pprint()
 
 plt.errorbar(y[0] - 2451544.5, z[0], yerr=z[2], fmt='s', label='Offsets')
 #plt.plot(y[3], z[0], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, f2(myodrra.output.beta, np.vstack([eph[0], eph[1]])), label='Ajuste1')
+plt.plot(eph[0] - 2451544.5, f5(myodrra.output.beta, np.vstack([eph[0], eph[1]])), label='Ajuste1')
 #plt.plot(eph[0] - 2451544.5, g(q[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('RA = {:.2f}*sen^2(A.V.) + {:.2f}*cos^2(A.V.) + {:.2f}*sen(A.V.)*cos(A.V.) + {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(q[0][0], q[0][1], q[0][2], q[0][3], q[0][4], q[0][5]))
 #plt.xlim(0,360)
