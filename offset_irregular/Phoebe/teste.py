@@ -52,9 +52,32 @@ def f3(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
 def f4(B, x): ## tempo, sen^2(f), cos^2(f), seno(f)*cos(f), sen(f), cos(f), constante
     return B[0]*(x[0] - 2451544.5) + (B[1]+B[2]*(x[0] - 2451544.5))*np.sin(x[1]*u.deg) + (B[3]+B[4]*(x[0] - 2451544.5))*np.cos(x[1]*u.deg) + B[5]
 
-def f5(B, x): ## a*sen(wt+p), sin(f), cos(f), constante
-    return B[0]*np.sin(2*np.pi/(B[1]*365.25)*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+def f5(B, x): ## a*cos(wt+p), sin(f), cos(f), constante
+    return B[0]*np.cos((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+    
+def f6(B, x): ## a*sen(wt+p), sin(f), cos(f), constante
+    return B[0]*np.sin((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
 
+
+############## least square function #################################
+
+def least(func, x, y, sy=None, beta0=[]):
+    linear = odrpack.Model(func)
+    #mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
+    if not sy == None:
+        mydata = odrpack.RealData(x, y, sy=sy)
+    else:
+        mydata = odrpack.RealData(x, y)
+    myodr = odrpack.ODR(mydata, linear, beta0=beta0, maxit=300)
+    myodr.set_job(fit_type=2)
+    myoutput = myodr.run()
+    myoutput.pprint()
+    return myodr.output
+    
+def residuos(func, par, x, y):
+    var = np.sum((y - func(par, x))**2)
+    resid = np.sqrt(var)
+    return resid
 
 ############## Declinacao ############################################
 
@@ -62,25 +85,33 @@ p = np.linalg.lstsq(g1, z[1])
 
 x = np.vstack([y[0], y[3]])
 
-linearde = odrpack.Model(f5)
-#mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
-mydatade = odrpack.RealData(x, z[1], sy=z[3])
-myodrde = odrpack.ODR(mydatade, linearde, beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0])
-myodrde.set_job(fit_type=2)
-myoutputde = myodrde.run()
 print 'Declinacao\n'
-myoutputde.pprint()
+f.write('\nDeclinacao\n')
 
-f.write('\n\nDeclinacao\n')
-f.write('Resultados: {}\n'.format(myodrde.output.beta))
-f.write('Erros: {}\n'.format(myodrde.output.sd_beta))
+fun=f6
+beta0=[50.0, 1.0, 0.0, 1.0, 1.0, 0.0]
+
+ajdewg = least(func=fun, x=x, y=z[1], sy=z[3], beta0=beta0)
+f.write('\nResultados do ajuste com peso:\n')
+for i in np.arange(len(ajdewg.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajdewg.beta[i], ajdewg.sd_beta[i]))
+resid = residuos(fun, par=ajdewg.beta, x=x, y=z[1])
+f.write('Residuos: {} mas\n'.format(resid))
+
+ajdenwg = least(func=fun, x=x, y=z[1], beta0=ajdewg.beta)
+f.write('\nResultados do ajuste sem peso:\n')
+for i in np.arange(len(ajdenwg.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajdenwg.beta[i], ajdenwg.sd_beta[i]))
+resid = residuos(fun, par=ajdenwg.beta, x=x, y=z[1])
+f.write('Residuos: {} mas\n'.format(resid))
 
 #print p[0]
 #print "Desvio padrao DEC:", np.sqrt(((z[1]/z[3] - (A*p[0]).sum(axis=1))**2).sum())
 
 plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 #plt.plot(y[3], z[1], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, f5(myodrde.output.beta, np.vstack([eph[0], eph[1]])), label='Ajuste1')
+plt.plot(eph[0] - 2451544.5, fun(ajdewg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
+plt.plot(eph[0] - 2451544.5, fun(ajdenwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
 #plt.plot(eph[0] - 2451544.5, f(p[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('DEC = {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(p[0][0], p[0][1], p[0][2]))
 #plt.xlim(0,360)
@@ -114,26 +145,35 @@ q = np.linalg.lstsq(g2, z[0])
 
 x = np.vstack([y[0], y[3]])
 
-linearra = odrpack.Model(f5)
-#mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
-mydatara = odrpack.RealData(x, z[0], sy=z[2])
-myodrra = odrpack.ODR(mydatara, linearra, beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0])
-myodrra.set_job(fit_type=2)
-myoutputra = myodrra.run()
-print '\n\nAscensao Reta\n'
-myoutputra.pprint()
 
+print 'Ascencao Reta\n'
+f.write('\n\nAscencao Reta\n')
 
-f.write('\n\nAscensao Reta\n')
-f.write('Resultados: {}\n'.format(myodrra.output.beta))
-f.write('Erros: {}\n'.format(myodrra.output.sd_beta))
+fun=f6
+beta0=[50.0, 1.0, 0.0, 1.0, 1.0, 0.0]
+
+ajrawg = least(func=fun, x=x, y=z[0], sy=z[2], beta0=beta0)
+f.write('\nResultados do ajuste com peso:\n')
+for i in np.arange(len(ajrawg.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajrawg.beta[i], ajrawg.sd_beta[i]))
+resid = residuos(fun, par=ajrawg.beta, x=x, y=z[0])
+f.write('Residuos: {} mas\n'.format(resid))
+
+ajranwg = least(func=fun, x=x, y=z[0], beta0=ajrawg.beta)
+f.write('\nResultados do ajuste sem peso:\n')
+for i in np.arange(len(ajranwg.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajranwg.beta[i], ajranwg.sd_beta[i]))
+resid = residuos(fun, par=ajranwg.beta, x=x, y=z[0])
+f.write('Residuos: {} mas\n'.format(resid))
+
 
 #print q[0]
 #print "Desvio padrao RA:", np.sqrt(((z[0]/z[2] - (B*q[0]).sum(axis=1))**2).sum())
 
 plt.errorbar(y[0] - 2451544.5, z[0], yerr=z[2], fmt='s', label='Offsets')
 #plt.plot(y[3], z[0], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, f5(myodrra.output.beta, np.vstack([eph[0], eph[1]])), label='Ajuste1')
+plt.plot(eph[0] - 2451544.5, fun(ajrawg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
+plt.plot(eph[0] - 2451544.5, fun(ajranwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
 #plt.plot(eph[0] - 2451544.5, g(q[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('RA = {:.2f}*sen^2(A.V.) + {:.2f}*cos^2(A.V.) + {:.2f}*sen(A.V.)*cos(A.V.) + {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(q[0][0], q[0][1], q[0][2], q[0][3], q[0][4], q[0][5]))
 #plt.xlim(0,360)
