@@ -5,10 +5,15 @@ from astropy.time import Time
 import scipy.odr.odrpack as odrpack
 
 ######################################################################
-y = np.loadtxt('Pasiphae_ephem.dat', skiprows=3, usecols=(2, 20, 21, 37, 16, 36), unpack=True) ## 2: JD; 20: dist_prim X; 21: dist_prim Y; 37: anom. verd.; 16: distancia; 36: anom. med.
-z = np.loadtxt('Pasiphae_total', usecols=(0, 1, 2, 3), unpack=True) ## 0: off RA; 1: off DEC; 2: off_err RA; 3: off_err DEC
 
-eph = np.loadtxt('Pasiphae.eph', skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
+f = open('entrada.dat', 'r')
+arq = f.readlines()
+f.close()
+
+y = np.loadtxt(arq[0].strip(), skiprows=3, usecols=(2, 20, 21, 37, 16, 36), unpack=True) ## 2: JD; 20: dist_prim X; 21: dist_prim Y; 37: anom. verd.; 16: distancia; 36: anom. med.
+z = np.loadtxt(arq[1].strip(), usecols=(0, 1, 2, 3), unpack=True) ## 0: off RA; 1: off DEC; 2: off_err RA; 3: off_err DEC
+
+eph = np.loadtxt(arq[2].strip(), skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
 
 k = np.arange(361)
 
@@ -22,6 +27,8 @@ for i in np.arange(1995,2016,1):
 
 print r
 r = np.array(r)
+
+f = open('saida.dat', 'w')
 
 ############## Funcoes ##############################################
 
@@ -42,11 +49,16 @@ def f2(B, x): ## tempo, seno*cos, sen, cos, constante
 def f3(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
     return B[0]*(x[0] - 2451544.5) + B[1]*(np.sin(x[1]*u.deg)**2) + B[2]*(np.cos(x[1]*u.deg)**2) + B[3]*np.sin(x[1]*u.deg)*np.cos(x[1]*u.deg) + B[4]*np.sin(x[1]*u.deg) + B[5]*np.cos(x[1]*u.deg) + B[6]
     
-def f4(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
+def f4(B, x): ## tempo, sen^2(f), cos^2(f), seno(f)*cos(f), sen(f), cos(f), constante
     return B[0]*(x[0] - 2451544.5) + (B[1]+B[2]*(x[0] - 2451544.5))*np.sin(x[1]*u.deg) + (B[3]+B[4]*(x[0] - 2451544.5))*np.cos(x[1]*u.deg) + B[5]
 
+<<<<<<< HEAD
 def f5(B, x): ## tempo, seno, cosseno, constante
     return B[0]*np.sin(2*np.pi*(1/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+=======
+def f5(B, x): ## a*sen(wt+p), sin(f), cos(f), constante
+    return B[0]*np.sin(2*np.pi/(B[1]*365.25)*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+>>>>>>> f1987afedb570a574cb87ac42e942b3efc93b76f
 
 
 ############## Declinacao ############################################
@@ -55,21 +67,25 @@ p = np.linalg.lstsq(g1, z[1])
 
 x = np.vstack([y[0], y[3]])
 
-linearde = odrpack.Model(f1)
+linearde = odrpack.Model(f5)
 #mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
 mydatade = odrpack.RealData(x, z[1], sy=z[3])
-myodrde = odrpack.ODR(mydatade, linearde, beta0=p[0])
+myodrde = odrpack.ODR(mydatade, linearde, beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0])
 myodrde.set_job(fit_type=2)
 myoutputde = myodrde.run()
 print 'Declinacao\n'
 myoutputde.pprint()
+
+f.write('\n\nDeclinacao\n')
+f.write('Resultados: {}\n'.format(myodrde.output.beta))
+f.write('Erros: {}\n'.format(myodrde.output.sd_beta))
 
 #print p[0]
 #print "Desvio padrao DEC:", np.sqrt(((z[1]/z[3] - (A*p[0]).sum(axis=1))**2).sum())
 
 plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 #plt.plot(y[3], z[1], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, f1(myodrde.output.beta, np.vstack([eph[0], eph[1]])), label='Ajuste1')
+plt.plot(eph[0] - 2451544.5, f5(myodrde.output.beta, np.vstack([eph[0], eph[1]])), label='Ajuste1')
 #plt.plot(eph[0] - 2451544.5, f(p[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('DEC = {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(p[0][0], p[0][1], p[0][2]))
 #plt.xlim(0,360)
@@ -106,11 +122,20 @@ x = np.vstack([y[0], y[3]])
 linearra = odrpack.Model(f5)
 #mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
 mydatara = odrpack.RealData(x, z[0], sy=z[2])
+<<<<<<< HEAD
 myodrra = odrpack.ODR(mydatara, linearra, beta0=[200.0, 11.8, 0.0, 1.0, 1.0, 1.0])
+=======
+myodrra = odrpack.ODR(mydatara, linearra, beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0])
+>>>>>>> f1987afedb570a574cb87ac42e942b3efc93b76f
 myodrra.set_job(fit_type=2)
 myoutputra = myodrra.run()
 print '\n\nAscensao Reta\n'
 myoutputra.pprint()
+
+
+f.write('\n\nAscensao Reta\n')
+f.write('Resultados: {}\n'.format(myodrra.output.beta))
+f.write('Erros: {}\n'.format(myodrra.output.sd_beta))
 
 #print q[0]
 #print "Desvio padrao RA:", np.sqrt(((z[0]/z[2] - (B*q[0]).sum(axis=1))**2).sum())
