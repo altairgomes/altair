@@ -1,14 +1,21 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.3.7)  8 JUL 2015 01:11
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2015.6.15)  8 JUL 2015 20:22
 entering extended mode
- restricted \write18 enabled.
+ \write18 enabled.
  %&-line parsing enabled.
 **irregular_offset.tex
 (./irregular_offset.tex
-LaTeX2e <2011/06/27>
-Babel <3.9h> and hyphenation patterns for 78 languages loaded.
-(/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, farsi, arabic, croatian, bulgarian, ukrainian, russian, czech, slov
+ak, danish, dutch, finnish, french, basque, ngerman, german, german-x-2009-06-1
+9, ngerman-x-2009-06-19, ibycus, monogreek, greek, ancientgreek, hungarian, san
+skrit, italian, latin, latvian, lithuanian, mongolian2a, mongolian, bokmal, nyn
+orsk, romanian, irish, coptic, serbian, turkish, welsh, esperanto, uppersorbian
+, estonian, indonesian, interlingua, icelandic, kurmanji, slovenian, polish, po
+rtuguese, spanish, galician, catalan, swedish, ukenglish, pinyin, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/report.cls
 Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
+(/usr/share/texmf-texlive/tex/latex/base/size11.clo
 File: size11.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -24,19 +31,19 @@ File: size11.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
 Package: inputenc 2008/03/30 v1.1d Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
+(/usr/share/texmf-texlive/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OML ...
 ... no UTF-8 mapping file for font encoding OML
 Now handling font encoding T1 ...
 ... processing UTF-8 mapping file for font encoding T1
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.dfu
 File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -186,7 +193,7 @@ File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OT1 ...
 ... processing UTF-8 mapping file for font encoding OT1
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu
+(/usr/share/texmf-texlive/tex/latex/base/ot1enc.dfu
 File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -217,7 +224,7 @@ File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OMS ...
 ... processing UTF-8 mapping file for font encoding OMS
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu
+(/usr/share/texmf-texlive/tex/latex/base/omsenc.dfu
 File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A7 (decimal 167)
    defining Unicode char U+00B6 (decimal 182)
@@ -241,61 +248,61 @@ Now handling font encoding U ...
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
 ))
-(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2013/12/03 3.9h The Babel package
+(/var/lib/texmf/tex/generic/babel/babel.sty
+Package: babel 2008/07/06 v3.8l The Babel package
 
-(/usr/share/texlive/texmf-dist/tex/generic/babel-portuges/portuges.ldf
+(/usr/share/texmf-texlive/tex/generic/babel/portuges.ldf
 Language: portuges 2008/03/18 v1.2q Portuguese support from the babel system
 
-(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2013/12/03 3.9h Babel common definitions
+(/usr/share/texmf-texlive/tex/generic/babel/babel.def
+File: babel.def 2008/07/06 v3.8l Babel common definitions
 \babel@savecnt=\count88
 \U@D=\dimen103
 )
 Package babel Info: Making " an active character on input line 145.
 ))
-(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
 Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def
 File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
 ))
-(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
-Package: amsmath 2013/01/14 v2.14 AMS math features
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
 \@mathmargin=\skip43
 
 For additional information on amsmath, use the `?' option.
-(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01
 
-(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
 \@emptytoks=\toks16
 \ex@=\dimen104
 ))
-(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
 \pmbraise@=\dimen105
 )
-(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
 \inf@bad=\count89
-LaTeX Info: Redefining \frac on input line 210.
+LaTeX Info: Redefining \frac on input line 211.
 \uproot@=\count90
 \leftroot@=\count91
-LaTeX Info: Redefining \overline on input line 306.
+LaTeX Info: Redefining \overline on input line 307.
 \classnum@=\count92
 \DOTSCASE@=\count93
-LaTeX Info: Redefining \ldots on input line 378.
-LaTeX Info: Redefining \dots on input line 381.
-LaTeX Info: Redefining \cdots on input line 466.
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
 \Mathstrutbox@=\box26
 \strutbox@=\box27
 \big@size=\dimen106
-LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \macc@depth=\count94
 \c@MaxMatrixCols=\count95
 \dotsspace@=\muskip10
@@ -316,46 +323,39 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 \multlinegap=\skip44
 \multlinetaggap=\skip45
 \mathdisplay@stack=\toks20
-LaTeX Info: Redefining \[ on input line 2665.
-LaTeX Info: Redefining \] on input line 2666.
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
 )
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
-Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+(/usr/share/texmf-texlive/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
-(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
 )
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
-Package: amssymb 2013/01/14 v3.01 AMS font symbols
+(/usr/share/texmf-texlive/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2009/06/22 v3.00
 )
-(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks21
 )
-(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
-File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
-)
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
-Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
-)
+(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
 \Gread@gobject=\count101
 ))
 \Gin@req@height=\dimen113
@@ -364,20 +364,20 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 (./irregular_offset.aux)
 \openout1 = `irregular_offset.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
 
-(/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count102
 \scratchdimen=\dimen115
@@ -388,325 +388,402 @@ LaTeX Font Info:    ... okay on input line 10.
 \MPscratchCnt=\count105
 \MPscratchDim=\dimen116
 \MPnumerator=\count106
-\makeMPintoPDFobject=\count107
 \everyMPtoPDFconversion=\toks23
-) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
-Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifluatex.sty
-Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
-Package ifluatex Info: LuaTeX not detected.
+LaTeX Font Info:    Try loading font information for U+msa on input line 15.
+ (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
-Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in PDF mode is detected.
+LaTeX Font Info:    Try loading font information for U+msb on input line 15.
+
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-Package pdftexcmds Info: LuaTeX not detected.
-Package pdftexcmds Info: \pdf@primitive is available.
-Package pdftexcmds Info: \pdf@ifprimitive is available.
-Package pdftexcmds Info: \pdfdraftmode found.
-)
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
-Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
-
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
-Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
-Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
-))
-(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
-Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
-Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
-
-(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/etexcmds.sty
-Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
-Package etexcmds Info: Could not find \expanded.
-(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
-(etexcmds)             that some package has redefined \expanded.
-(etexcmds)             In the latter case, load this package earlier.
-)))
-Package grfext Info: Graphics extension search list:
-(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
-G,.JBIG2,.JB2,.eps]
-(grfext)             \AppendGraphicsExtensions on input line 452.
-
-(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
-e
-))
-<Ananke/RA.png, id=1, 1187.3961pt x 511.6716pt>
-File: Ananke/RA.png Graphic file (type png)
- <use Ananke/RA.png>
-Package pdftex.def Info: Ananke/RA.png used on input line 15.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 15--16
-[][] 
- []
-
-LaTeX Font Info:    Try loading font information for U+msa on input line 19.
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Try loading font information for U+msb on input line 19.
-
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Underfull \hbox (badness 10000) in paragraph at lines 18--26
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 27--35
-
+Overfull \hbox (5.65872pt too wide) detected at line 17
+\OML/cmm/m/it/10.95 p\OT1/cmr/m/n/10.95 [0] [] [] + \OML/cmm/m/it/10.95 p\OT1/c
+mr/m/n/10.95 [3] [](\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 ) + \OML/cmm/m/it/1
+0.95 p\OT1/cmr/m/n/10.95 [4] [](\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 ) + \OM
+L/cmm/m/it/10.95 p\OT1/cmr/m/n/10.95 [5]
  []
 
 [1
 
 
-{/home/altairjunior/.texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./Ananke/RA
-.png>] <Ananke/DEC.png, id=13, 1187.3961pt x 511.6716pt>
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+<Ananke/RA.png, id=11, 1187.3961pt x 511.6716pt>
+File: Ananke/RA.png Graphic file (type png)
+ <use Ananke/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 24--25
+[][] 
+ []
+
+<Ananke/RA_anom.png, id=13, 1187.3961pt x 511.6716pt>
+File: Ananke/RA_anom.png Graphic file (type png)
+ <use Ananke/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 28--29
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Ananke/DEC.png, id=14, 1187.3961pt x 511.6716pt>
 File: Ananke/DEC.png Graphic file (type png)
-
-<use Ananke/DEC.png>
-Package pdftex.def Info: Ananke/DEC.png used on input line 39.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 39--40
+ <use Ananke/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 55--56
 [][] 
  []
 
-[2 <./Ananke/DEC.png>] <Carme/RA.png, id=18, 1187.3961pt x 511.6716pt>
+[2
+
+ <./Ananke/RA.png> <./Ananke/RA_anom.png>]
+<Ananke/DEC_anom.png, id=21, 1187.3961pt x 511.6716pt>
+File: Ananke/DEC_anom.png Graphic file (type png)
+
+<use Ananke/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 59--60
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3 <./Ananke/DEC.png>] [4 <./Ananke/DEC_anom.png>]
+<Carme/RA.png, id=30, 1187.3961pt x 511.6716pt>
 File: Carme/RA.png Graphic file (type png)
-
-<use Carme/RA.png>
-Package pdftex.def Info: Carme/RA.png used on input line 45.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 45--46
+ <use Carme/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 86--87
 [][] 
  []
 
-<Carme/DEC.png, id=19, 1187.3961pt x 511.6716pt>
-File: Carme/DEC.png Graphic file (type png)
- <use Carme/DEC.png>
-Package pdftex.def Info: Carme/DEC.png used on input line 51.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 51--52
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[3
-
- <./Carme/RA.png>] [4 <./Carme/DEC.png>]
-<Elara/RA.png, id=28, 1187.3961pt x 511.6716pt>
-File: Elara/RA.png Graphic file (type png)
- <use Elara/RA.png>
-Package pdftex.def Info: Elara/RA.png used on input line 58.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 58--59
-[][] 
- []
-
-<Elara/DEC.png, id=29, 1187.3961pt x 511.6716pt>
-File: Elara/DEC.png Graphic file (type png)
- <use Elara/DEC.png>
-Package pdftex.def Info: Elara/DEC.png used on input line 64.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 64--65
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[5
-
- <./Elara/RA.png>] [6 <./Elara/DEC.png>]
-<Himalia/RA.png, id=38, 1187.3961pt x 511.6716pt>
-File: Himalia/RA.png Graphic file (type png)
- <use Himalia/RA.png>
-Package pdftex.def Info: Himalia/RA.png used on input line 71.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 71--72
-[][] 
- []
-
-<Himalia/DEC.png, id=39, 1187.3961pt x 511.6716pt>
-File: Himalia/DEC.png Graphic file (type png)
- <use Himalia/DEC.png>
-Package pdftex.def Info: Himalia/DEC.png used on input line 77.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 77--78
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[7
-
- <./Himalia/RA.png>] [8 <./Himalia/DEC.png>]
-<Lysithea/RA.png, id=49, 1187.3961pt x 511.6716pt>
-File: Lysithea/RA.png Graphic file (type png)
- <use Lysithea/RA.png>
-Package pdftex.def Info: Lysithea/RA.png used on input line 84.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 84--85
-[][] 
- []
-
-<Lysithea/DEC.png, id=50, 1187.3961pt x 511.6716pt>
-File: Lysithea/DEC.png Graphic file (type png)
- <use Lysithea/DEC.png>
-Package pdftex.def Info: Lysithea/DEC.png used on input line 90.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
+<Carme/RA_anom.png, id=31, 1187.3961pt x 511.6716pt>
+File: Carme/RA_anom.png Graphic file (type png)
+ <use Carme/RA_anom.png>
 Overfull \hbox (55.59486pt too wide) in paragraph at lines 90--91
 [][] 
  []
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[9
-
- <./Lysithea/RA.png>] [10 <./Lysithea/DEC.png>]
-<Sinope/RA.png, id=59, 1187.3961pt x 511.6716pt>
-File: Sinope/RA.png Graphic file (type png)
- <use Sinope/RA.png>
-Package pdftex.def Info: Sinope/RA.png used on input line 97.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 97--98
-[][] 
- []
-
-<Sinope/DEC.png, id=60, 1187.3961pt x 511.6716pt>
-File: Sinope/DEC.png Graphic file (type png)
- <use Sinope/DEC.png>
-Package pdftex.def Info: Sinope/DEC.png used on input line 103.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 103--104
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[11
-
- <./Sinope/RA.png>] [12 <./Sinope/DEC.png>]
-<Pasiphae/RA.png, id=69, 1187.3961pt x 511.6716pt>
-File: Pasiphae/RA.png Graphic file (type png)
- <use Pasiphae/RA.png>
-Package pdftex.def Info: Pasiphae/RA.png used on input line 110.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 110--111
-[][] 
- []
-
-<Pasiphae/DEC.png, id=70, 1187.3961pt x 511.6716pt>
-File: Pasiphae/DEC.png Graphic file (type png)
- <use Pasiphae/DEC.png>
-Package pdftex.def Info: Pasiphae/DEC.png used on input line 116.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
+<Carme/DEC.png, id=32, 1187.3961pt x 511.6716pt>
+File: Carme/DEC.png Graphic file (type png)
+ <use Carme/DEC.png>
 Overfull \hbox (55.59486pt too wide) in paragraph at lines 116--117
 [][] 
  []
 
+[5
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[13
-
- <./Pasiphae/RA.png>] [14 <./Pasiphae/DEC.png>]
-<Phoebe/RA.png, id=80, 1187.3961pt x 511.6716pt>
-File: Phoebe/RA.png Graphic file (type png)
- <use Phoebe/RA.png>
-Package pdftex.def Info: Phoebe/RA.png used on input line 123.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 123--124
-[][] 
- []
-
-<Phoebe/DEC.png, id=81, 1187.3961pt x 511.6716pt>
-File: Phoebe/DEC.png Graphic file (type png)
- <use Phoebe/DEC.png>
-Package pdftex.def Info: Phoebe/DEC.png used on input line 129.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 129--130
+ <./Carme/RA.png> <./Carme/RA_anom.png>]
+<Carme/DEC_anom.png, id=38, 1187.3961pt x 511.6716pt>
+File: Carme/DEC_anom.png Graphic file (type png)
+ <use Carme/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 120--121
 [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[15
-
- <./Phoebe/RA.png>] [16 <./Phoebe/DEC.png>]
-<Nereida/RA.png, id=90, 1187.3961pt x 511.6716pt>
-File: Nereida/RA.png Graphic file (type png)
- <use Nereida/RA.png>
-Package pdftex.def Info: Nereida/RA.png used on input line 136.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
-
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 136--137
+[6 <./Carme/DEC.png>] [7 <./Carme/DEC_anom.png>]
+<Elara/RA.png, id=48, 1187.3961pt x 511.6716pt>
+File: Elara/RA.png Graphic file (type png)
+ <use Elara/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 146--147
 [][] 
  []
 
-<Nereida/DEC.png, id=91, 1187.3961pt x 511.6716pt>
-File: Nereida/DEC.png Graphic file (type png)
- <use Nereida/DEC.png>
-Package pdftex.def Info: Nereida/DEC.png used on input line 142.
-(pdftex.def)             Requested size: 415.59486pt x 179.08774pt.
+<Elara/RA_anom.png, id=49, 1187.3961pt x 511.6716pt>
+File: Elara/RA_anom.png Graphic file (type png)
+ <use Elara/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 150--151
+[][] 
+ []
 
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 142--143
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Elara/DEC.png, id=50, 1187.3961pt x 511.6716pt>
+File: Elara/DEC.png Graphic file (type png)
+ <use Elara/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 176--177
+[][] 
+ []
+
+[8
+
+ <./Elara/RA.png> <./Elara/RA_anom.png>]
+<Elara/DEC_anom.png, id=56, 1187.3961pt x 511.6716pt>
+File: Elara/DEC_anom.png Graphic file (type png)
+ <use Elara/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 180--181
 [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
+
+[9 <./Elara/DEC.png>] [10 <./Elara/DEC_anom.png>]
+<Himalia/RA.png, id=65, 1187.3961pt x 511.6716pt>
+File: Himalia/RA.png Graphic file (type png)
+ <use Himalia/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 207--208
+[][] 
+ []
+
+<Himalia/RA_anom.png, id=66, 1187.3961pt x 511.6716pt>
+File: Himalia/RA_anom.png Graphic file (type png)
+
+<use Himalia/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 211--212
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Himalia/DEC.png, id=67, 1187.3961pt x 511.6716pt>
+File: Himalia/DEC.png Graphic file (type png)
+ <use Himalia/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 237--238
+[][] 
+ []
+
+[11
+
+ <./Himalia/RA.png> <./Himalia/RA_anom.png>]
+<Himalia/DEC_anom.png, id=73, 1187.3961pt x 511.6716pt>
+File: Himalia/DEC_anom.png Graphic file (type png)
+
+<use Himalia/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 241--242
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12 <./Himalia/DEC.png>] [13 <./Himalia/DEC_anom.png>]
+<Lysithea/RA.png, id=83, 1187.3961pt x 511.6716pt>
+File: Lysithea/RA.png Graphic file (type png)
+ <use Lysithea/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 268--269
+[][] 
+ []
+
+<Lysithea/RA_anom.png, id=84, 1187.3961pt x 511.6716pt>
+File: Lysithea/RA_anom.png Graphic file (type png)
+
+<use Lysithea/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 272--273
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Lysithea/DEC.png, id=85, 1187.3961pt x 511.6716pt>
+File: Lysithea/DEC.png Graphic file (type png)
+ <use Lysithea/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 298--299
+[][] 
+ []
+
+[14
+
+ <./Lysithea/RA.png> <./Lysithea/RA_anom.png>]
+<Lysithea/DEC_anom.png, id=91, 1187.3961pt x 511.6716pt>
+File: Lysithea/DEC_anom.png Graphic file (type png)
+
+<use Lysithea/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 302--303
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[15 <./Lysithea/DEC.png>] [16 <./Lysithea/DEC_anom.png>]
+<Sinope/RA.png, id=100, 1187.3961pt x 511.6716pt>
+File: Sinope/RA.png Graphic file (type png)
+ <use Sinope/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 329--330
+[][] 
+ []
+
+<Sinope/RA_anom.png, id=101, 1187.3961pt x 511.6716pt>
+File: Sinope/RA_anom.png Graphic file (type png)
+
+<use Sinope/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 333--334
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Sinope/DEC.png, id=102, 1187.3961pt x 511.6716pt>
+File: Sinope/DEC.png Graphic file (type png)
+ <use Sinope/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 359--360
+[][] 
+ []
 
 [17
 
- <./Nereida/RA.png>] [18 <./Nereida/DEC.png>] (./irregular_offset.aux) ) 
+ <./Sinope/RA.png> <./Sinope/RA_anom.png>]
+<Sinope/DEC_anom.png, id=108, 1187.3961pt x 511.6716pt>
+File: Sinope/DEC_anom.png Graphic file (type png)
+
+<use Sinope/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 363--364
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[18 <./Sinope/DEC.png>] [19 <./Sinope/DEC_anom.png>]
+<Pasiphae/RA.png, id=118, 1187.3961pt x 511.6716pt>
+File: Pasiphae/RA.png Graphic file (type png)
+ <use Pasiphae/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 390--391
+[][] 
+ []
+
+<Pasiphae/RA_anom.png, id=119, 1187.3961pt x 511.6716pt>
+File: Pasiphae/RA_anom.png Graphic file (type png)
+
+<use Pasiphae/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 394--395
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Pasiphae/DEC.png, id=120, 1187.3961pt x 511.6716pt>
+File: Pasiphae/DEC.png Graphic file (type png)
+ <use Pasiphae/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 420--421
+[][] 
+ []
+
+[20
+
+ <./Pasiphae/RA.png> <./Pasiphae/RA_anom.png>]
+<Pasiphae/DEC_anom.png, id=126, 1187.3961pt x 511.6716pt>
+File: Pasiphae/DEC_anom.png Graphic file (type png)
+
+<use Pasiphae/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 424--425
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[21 <./Pasiphae/DEC.png>] [22 <./Pasiphae/DEC_anom.png>]
+<Phoebe/RA.png, id=135, 1187.3961pt x 511.6716pt>
+File: Phoebe/RA.png Graphic file (type png)
+ <use Phoebe/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 451--452
+[][] 
+ []
+
+<Phoebe/RA_anom.png, id=136, 1187.3961pt x 511.6716pt>
+File: Phoebe/RA_anom.png Graphic file (type png)
+
+<use Phoebe/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 455--456
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Phoebe/DEC.png, id=137, 1187.3961pt x 511.6716pt>
+File: Phoebe/DEC.png Graphic file (type png)
+ <use Phoebe/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 481--482
+[][] 
+ []
+
+[23
+
+ <./Phoebe/RA.png> <./Phoebe/RA_anom.png>]
+<Phoebe/DEC_anom.png, id=143, 1187.3961pt x 511.6716pt>
+File: Phoebe/DEC_anom.png Graphic file (type png)
+
+<use Phoebe/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 485--486
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[24 <./Phoebe/DEC.png>] [25 <./Phoebe/DEC_anom.png>]
+<Nereida/RA.png, id=153, 1187.3961pt x 511.6716pt>
+File: Nereida/RA.png Graphic file (type png)
+ <use Nereida/RA.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 512--513
+[][] 
+ []
+
+<Nereida/RA_anom.png, id=154, 1187.3961pt x 511.6716pt>
+File: Nereida/RA_anom.png Graphic file (type png)
+
+<use Nereida/RA_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 516--517
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Nereida/DEC.png, id=155, 1187.3961pt x 511.6716pt>
+File: Nereida/DEC.png Graphic file (type png)
+ <use Nereida/DEC.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 542--543
+[][] 
+ []
+
+[26
+
+ <./Nereida/RA.png> <./Nereida/RA_anom.png>]
+<Nereida/DEC_anom.png, id=161, 1187.3961pt x 511.6716pt>
+File: Nereida/DEC_anom.png Graphic file (type png)
+
+<use Nereida/DEC_anom.png>
+Overfull \hbox (55.59486pt too wide) in paragraph at lines 546--547
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[27 <./Nereida/DEC.png>] [28 <./Nereida/DEC_anom.png>] (./irregular_offset.aux)
+ ) 
 Here is how much of TeX's memory you used:
- 3293 strings out of 493304
- 41454 string characters out of 6139872
- 101649 words of memory out of 5000000
- 6682 multiletter control sequences out of 15000+600000
- 12146 words of font info for 37 fonts, out of 8000000 for 9000
- 957 hyphenation exceptions out of 8191
- 37i,6n,24p,249b,227s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/s
-hare/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texlive/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/pub
-lic/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx248
-8.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1095.pfb>
-Output written on irregular_offset.pdf (18 pages, 1620865 bytes).
+ 2721 strings out of 493848
+ 32103 string characters out of 1152823
+ 84860 words of memory out of 3000000
+ 5965 multiletter control sequences out of 15000+50000
+ 12146 words of font info for 37 fonts, out of 3000000 for 9000
+ 714 hyphenation exceptions out of 8191
+ 27i,8n,24p,265b,218s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texmf-
+texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fon
+ts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/pu
+blic/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
+s/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></us
+r/share/texmf/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf/fonts/
+type1/public/cm-super/sfrm1095.pfb>
+Output written on irregular_offset.pdf (28 pages, 2133180 bytes).
 PDF statistics:
- 116 PDF objects out of 1000 (max. 8388607)
- 55 compressed objects within 1 object stream
+ 194 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 91 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 181 words of extra memory for PDF output out of 10000 (max. 10000000)
 
