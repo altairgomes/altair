@@ -52,16 +52,6 @@ def f3(B, x): ## tempo, sen^2, cos^2, seno*cos, sen, cos, constante
 def f4(B, x): ## tempo, sen^2(f), cos^2(f), seno(f)*cos(f), sen(f), cos(f), constante
     return B[0]*(x[0] - 2451544.5) + (B[1]+B[2]*(x[0] - 2451544.5))*np.sin(x[1]*u.deg) + (B[3]+B[4]*(x[0] - 2451544.5))*np.cos(x[1]*u.deg) + B[5]
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-def f5(B, x): ## tempo, seno, cosseno, constante
-    return B[0]*np.sin(2*np.pi*(1/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
-=======
-def f5(B, x): ## a*sen(wt+p), sin(f), cos(f), constante
-    return B[0]*np.sin(2*np.pi/(B[1]*365.25)*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
->>>>>>> f1987afedb570a574cb87ac42e942b3efc93b76f
-
-=======
 def f5(B, x): ## a*cos(wt+p), sin(f), cos(f), constante
     return B[0]*np.cos((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
     
@@ -88,7 +78,6 @@ def residuos(func, par, x, y):
     var = np.sum((y - func(par, x))**2)
     resid = np.sqrt(var)
     return resid
->>>>>>> 101b4e0440ed1402fb56862f85d348de9a75b73b
 
 ############## Declinacao ############################################
 
@@ -155,22 +144,6 @@ plt.clf()
 q = np.linalg.lstsq(g2, z[0])
 
 x = np.vstack([y[0], y[3]])
-
-<<<<<<< HEAD
-linearra = odrpack.Model(f5)
-#mydata = odrpack.Data(x, z[1], wd=1./np.power(z[2],2), we=1./np.power(sy,2))
-mydatara = odrpack.RealData(x, z[0], sy=z[2])
-<<<<<<< HEAD
-myodrra = odrpack.ODR(mydatara, linearra, beta0=[200.0, 11.8, 0.0, 1.0, 1.0, 1.0])
-=======
-myodrra = odrpack.ODR(mydatara, linearra, beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0])
->>>>>>> f1987afedb570a574cb87ac42e942b3efc93b76f
-myodrra.set_job(fit_type=2)
-myoutputra = myodrra.run()
-print '\n\nAscensao Reta\n'
-myoutputra.pprint()
-=======
->>>>>>> 101b4e0440ed1402fb56862f85d348de9a75b73b
 
 print 'Ascencao Reta\n'
 f.write('\n\nAscencao Reta\n')

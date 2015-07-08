@@ -88,7 +88,7 @@ x = np.vstack([y[0], y[3]])
 print 'Declinacao\n'
 f.write('\nDeclinacao\n')
 
-fun=f6
+fun=f5
 beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0]
 
 ajdewg = least(func=fun, x=x, y=z[1], sy=z[3], beta0=beta0)
@@ -149,7 +149,7 @@ x = np.vstack([y[0], y[3]])
 print 'Ascencao Reta\n'
 f.write('\n\nAscencao Reta\n')
 
-fun=f6
+fun=f5
 beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0]
 
 ajrawg = least(func=fun, x=x, y=z[0], sy=z[2], beta0=beta0)
