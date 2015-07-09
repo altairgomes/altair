@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2015.6.15)  8 JUL 2015 20:22
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2015.6.15)  9 JUL 2015 20:10
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -390,400 +390,398 @@ LaTeX Font Info:    ... okay on input line 11.
 \MPnumerator=\count106
 \everyMPtoPDFconversion=\toks23
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 15.
+LaTeX Font Info:    Try loading font information for U+msa on input line 12.
  (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 15.
+LaTeX Font Info:    Try loading font information for U+msb on input line 12.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
-)
-Overfull \hbox (5.65872pt too wide) detected at line 17
-\OML/cmm/m/it/10.95 p\OT1/cmr/m/n/10.95 [0] [] [] + \OML/cmm/m/it/10.95 p\OT1/c
-mr/m/n/10.95 [3] [](\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 ) + \OML/cmm/m/it/1
-0.95 p\OT1/cmr/m/n/10.95 [4] [](\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 ) + \OM
-L/cmm/m/it/10.95 p\OT1/cmr/m/n/10.95 [5]
+) [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [1
+
+] [2]
+Underfull \hbox (badness 10000) in paragraph at lines 50--51
+
  []
 
-[1
-
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-<Ananke/RA.png, id=11, 1187.3961pt x 511.6716pt>
-File: Ananke/RA.png Graphic file (type png)
- <use Ananke/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 24--25
-[][] 
- []
-
-<Ananke/RA_anom.png, id=13, 1187.3961pt x 511.6716pt>
-File: Ananke/RA_anom.png Graphic file (type png)
- <use Ananke/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 28--29
-[][] 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<Ananke/DEC.png, id=14, 1187.3961pt x 511.6716pt>
-File: Ananke/DEC.png Graphic file (type png)
- <use Ananke/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 55--56
-[][] 
- []
-
-[2
-
- <./Ananke/RA.png> <./Ananke/RA_anom.png>]
-<Ananke/DEC_anom.png, id=21, 1187.3961pt x 511.6716pt>
-File: Ananke/DEC_anom.png Graphic file (type png)
-
-<use Ananke/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 59--60
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[3 <./Ananke/DEC.png>] [4 <./Ananke/DEC_anom.png>]
-<Carme/RA.png, id=30, 1187.3961pt x 511.6716pt>
-File: Carme/RA.png Graphic file (type png)
- <use Carme/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 86--87
-[][] 
- []
-
-<Carme/RA_anom.png, id=31, 1187.3961pt x 511.6716pt>
-File: Carme/RA_anom.png Graphic file (type png)
- <use Carme/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 90--91
-[][] 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<Carme/DEC.png, id=32, 1187.3961pt x 511.6716pt>
-File: Carme/DEC.png Graphic file (type png)
- <use Carme/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 116--117
-[][] 
- []
-
-[5
-
- <./Carme/RA.png> <./Carme/RA_anom.png>]
-<Carme/DEC_anom.png, id=38, 1187.3961pt x 511.6716pt>
-File: Carme/DEC_anom.png Graphic file (type png)
- <use Carme/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 120--121
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[6 <./Carme/DEC.png>] [7 <./Carme/DEC_anom.png>]
-<Elara/RA.png, id=48, 1187.3961pt x 511.6716pt>
-File: Elara/RA.png Graphic file (type png)
- <use Elara/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 146--147
-[][] 
- []
-
-<Elara/RA_anom.png, id=49, 1187.3961pt x 511.6716pt>
-File: Elara/RA_anom.png Graphic file (type png)
- <use Elara/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 150--151
-[][] 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<Elara/DEC.png, id=50, 1187.3961pt x 511.6716pt>
-File: Elara/DEC.png Graphic file (type png)
- <use Elara/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 176--177
-[][] 
- []
-
-[8
-
- <./Elara/RA.png> <./Elara/RA_anom.png>]
-<Elara/DEC_anom.png, id=56, 1187.3961pt x 511.6716pt>
-File: Elara/DEC_anom.png Graphic file (type png)
- <use Elara/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 180--181
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[9 <./Elara/DEC.png>] [10 <./Elara/DEC_anom.png>]
-<Himalia/RA.png, id=65, 1187.3961pt x 511.6716pt>
-File: Himalia/RA.png Graphic file (type png)
- <use Himalia/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 207--208
-[][] 
- []
-
-<Himalia/RA_anom.png, id=66, 1187.3961pt x 511.6716pt>
-File: Himalia/RA_anom.png Graphic file (type png)
-
-<use Himalia/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 211--212
-[][] 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<Himalia/DEC.png, id=67, 1187.3961pt x 511.6716pt>
-File: Himalia/DEC.png Graphic file (type png)
- <use Himalia/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 237--238
-[][] 
- []
-
-[11
-
- <./Himalia/RA.png> <./Himalia/RA_anom.png>]
-<Himalia/DEC_anom.png, id=73, 1187.3961pt x 511.6716pt>
-File: Himalia/DEC_anom.png Graphic file (type png)
-
-<use Himalia/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 241--242
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[12 <./Himalia/DEC.png>] [13 <./Himalia/DEC_anom.png>]
-<Lysithea/RA.png, id=83, 1187.3961pt x 511.6716pt>
-File: Lysithea/RA.png Graphic file (type png)
- <use Lysithea/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 268--269
-[][] 
- []
-
-<Lysithea/RA_anom.png, id=84, 1187.3961pt x 511.6716pt>
-File: Lysithea/RA_anom.png Graphic file (type png)
-
-<use Lysithea/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 272--273
-[][] 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<Lysithea/DEC.png, id=85, 1187.3961pt x 511.6716pt>
-File: Lysithea/DEC.png Graphic file (type png)
- <use Lysithea/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 298--299
-[][] 
- []
-
-[14
-
- <./Lysithea/RA.png> <./Lysithea/RA_anom.png>]
-<Lysithea/DEC_anom.png, id=91, 1187.3961pt x 511.6716pt>
-File: Lysithea/DEC_anom.png Graphic file (type png)
-
-<use Lysithea/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 302--303
-[][] 
- []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[15 <./Lysithea/DEC.png>] [16 <./Lysithea/DEC_anom.png>]
-<Sinope/RA.png, id=100, 1187.3961pt x 511.6716pt>
+<Sinope/RA.png, id=20, 948.9051pt x 413.3844pt>
 File: Sinope/RA.png Graphic file (type png)
  <use Sinope/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 329--330
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 53--54
 [][] 
  []
 
-<Sinope/RA_anom.png, id=101, 1187.3961pt x 511.6716pt>
+<Sinope/RA_anom.png, id=22, 959.7456pt x 413.3844pt>
 File: Sinope/RA_anom.png Graphic file (type png)
-
-<use Sinope/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 333--334
+ <use Sinope/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 57--58
 [][] 
  []
 
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-<Sinope/DEC.png, id=102, 1187.3961pt x 511.6716pt>
+<Sinope/DEC.png, id=23, 948.9051pt x 413.3844pt>
 File: Sinope/DEC.png Graphic file (type png)
  <use Sinope/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 359--360
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 86--87
 [][] 
  []
 
-[17
+[3
 
- <./Sinope/RA.png> <./Sinope/RA_anom.png>]
-<Sinope/DEC_anom.png, id=108, 1187.3961pt x 511.6716pt>
+ <./Sinope/RA.png>] <Sinope/DEC_anom.png, id=29, 959.7456pt x 413.3844pt>
 File: Sinope/DEC_anom.png Graphic file (type png)
 
 <use Sinope/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 363--364
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 90--91
 [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[18 <./Sinope/DEC.png>] [19 <./Sinope/DEC_anom.png>]
-<Pasiphae/RA.png, id=118, 1187.3961pt x 511.6716pt>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[4 <./Sinope/RA_anom.png> <./Sinope/DEC.png>] [5 <./Sinope/DEC_anom.png>]
+<Pasiphae/RA.png, id=39, 948.9051pt x 413.3844pt>
 File: Pasiphae/RA.png Graphic file (type png)
  <use Pasiphae/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 390--391
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 117--118
 [][] 
  []
 
-<Pasiphae/RA_anom.png, id=119, 1187.3961pt x 511.6716pt>
+<Pasiphae/RA_anom.png, id=40, 959.7456pt x 413.3844pt>
 File: Pasiphae/RA_anom.png Graphic file (type png)
 
 <use Pasiphae/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 394--395
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 121--122
 [][] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<Pasiphae/DEC.png, id=120, 1187.3961pt x 511.6716pt>
+<Pasiphae/DEC.png, id=41, 948.9051pt x 413.3844pt>
 File: Pasiphae/DEC.png Graphic file (type png)
  <use Pasiphae/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 420--421
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 147--148
 [][] 
  []
 
-[20
+[6
 
  <./Pasiphae/RA.png> <./Pasiphae/RA_anom.png>]
-<Pasiphae/DEC_anom.png, id=126, 1187.3961pt x 511.6716pt>
+<Pasiphae/DEC_anom.png, id=48, 959.7456pt x 413.3844pt>
 File: Pasiphae/DEC_anom.png Graphic file (type png)
 
 <use Pasiphae/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 424--425
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 151--152
 [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[21 <./Pasiphae/DEC.png>] [22 <./Pasiphae/DEC_anom.png>]
-<Phoebe/RA.png, id=135, 1187.3961pt x 511.6716pt>
-File: Phoebe/RA.png Graphic file (type png)
- <use Phoebe/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 451--452
+[7 <./Pasiphae/DEC.png>] [8 <./Pasiphae/DEC_anom.png>]
+<Ananke/RA.png, id=57, 948.9051pt x 413.3844pt>
+File: Ananke/RA.png Graphic file (type png)
+ <use Ananke/RA.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 178--179
 [][] 
  []
 
-<Phoebe/RA_anom.png, id=136, 1187.3961pt x 511.6716pt>
-File: Phoebe/RA_anom.png Graphic file (type png)
-
-<use Phoebe/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 455--456
+<Ananke/RA_anom.png, id=58, 959.7456pt x 413.3844pt>
+File: Ananke/RA_anom.png Graphic file (type png)
+ <use Ananke/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 182--183
 [][] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<Phoebe/DEC.png, id=137, 1187.3961pt x 511.6716pt>
-File: Phoebe/DEC.png Graphic file (type png)
- <use Phoebe/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 481--482
+<Ananke/DEC.png, id=59, 948.9051pt x 413.3844pt>
+File: Ananke/DEC.png Graphic file (type png)
+ <use Ananke/DEC.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 210--212
+[][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 210--212
+
+ []
+
+[9
+
+ <./Ananke/RA.png> <./Ananke/RA_anom.png>]
+<Ananke/DEC_anom.png, id=65, 959.7456pt x 413.3844pt>
+File: Ananke/DEC_anom.png Graphic file (type png)
+
+<use Ananke/DEC_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 215--216
 [][] 
  []
 
-[23
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[10 <./Ananke/DEC.png>] [11 <./Ananke/DEC_anom.png>]
+<Carme/RA.png, id=74, 948.9051pt x 413.3844pt>
+File: Carme/RA.png Graphic file (type png)
+ <use Carme/RA.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 242--243
+[][] 
+ []
+
+<Carme/RA_anom.png, id=75, 959.7456pt x 413.3844pt>
+File: Carme/RA_anom.png Graphic file (type png)
+ <use Carme/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 246--247
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Carme/DEC.png, id=76, 948.9051pt x 413.3844pt>
+File: Carme/DEC.png Graphic file (type png)
+ <use Carme/DEC.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 272--273
+[][] 
+ []
+
+[12
+
+ <./Carme/RA.png> <./Carme/RA_anom.png>]
+<Carme/DEC_anom.png, id=83, 959.7456pt x 413.3844pt>
+File: Carme/DEC_anom.png Graphic file (type png)
+ <use Carme/DEC_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 276--277
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[13 <./Carme/DEC.png>] [14 <./Carme/DEC_anom.png>]
+<Elara/RA.png, id=92, 948.9051pt x 413.3844pt>
+File: Elara/RA.png Graphic file (type png)
+ <use Elara/RA.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 301--302
+[][] 
+ []
+
+<Elara/RA_anom.png, id=93, 959.7456pt x 413.3844pt>
+File: Elara/RA_anom.png Graphic file (type png)
+ <use Elara/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 305--306
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Elara/DEC.png, id=94, 948.9051pt x 413.3844pt>
+File: Elara/DEC.png Graphic file (type png)
+ <use Elara/DEC.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 331--332
+[][] 
+ []
+
+[15
+
+ <./Elara/RA.png> <./Elara/RA_anom.png>]
+<Elara/DEC_anom.png, id=100, 959.7456pt x 413.3844pt>
+File: Elara/DEC_anom.png Graphic file (type png)
+ <use Elara/DEC_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 335--336
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[16 <./Elara/DEC.png>] [17 <./Elara/DEC_anom.png>]
+<Himalia/RA.png, id=109, 948.9051pt x 413.3844pt>
+File: Himalia/RA.png Graphic file (type png)
+ <use Himalia/RA.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 362--363
+[][] 
+ []
+
+<Himalia/RA_anom.png, id=110, 959.7456pt x 413.3844pt>
+File: Himalia/RA_anom.png Graphic file (type png)
+
+<use Himalia/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 366--367
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Himalia/DEC.png, id=111, 948.9051pt x 413.3844pt>
+File: Himalia/DEC.png Graphic file (type png)
+ <use Himalia/DEC.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 392--393
+[][] 
+ []
+
+[18
+
+ <./Himalia/RA.png> <./Himalia/RA_anom.png>]
+<Himalia/DEC_anom.png, id=118, 959.7456pt x 413.3844pt>
+File: Himalia/DEC_anom.png Graphic file (type png)
+
+<use Himalia/DEC_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 396--397
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[19 <./Himalia/DEC.png>] [20 <./Himalia/DEC_anom.png>]
+<Lysithea/RA.png, id=127, 948.9051pt x 413.3844pt>
+File: Lysithea/RA.png Graphic file (type png)
+ <use Lysithea/RA.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 423--424
+[][] 
+ []
+
+<Lysithea/RA_anom.png, id=128, 959.7456pt x 413.3844pt>
+File: Lysithea/RA_anom.png Graphic file (type png)
+
+<use Lysithea/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 427--428
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Lysithea/DEC.png, id=129, 948.9051pt x 413.3844pt>
+File: Lysithea/DEC.png Graphic file (type png)
+ <use Lysithea/DEC.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 453--454
+[][] 
+ []
+
+[21
+
+ <./Lysithea/RA.png> <./Lysithea/RA_anom.png>]
+<Lysithea/DEC_anom.png, id=135, 959.7456pt x 413.3844pt>
+File: Lysithea/DEC_anom.png Graphic file (type png)
+
+<use Lysithea/DEC_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 457--458
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[22 <./Lysithea/DEC.png>] [23 <./Lysithea/DEC_anom.png>]
+<Phoebe/RA.png, id=144, 948.9051pt x 413.3844pt>
+File: Phoebe/RA.png Graphic file (type png)
+ <use Phoebe/RA.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 484--485
+[][] 
+ []
+
+<Phoebe/RA_anom.png, id=145, 959.7456pt x 413.3844pt>
+File: Phoebe/RA_anom.png Graphic file (type png)
+ <use Phoebe/RA_anom.png>
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 488--489
+[][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Phoebe/DEC.png, id=146, 948.9051pt x 413.3844pt>
+File: Phoebe/DEC.png Graphic file (type png)
+ <use Phoebe/DEC.png>
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 514--515
+[][] 
+ []
+
+[24
 
  <./Phoebe/RA.png> <./Phoebe/RA_anom.png>]
-<Phoebe/DEC_anom.png, id=143, 1187.3961pt x 511.6716pt>
+<Phoebe/DEC_anom.png, id=153, 959.7456pt x 413.3844pt>
 File: Phoebe/DEC_anom.png Graphic file (type png)
 
 <use Phoebe/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 485--486
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 518--519
 [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[24 <./Phoebe/DEC.png>] [25 <./Phoebe/DEC_anom.png>]
-<Nereida/RA.png, id=153, 1187.3961pt x 511.6716pt>
+[25 <./Phoebe/DEC.png>] [26 <./Phoebe/DEC_anom.png>]
+<Nereida/RA.png, id=162, 948.9051pt x 413.3844pt>
 File: Nereida/RA.png Graphic file (type png)
  <use Nereida/RA.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 512--513
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 545--546
 [][] 
  []
 
-<Nereida/RA_anom.png, id=154, 1187.3961pt x 511.6716pt>
+<Nereida/RA_anom.png, id=163, 959.7456pt x 413.3844pt>
 File: Nereida/RA_anom.png Graphic file (type png)
 
 <use Nereida/RA_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 516--517
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 549--550
 [][] 
  []
 
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<Nereida/DEC.png, id=155, 1187.3961pt x 511.6716pt>
+<Nereida/DEC.png, id=164, 948.9051pt x 413.3844pt>
 File: Nereida/DEC.png Graphic file (type png)
  <use Nereida/DEC.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 542--543
+Overfull \hbox (67.00336pt too wide) in paragraph at lines 575--576
 [][] 
  []
 
-[26
+[27
 
  <./Nereida/RA.png> <./Nereida/RA_anom.png>]
-<Nereida/DEC_anom.png, id=161, 1187.3961pt x 511.6716pt>
+<Nereida/DEC_anom.png, id=170, 959.7456pt x 413.3844pt>
 File: Nereida/DEC_anom.png Graphic file (type png)
 
 <use Nereida/DEC_anom.png>
-Overfull \hbox (55.59486pt too wide) in paragraph at lines 546--547
+Overfull \hbox (71.88153pt too wide) in paragraph at lines 579--580
 [][] 
  []
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[27 <./Nereida/DEC.png>] [28 <./Nereida/DEC_anom.png>] (./irregular_offset.aux)
- ) 
+[28 <./Nereida/DEC.png> <./Nereida/DEC_anom.png>] (./irregular_offset.aux) ) 
 Here is how much of TeX's memory you used:
- 2721 strings out of 493848
- 32103 string characters out of 1152823
- 84860 words of memory out of 3000000
- 5965 multiletter control sequences out of 15000+50000
- 12146 words of font info for 37 fonts, out of 3000000 for 9000
+ 2738 strings out of 493848
+ 32294 string characters out of 1152823
+ 84886 words of memory out of 3000000
+ 5977 multiletter control sequences out of 15000+50000
+ 15912 words of font info for 46 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 27i,8n,24p,265b,218s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texmf-
-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fon
-ts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/pu
-blic/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
-s/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></us
-r/share/texmf/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf/fonts/
-type1/public/cm-super/sfrm1095.pfb>
-Output written on irregular_offset.pdf (28 pages, 2133180 bytes).
+ 27i,8n,24p,445b,230s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/u
+sr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texmf-texli
+ve/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/ty
+pe1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/
+amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmsy10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/sha
+re/texmf/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf/fonts/type1
+/public/cm-super/sfrm1095.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfr
+m1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/shar
+e/texmf/fonts/type1/public/cm-super/sfti1095.pfb>
+Output written on irregular_offset.pdf (29 pages, 1740581 bytes).
 PDF statistics:
- 194 PDF objects out of 1000 (max. 8388607)
+ 209 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  181 words of extra memory for PDF output out of 10000 (max. 10000000)
 

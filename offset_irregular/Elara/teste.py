@@ -41,7 +41,7 @@ g3 = np.vstack([y[0] - 2451544.5, np.sin(y[3]*u.deg)**2, np.cos(y[3]*u.deg)**2, 
 g4 = np.vstack([y[0] - 2451544.5, np.sin(y[3]*u.deg), (y[0] - 2451544.5)*np.sin(y[3]*u.deg), np.cos(y[3]*u.deg), (y[0] - 2451544.5)*np.cos(y[3]*u.deg), np.ones(len(y[3]))]).T
 
 def f1(B, x): ## tempo, seno, cosseno, constante
-    return B[0]*(x[0] - 2451544.5) + B[1]*np.sin(x[1]*u.deg) + B[2]*np.cos(x[1]*u.deg) + B[3]
+    return (B[0]/365)*(x[0] - 2451544.5) + B[1]*np.sin(x[1]*u.deg) + B[2]*np.cos(x[1]*u.deg) + B[3]
     
 def f2(B, x): ## tempo, seno*cos, sen, cos, constante
     return B[0]*(x[0] - 2451544.5) + B[1]*np.sin(x[1]*u.deg)*np.cos(x[1]*u.deg) + B[2]*np.sin(x[1]*u.deg) + B[3]*np.cos(x[1]*u.deg) + B[4]
@@ -53,10 +53,10 @@ def f4(B, x): ## tempo, sen^2(f), cos^2(f), seno(f)*cos(f), sen(f), cos(f), cons
     return B[0]*(x[0] - 2451544.5) + (B[1]+B[2]*(x[0] - 2451544.5))*np.sin(x[1]*u.deg) + (B[3]+B[4]*(x[0] - 2451544.5))*np.cos(x[1]*u.deg) + B[5]
 
 def f5(B, x): ## a*cos(wt+p), sin(f), cos(f), constante
-    return B[0]*np.cos((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+    return B[0]*np.cos((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]*(np.pi/180)) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
     
 def f6(B, x): ## a*sen(wt+p), sin(f), cos(f), constante
-    return B[0]*np.sin((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
+    return B[0]*np.sin((2*np.pi/(B[1]*365.25))*(x[0] - 2451544.5) + B[2]*(np.pi/180)) + B[3]*np.sin(x[1]*u.deg) + B[4]*np.cos(x[1]*u.deg) + B[5]
 
 
 ############## least square function #################################
@@ -76,7 +76,7 @@ def least(func, x, y, sy=None, beta0=[]):
     
 def residuos(func, par, x, y):
     var = np.sum((y - func(par, x))**2)
-    resid = np.sqrt(var)
+    resid = np.sqrt(var/(len(y)-len(par)))
     return resid
 
 ############## Declinacao ############################################
@@ -123,7 +123,7 @@ plt.ylabel('Offset (mas)')
 plt.legend()
 plt.axhline(0, color='black')
 fig =plt.gcf()
-fig.set_size_inches(20.0,8.0)
+fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('DEC.png',dpi=100, bbox_inches='tight')
 #plt.savefig('DEC.png')
 plt.clf()
@@ -133,9 +133,10 @@ plt.ylim(-500,500)
 plt.xlim(0,360)
 plt.xlabel('Anomalia Verdadeira')
 plt.ylabel('Offset (mas)')
+plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)])
 plt.axhline(0, color='black')
 fig =plt.gcf()
-fig.set_size_inches(20.0,8.0)
+fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('DEC_anom.png',dpi=100, bbox_inches='tight')
 plt.clf()
 
@@ -185,7 +186,7 @@ plt.ylabel('Offset (mas)')
 plt.legend()
 plt.axhline(0, color='black')
 fig = plt.gcf()
-fig.set_size_inches(20.0,8.0)
+fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('RA.png',dpi=100, bbox_inches='tight')
 plt.clf()
 
@@ -194,9 +195,10 @@ plt.ylim(-500,500)
 plt.xlim(0,360)
 plt.xlabel('Anomalia Verdadeira')
 plt.ylabel('Offset (mas)')
+plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)])
 plt.axhline(0, color='black')
 fig =plt.gcf()
-fig.set_size_inches(20.0,8.0)
+fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('RA_anom.png',dpi=100, bbox_inches='tight')
 
 #plt.savefig('RA.png', figsize(10,8))
