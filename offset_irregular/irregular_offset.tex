@@ -18,17 +18,17 @@
 As equações utilizadas são as seguintes e dependem da situação:
 
 \begin{equation}
-p[0]\times \frac{t - 2451544.5}{365.65} + p[1]\times \sin(f) + p[2]\times\cos(f) + p[3],
+F(t,p) = p[0]\times \frac{t - 2451544.5}{365.65} + p[1]\times \sin(f) + p[2]\times\cos(f) + p[3],
 \label{eq:linear}
 \end{equation}
 
 \begin{equation}
-p[0]\times\sin\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
+F(t,p) = p[0]\times\sin\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
 \label{eq:sin}
 \end{equation}
 
 \begin{equation}
-p[0]\times\cos\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
+F(t,p) = p[0]\times\cos\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
 \label{eq:cos}
 \end{equation}
 onde $t$ é o tempo em data juliana, $f$ é a anomalia verdadeira e p[i] são os parâmetros de ajuste onde i é o número do parâmetro.
@@ -37,11 +37,20 @@ A equação \ref{eq:linear} é basicamente uma variação linear com o tempo mai
 
 As equaç\~oes \ref{eq:sin} e \ref{eq:cos} correspondem a uma variação senoidal com o tempo (uma utilizando o seno e outra o cosseno) mais variações senoidais da anomalia verdadeira. Pra maioria dos casos as duas últimas dão o mesmo resultado. p[1] foi colocado de forma a ser o período da oscilação em anos.
 
-Para cada satélite há quatro gráficos, dois para RA e dois para DEC. Dos pares, um é \textit{offset X tempo} com os ajustes pesados em função da dispersão da noite em verde e com peso igual para todos (sem peso) em vermelho. O outro é \textit{offset X anomalia verdadeira}. Além disso, temos tabelas com os valores e erros obtidos para os parâmetros através do método de mínimos quadgrausos.
+Para cada satélite há quatro gráficos, dois para RA e dois para DEC. Dos pares, um é \textit{offset X tempo} com os ajustes. O outro é \textit{offset X anomalia verdadeira}. Além disso, temos tabelas com os valores e erros obtidos para os parâmetros através do método de mínimos quadrados não-linear.
 
-Nos gráficos em função do tempo, as linhas verticais marcam os instantes de anomalia verdadeira igual a zero (periastro).
+Nos gráficos em função do tempo, as linhas verticais marcam os instantes de anomalia verdadeira igual a zero (periastro). A linha verde é o ajuste utilizando $1 / \sigma^{2}$ como peso onde $\sigma$ é a dispersão da noite. A linha vermelha é o ajuste dos offsets onde todos os offsets tem o mesmo peso.
 
-Começo apresentando para os satélites de Júpiter. Primeiro os satélites que são únicos de seu grupo orbital e por fim para o grupo de Himalia.
+Nas tabelas temos os valores derivados para os parâmetros e seus erros a partir dos dois ajustes (com peso e sem peso). Além disso, também mostro o resíduo médio de cada ajuste calculado a partir da seguinte equação:
+
+\begin{equation}
+RM = \frac{\sum\limits_{i=1}^{n}{(x_{i} - F(t_{i},f_{i}))^2}w_{i}}{\sum\limits_{i=1}^{n}{w}_{i}},
+\end{equation}
+onde $x_{i}$ é o offset, F é a função ajustada para tempo $t{i}$ e anomalia verdadeira $f_{i}$ e $w_{i}$ é o peso do offset $i$.
+
+Começo apresentando para os satélites de Júpiter. Primeiro os satélites que são únicos de seu grupo orbital e por fim para o grupo de Himalia. Notem que muitos desses ajustes obtêm como período na senoide do tempo um valor entre 10 e 13 anos. Lembrando que o período da órbita de Júpiter é 11.8 anos. Para Phoebe e Nereida, coloquei como chute inicial para o período 1 ano de forma a tentar obter uma variação de paralaxe da Terra, já que não temos observações suficientes para obter uma senoide cujo período seja da ordem da órbita dos planetas Saturno (29.4) e Netuno (164.8).
+
+Ainda precisamos melhorar os ajustes, talvez limitando o peso para que observações com dispersão muito baixa não esteja sendo superestimada. Outra possibilidade é mudar as funções em relação à anomalia verdadeira e/ou ao tempo.
 
 
 \chapter*{Sinope}
@@ -80,7 +89,7 @@ Residuo & 122 & 97 & mas\\
 
 \section*{Declinação}
 
-\indent \indent Em Declinação, o seno da anomalia verdadeira já tem uma importância maior e que a amplitude do tempo é bem menor que para RA
+\indent \indent Para Declinação também foi utilizada a função 2. Nesse, o seno da anomalia verdadeira tem uma importância maior que para RA e que a amplitude do tempo é bem menor que para RA.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Sinope/DEC.png} 
