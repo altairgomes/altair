@@ -68,15 +68,18 @@ def least(func, x, y, sy=None, beta0=[]):
         mydata = odrpack.RealData(x, y, sy=sy)
     else:
         mydata = odrpack.RealData(x, y)
-    myodr = odrpack.ODR(mydata, linear, beta0=beta0)
+    myodr = odrpack.ODR(mydata, linear, beta0=beta0, maxit=500)
     myodr.set_job(fit_type=2)
     myoutput = myodr.run()
     myoutput.pprint()
     return myodr.output
     
-def residuos(func, par, x, y):
-    var = np.sum((y - func(par, x))**2)
-    resid = np.sqrt(var/(len(y)-len(par)))
+def residuos(func, par, x, y, sy=[]):
+    if not sy == []:
+        var = np.sum(((1/sy)**2)*((y - func(par, x))**2))/np.sum((1/sy)**2)
+    else:
+        var = np.sum(((y - func(par, x))**2)/len(y))
+    resid = np.sqrt(var)
     return resid
 
 ############## Declinacao ############################################
@@ -88,14 +91,14 @@ x = np.vstack([y[0], y[3]])
 print 'Declinacao\n'
 f.write('\nDeclinacao\n')
 
-fun=f5
+fun=f6
 beta0=[50.0, 1.0, 0.0, 1.0, 1.0, 0.0]
 
 ajdewg = least(func=fun, x=x, y=z[1], sy=z[3], beta0=beta0)
 f.write('\nResultados do ajuste com peso:\n')
 for i in np.arange(len(ajdewg.beta)):
     f.write('p[{}]: {} \pm {}\n'.format(i, ajdewg.beta[i], ajdewg.sd_beta[i]))
-resid = residuos(fun, par=ajdewg.beta, x=x, y=z[1])
+resid = residuos(fun, par=ajdewg.beta, x=x, y=z[1], sy=z[3])
 f.write('Residuos: {} mas\n'.format(resid))
 
 ajdenwg = least(func=fun, x=x, y=z[1], beta0=ajdewg.beta)
@@ -157,7 +160,7 @@ ajrawg = least(func=fun, x=x, y=z[0], sy=z[2], beta0=beta0)
 f.write('\nResultados do ajuste com peso:\n')
 for i in np.arange(len(ajrawg.beta)):
     f.write('p[{}]: {} \pm {}\n'.format(i, ajrawg.beta[i], ajrawg.sd_beta[i]))
-resid = residuos(fun, par=ajrawg.beta, x=x, y=z[0])
+resid = residuos(fun, par=ajrawg.beta, x=x, y=z[0], sy=z[2])
 f.write('Residuos: {} mas\n'.format(resid))
 
 ajranwg = least(func=fun, x=x, y=z[0], beta0=ajrawg.beta)

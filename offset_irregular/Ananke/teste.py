@@ -74,9 +74,12 @@ def least(func, x, y, sy=None, beta0=[]):
     myoutput.pprint()
     return myodr.output
     
-def residuos(func, par, x, y):
-    var = np.sum((y - func(par, x))**2)
-    resid = np.sqrt(var/(len(y)-len(par)))
+def residuos(func, par, x, y, sy=[]):
+    if not sy == []:
+        var = np.sum(((1/sy)**2)*((y - func(par, x))**2))/np.sum((1/sy)**2)
+    else:
+        var = np.sum(((y - func(par, x))**2)/len(y))
+    resid = np.sqrt(var)
     return resid
 
 ############## Declinacao ############################################
@@ -95,7 +98,7 @@ ajdewg = least(func=fun, x=x, y=z[1], sy=z[3], beta0=beta0)
 f.write('\nResultados do ajuste com peso:\n')
 for i in np.arange(len(ajdewg.beta)):
     f.write('p[{}]: {} \pm {}\n'.format(i, ajdewg.beta[i], ajdewg.sd_beta[i]))
-resid = residuos(fun, par=ajdewg.beta, x=x, y=z[1])
+resid = residuos(fun, par=ajdewg.beta, x=x, y=z[1], sy=z[3])
 f.write('Residuos: {} mas\n'.format(resid))
 
 ajdenwg = least(func=fun, x=x, y=z[1], beta0=ajdewg.beta)
@@ -105,13 +108,31 @@ for i in np.arange(len(ajdenwg.beta)):
 resid = residuos(fun, par=ajdenwg.beta, x=x, y=z[1])
 f.write('Residuos: {} mas\n'.format(resid))
 
+fun=f6
+beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0]
+
+ajdewg2 = least(func=fun, x=x, y=z[1], sy=z[3], beta0=beta0)
+f.write('\nResultados do ajuste com peso:\n')
+for i in np.arange(len(ajdewg2.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajdewg2.beta[i], ajdewg2.sd_beta[i]))
+resid = residuos(fun, par=ajdewg2.beta, x=x, y=z[1], sy=z[3])
+f.write('Residuos: {} mas\n'.format(resid))
+
+ajdenwg2 = least(func=fun, x=x, y=z[1], beta0=ajdewg2.beta)
+f.write('\nResultados do ajuste sem peso:\n')
+for i in np.arange(len(ajdenwg2.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajdenwg2.beta[i], ajdenwg2.sd_beta[i]))
+resid = residuos(fun, par=ajdenwg2.beta, x=x, y=z[1])
+f.write('Residuos: {} mas\n'.format(resid))
+
 #print p[0]
 #print "Desvio padrao DEC:", np.sqrt(((z[1]/z[3] - (A*p[0]).sum(axis=1))**2).sum())
 
 plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 #plt.plot(y[3], z[1], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, fun(ajdewg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
-plt.plot(eph[0] - 2451544.5, fun(ajdenwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
+plt.plot(eph[0] - 2451544.5, f5(ajdewg.beta, np.vstack([eph[0], eph[1]])), label='Cosseno')
+#plt.plot(eph[0] - 2451544.5, fun(ajdenwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
+plt.plot(eph[0] - 2451544.5, f6(ajdewg2.beta, np.vstack([eph[0], eph[1]])), label='Seno')
 #plt.plot(eph[0] - 2451544.5, f(p[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('DEC = {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(p[0][0], p[0][1], p[0][2]))
 #plt.xlim(0,360)
@@ -124,7 +145,7 @@ plt.legend()
 plt.axhline(0, color='black')
 fig =plt.gcf()
 fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
-fig.savefig('DEC.png',dpi=100, bbox_inches='tight')
+fig.savefig('DEC_cos_sen.png',dpi=100, bbox_inches='tight')
 #plt.savefig('DEC.png')
 plt.clf()
 
@@ -157,7 +178,7 @@ ajrawg = least(func=fun, x=x, y=z[0], sy=z[2], beta0=beta0)
 f.write('\nResultados do ajuste com peso:\n')
 for i in np.arange(len(ajrawg.beta)):
     f.write('p[{}]: {} \pm {}\n'.format(i, ajrawg.beta[i], ajrawg.sd_beta[i]))
-resid = residuos(fun, par=ajrawg.beta, x=x, y=z[0])
+resid = residuos(fun, par=ajrawg.beta, x=x, y=z[0], sy=z[2])
 f.write('Residuos: {} mas\n'.format(resid))
 
 ajranwg = least(func=fun, x=x, y=z[0], beta0=ajrawg.beta)
@@ -167,14 +188,32 @@ for i in np.arange(len(ajranwg.beta)):
 resid = residuos(fun, par=ajranwg.beta, x=x, y=z[0])
 f.write('Residuos: {} mas\n'.format(resid))
 
+fun=f6
+beta0=[200.0, 11.7, 0.0, 1.0, 1.0, 0.0]
+
+ajrawg2 = least(func=fun, x=x, y=z[0], sy=z[2], beta0=beta0)
+f.write('\nResultados do ajuste com peso:\n')
+for i in np.arange(len(ajrawg2.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajrawg2.beta[i], ajrawg2.sd_beta[i]))
+resid = residuos(fun, par=ajrawg2.beta, x=x, y=z[0], sy=z[2])
+f.write('Residuos: {} mas\n'.format(resid))
+
+ajranwg2 = least(func=fun, x=x, y=z[0], beta0=ajrawg2.beta)
+f.write('\nResultados do ajuste sem peso:\n')
+for i in np.arange(len(ajranwg2.beta)):
+    f.write('p[{}]: {} \pm {}\n'.format(i, ajranwg2.beta[i], ajranwg2.sd_beta[i]))
+resid = residuos(fun, par=ajranwg2.beta, x=x, y=z[0])
+f.write('Residuos: {} mas\n'.format(resid))
+
 
 #print q[0]
 #print "Desvio padrao RA:", np.sqrt(((z[0]/z[2] - (B*q[0]).sum(axis=1))**2).sum())
 
 plt.errorbar(y[0] - 2451544.5, z[0], yerr=z[2], fmt='s', label='Offsets')
 #plt.plot(y[3], z[0], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, fun(ajrawg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
-plt.plot(eph[0] - 2451544.5, fun(ajranwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
+plt.plot(eph[0] - 2451544.5, f5(ajrawg.beta, np.vstack([eph[0], eph[1]])), label='Cosseno')
+#plt.plot(eph[0] - 2451544.5, fun(ajranwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
+plt.plot(eph[0] - 2451544.5, f6(ajrawg.beta, np.vstack([eph[0], eph[1]])), label='Seno')
 #plt.plot(eph[0] - 2451544.5, g(q[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('RA = {:.2f}*sen^2(A.V.) + {:.2f}*cos^2(A.V.) + {:.2f}*sen(A.V.)*cos(A.V.) + {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(q[0][0], q[0][1], q[0][2], q[0][3], q[0][4], q[0][5]))
 #plt.xlim(0,360)
@@ -187,7 +226,7 @@ plt.legend()
 plt.axhline(0, color='black')
 fig = plt.gcf()
 fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
-fig.savefig('RA.png',dpi=100, bbox_inches='tight')
+fig.savefig('RA_cos_sen.png',dpi=100, bbox_inches='tight')
 plt.clf()
 
 plt.errorbar(y[3], z[0], yerr=z[2], fmt='s', label='Offsets')

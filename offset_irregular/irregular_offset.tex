@@ -18,17 +18,17 @@
 As equações utilizadas são as seguintes e dependem da situação:
 
 \begin{equation}
-F(t,p) = p[0]\times \frac{t - 2451544.5}{365.65} + p[1]\times \sin(f) + p[2]\times\cos(f) + p[3],
+F(t,f) = p[0]\times \frac{t - 2451544.5}{365.65} + p[1]\times \sin(f) + p[2]\times\cos(f) + p[3],
 \label{eq:linear}
 \end{equation}
 
 \begin{equation}
-F(t,p) = p[0]\times\sin\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
+F(t,f) = p[0]\times\sin\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
 \label{eq:sin}
 \end{equation}
 
 \begin{equation}
-F(t,p) = p[0]\times\cos\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
+F(t,f) = p[0]\times\cos\left(\frac{2\pi}{p[1]}\times \frac{t - 2451544.5}{365.25} + p[2]\right) + p[3]\times\sin(f) + p[4]\times\cos(f) + p[5],
 \label{eq:cos}
 \end{equation}
 onde $t$ é o tempo em data juliana, $f$ é a anomalia verdadeira e p[i] são os parâmetros de ajuste onde i é o número do parâmetro.
@@ -44,16 +44,19 @@ Nos gráficos em função do tempo, as linhas verticais marcam os instantes de a
 Nas tabelas temos os valores derivados para os parâmetros e seus erros a partir dos dois ajustes (com peso e sem peso). Além disso, também mostro o resíduo médio de cada ajuste calculado a partir da seguinte equação:
 
 \begin{equation}
-RM = \frac{\sum\limits_{i=1}^{n}{(x_{i} - F(t_{i},f_{i}))^2}w_{i}}{\sum\limits_{i=1}^{n}{w}_{i}},
+RM = \sqrt{\frac{\sum\limits_{i=1}^{n}{(x_{i} - F(t_{i},f_{i}))^2}w_{i}}{\sum\limits_{i=1}^{n}{w}_{i}}},
 \end{equation}
-onde $x_{i}$ é o offset, F é a função ajustada para tempo $t{i}$ e anomalia verdadeira $f_{i}$ e $w_{i}$ é o peso do offset $i$.
+onde $x_{i}$ é o offset, F é a função ajustada para tempo $t_{i}$ e anomalia verdadeira $f_{i}$ e $w_{i}$ é o peso do offset $i$, $n$ é o númrro total de offsets.
 
 Começo apresentando para os satélites de Júpiter. Primeiro os satélites que são únicos de seu grupo orbital e por fim para o grupo de Himalia. Notem que muitos desses ajustes obtêm como período na senoide do tempo um valor entre 10 e 13 anos. Lembrando que o período da órbita de Júpiter é 11.8 anos. Para Phoebe e Nereida, coloquei como chute inicial para o período 1 ano de forma a tentar obter uma variação de paralaxe da Terra, já que não temos observações suficientes para obter uma senoide cujo período seja da ordem da órbita dos planetas Saturno (29.4) e Netuno (164.8).
 
-Ainda precisamos melhorar os ajustes, talvez limitando o peso para que observações com dispersão muito baixa não esteja sendo superestimada. Outra possibilidade é mudar as funções em relação à anomalia verdadeira e/ou ao tempo.
+Ainda precisamos melhorar os ajustes, talvez limitando o peso para que noites com dispersão muito baixa não crie um erro no ajuste ou eliminando offsets com resíduo maior que 2$\sigma$ do resíduo médio. Outra possibilidade é mudar as funções em relação à anomalia verdadeira e/ou ao tempo.
 
 
 \chapter*{Sinope}
+
+\indent \indent Número total de noites: 36.
+
 \section*{Ascensão Reta}
 
 \indent \indent Para Sinope (RA), o ajuste foi feito utilizando a função \ref{eq:sin}. Vemos pelo gráfico em função do tempo e a tabela que a variação em função da anomalia verdadeira influencia menos que o tempo.\\
@@ -81,7 +84,7 @@ p[2] & -30 $\pm$ 8 & -22 $\pm$ 7 & graus\\
 p[3] & 10 $\pm$ 48 & 44 $\pm$ 37 & mas\\
 p[4] & -15 $\pm$ 31 & -18 $\pm$ 24 & mas\\
 p[5] & -26 $\pm$ 21 & 1 $\pm$ 21 & mas\\
-Residuo & 122 & 97 & mas\\
+Residuo & 91 & 88 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
@@ -89,7 +92,7 @@ Residuo & 122 & 97 & mas\\
 
 \section*{Declinação}
 
-\indent \indent Para Declinação também foi utilizada a função 2. Nesse, o seno da anomalia verdadeira tem uma importância maior que para RA e que a amplitude do tempo é bem menor que para RA.
+\indent \indent Para Declinação também foi utilizada a função \ref{eq:sin}. Nesse, o seno da anomalia verdadeira tem uma importância maior que para RA e que a amplitude do tempo é bem menor que para RA.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Sinope/DEC.png} 
@@ -113,14 +116,19 @@ p[2] & 123 $\pm$ 8 & 129 $\pm$ 23 & graus\\
 p[3] & 69 $\pm$ 11 & 79 $\pm$ 15 & mas\\
 p[4] & -18 $\pm$ 9 & -19 $\pm$ 10 & mas\\
 p[5] & -54 $\pm$ 7 & -43 $\pm$ 8 & mas\\
-Residuo & 48 & 41 & mas\\
+Residuo & 30 & 38 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Pasiphae}
+
+\indent \indent Número total de noites: 65.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Pasiphae/RA.png} 
@@ -144,13 +152,15 @@ p[2] & -39 $\pm$ 7 & -57 $\pm$ 10 & graus\\
 p[3] & 20 $\pm$ 16 & 15 $\pm$ 17 & mas\\
 p[4] & -39 $\pm$ 19 & -16 $\pm$ 19 & mas\\
 p[5] & -17 $\pm$ 12 & -24 $\pm$ 13 & mas\\
-Residuo & 95 & 88 & mas\\
+Residuo & 57 & 84 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \section*{Declinação}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Pasiphae/DEC.png} 
@@ -174,14 +184,19 @@ p[2] & -85 $\pm$ 29 & -110 $\pm$ 45 & graus\\
 p[3] & -30 $\pm$ 14 & -48 $\pm$ 11 & mas\\
 p[4] & 44 $\pm$ 16 & 58 $\pm$ 13 & mas\\
 p[5] & -62 $\pm$ 10 & -67 $\pm$ 9 & mas\\
-Residuo & 66 & 63 & mas\\
+Residuo & 59 & 60 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Ananke}
+
+\indent \indent Número total de noites: 30.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:cos}. A equação com seno dava um período de 2 anos
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Ananke/RA.png} 
@@ -205,7 +220,7 @@ p[2] & 5 $\pm$ 8 & 24 $\pm$ 10 & graus\\
 p[3] & 60 $\pm$ 29 & 44 $\pm$ 39 & mas\\
 p[4] & 152 $\pm$ 37 & 111 $\pm$ 32 & mas\\
 p[5] & -20 $\pm$ 37 & 5 $\pm$ 37 & mas\\
-Residuo & 116 & 92 & mas\\
+Residuo & 71 & 82 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
@@ -213,6 +228,7 @@ Residuo & 116 & 92 & mas\\
 
 \section*{Declinação}
 
+Foi utilizada a equação \ref{eq:cos}. A equação com o seno dava um período de 2 anos
 
 \begin{figure}[h]
 \begin{centering}
@@ -238,14 +254,19 @@ p[2] & 45 $\pm$ 5 & 31 $\pm$ 18 & graus\\
 p[3] & 9 $\pm$ 11 & 18 $\pm$ 18 & mas\\
 p[4] & 260 $\pm$ 10 & 194 $\pm$ 19 & mas\\
 p[5] & -22 $\pm$ 13 & -34 $\pm$ 16 & mas\\
-Residuo & 69 & 51 & mas\\
+Residuo & 23 & 46 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Carme}
+
+\indent \indent Número total de noites: 44.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:cos}. A equação com o seno não conseguia ajustar bem o período do tempo com o peso. encontrava 33 $\pm$ 43.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Carme/RA.png} 
@@ -269,13 +290,15 @@ p[2] & 1 $\pm$ 8 & -24 $\pm$ 16 & graus\\
 p[3] & 104 $\pm$ 16 & 33 $\pm$ 22 & mas\\
 p[4] & -17 $\pm$ 20 & 0 $\pm$ 24 & mas\\
 p[5] & -4 $\pm$ 15 & 0 $\pm$ 17 & mas\\
-Residuo & 107 & 90 & mas\\
+Residuo & 45 & 83 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \section*{Declinação}
+
+Foi utilizada a equação \ref{eq:linear}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Carme/DEC.png} 
@@ -297,14 +320,19 @@ p[0] & 12 $\pm$ 1 & 10 $\pm$ 2 & mas/ano\\
 p[1] & -44 $\pm$ 9 & -4 $\pm$ 12 & mas\\
 p[2] & 155 $\pm$ 9 & 140 $\pm$ 12 & mas\\
 p[3] & -55 $\pm$ 9 & -57 $\pm$ 11 & mas\\
-Residuo & 58 & 49 & mas\\
+Residuo & 29 & 47 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Elara}
+
+\indent \indent Número total de noites: 65.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:sin}
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Elara/RA.png} 
@@ -328,13 +356,15 @@ p[2] & -41 $\pm$ 26 & -82 $\pm$ 24 & graus\\
 p[3] & 33 $\pm$ 13 & 27 $\pm$ 18 & mas\\
 p[4] & -49 $\pm$ 23 & -57 $\pm$ 21 & mas\\
 p[5] & -7 $\pm$ 14 & -23 $\pm$ 15 & mas\\
-Residuo & 110 & 103 & mas\\
+Residuo & 66 & 98 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \section*{Declinação}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Elara/DEC.png} 
@@ -358,14 +388,19 @@ p[2] & 33 $\pm$ 27 & 23 $\pm$ 24 & graus\\
 p[3] & 32 $\pm$ 8 & 26 $\pm$ 10 & mas\\
 p[4] & 29 $\pm$ 8 & 42 $\pm$ 11 & mas\\
 p[5] & -37 $\pm$ 7 & -31 $\pm$ 8 & mas\\
-Residuo & 60 & 58 & mas\\
+Residuo & 41 & 55 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Himalia}
+
+\indent \indent Número total de noites: 98.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Himalia/RA.png} 
@@ -389,13 +424,15 @@ p[2] & 5 $\pm$ 46 & 12 $\pm$ 41 & graus\\
 p[3] & 0 $\pm$ 21 & -17 $\pm$ 21 & mas\\
 p[4] & -55 $\pm$ 17 & -36 $\pm$ 21 & mas\\
 p[5] & -49 $\pm$ 36 & -32 $\pm$ 14 & mas\\
-Residuo & 144 & 140 & mas\\
+Residuo & 108 & 136 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \section*{Declinação}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Himalia/DEC.png} 
@@ -419,14 +456,19 @@ p[2] & 76 $\pm$ 23 & 3 $\pm$ 29 & graus\\
 p[3] & 15 $\pm$ 6 & 19 $\pm$ 8 & mas\\
 p[4] & 7 $\pm$ 5 & 3 $\pm$ 7 & mas\\
 p[5] & -7 $\pm$ 4 & -10 $\pm$ 5 & mas\\
-Residuo & 55 & 53 & mas\\
+Residuo & 34 & 51 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Lysithea}
+
+\indent \indent Número total de noites: 29.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:cos}. A equação com o seno diverge muito com período de mais de 400 anos no tempo para o ajuste com peso.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Lysithea/RA.png} 
@@ -450,13 +492,15 @@ p[2] & 31 $\pm$ 21 & 132 $\pm$ 96 & graus\\
 p[3] & 67 $\pm$ 27 & 12 $\pm$ 28 & mas\\
 p[4] & -38 $\pm$ 33 & -24 $\pm$ 26 & mas\\
 p[5] & -16 $\pm$ 28 & 79 $\pm$ 370 & mas\\
-Residuo & 103 & 82 & mas\\
+Residuo & 54 & 73 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \section*{Declinação}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Lysithea/DEC.png} 
@@ -480,14 +524,19 @@ p[2] & -77 $\pm$ 16 & -57 $\pm$ 29 & graus\\
 p[3] & 85 $\pm$ 14 & 72 $\pm$ 17 & mas\\
 p[4] & -12 $\pm$ 15 & 11 $\pm$ 16 & mas\\
 p[5] & -8 $\pm$ 14 & -19 $\pm$ 15 & mas\\
-Residuo & 55 & 52 & mas\\
+Residuo & 32 & 46 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Phoebe}
+
+\indent \indent Número total de noites: 133.
+
 \section*{Ascensão Reta}
+
+Foi utilizada a equação \ref{eq:sin}
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Phoebe/RA.png} 
@@ -511,13 +560,15 @@ p[2] & 36 $\pm$ 49 & 112 $\pm$ 31 & graus\\
 p[3] & -8 $\pm$ 7 & -26 $\pm$ 6 & mas\\
 p[4] & -12 $\pm$ 8 & 1 $\pm$ 5 & mas\\
 p[5] & 2 $\pm$ 9 & 8 $\pm$ 8 & mas\\
-Residuo & 48 & 44 & mas\\
+Residuo & 49 & 43 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \section*{Declinação}
+
+Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
 \includegraphics[scale=0.45]{Phoebe/DEC.png} 
@@ -535,19 +586,24 @@ Residuo & 48 & 44 & mas\\
 \hline
 Parâmetro & Com peso & Sem peso & Unidade\tabularnewline
 \hline
-p[0] & 22 $\pm$ 13 & 20 $\pm$ 8 & mas\\
+p[0] & 22 $\pm$ 14 & 20 $\pm$ 8 & mas\\
 p[1] & 0.98 $\pm$ 0.01 & 0.95 $\pm$ 0.01 & anos\\
-p[2] & -29 $\pm$ 49 & -127 $\pm$ 27 & graus\\
-p[3] & 12 $\pm$ 12 & 16 $\pm$ 7 & mas\\
-p[4] & 3 $\pm$ 10 & 10 $\pm$ 6 & mas\\
-p[5] & -13 $\pm$ 8 & -9 $\pm$ 5 & mas\\
-Residuo & 55 & 52 & mas\\
+p[2] & 26 $\pm$ 43 & -37 $\pm$ 27 & graus\\
+p[3] & 17 $\pm$ 12 & 16 $\pm$ 7 & mas\\
+p[4] & 2 $\pm$ 10 & 10 $\pm$ 6 & mas\\
+p[5] & -16 $\pm$ 8 & -9 $\pm$ 5 & mas\\
+Residuo & 70 & 51 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
 \end{table}
 
 \chapter*{Nereida}
+
+\indent \indent Número total de noites: 79.
+
+Não mostro nenhum ajuste pois não encontrei nenhuma função com ajuste razoável. Isso provavelmente se deve pelo fato de não haver observações na metade próxima ao periastro.
+
 \section*{Ascensão Reta}
 
 \begin{figure}[h]
