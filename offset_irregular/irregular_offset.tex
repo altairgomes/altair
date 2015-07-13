@@ -8,6 +8,9 @@
 \usepackage{graphicx}
 \title{Relatório sobre o ajuste dos offsets dos satélites irregulares}
 \author{Altair Ramos}
+
+\newcommand{\tab}[1]{\hspace{.2\textwidth}\rlap{#1}}
+
 \begin{document}
 \maketitle
 
@@ -52,6 +55,40 @@ Começo apresentando para os satélites de Júpiter. Primeiro os satélites que 
 
 Ainda precisamos melhorar os ajustes, talvez limitando o peso para que noites com dispersão muito baixa não crie um erro no ajuste ou eliminando offsets com resíduo maior que 2$\sigma$ do resíduo médio. Outra possibilidade é mudar as funções em relação à anomalia verdadeira e/ou ao tempo.
 
+Abaixo os par\^ametros orbitais dos sat\'elites de J\'upiter
+
+\begin{table}[h!]
+\caption{\label{Tab: Sinope-RA} Resultados dos ajustes para Sinope - RA}
+\begin{centering}
+\begin{tabular}{ccccccccccc}
+\hline
+\hline
+Sat.	 &a &	e &	w	&M&	i&	node &	n&	P&	$P_{w}$&	$P_{node}$\\
+&$\times10^{3}$(km)&	&(deg)&	(deg)&	(deg)&	(deg)&	(deg/day)&	(days)&	(yr)	&(yr)	\\
+\hline
+Himalia&	11.460&	0.15&	331&	66&	28&	64&	1.43&	250.56&	139.38&	292.57\\
+Elara& 	11.740&	0.21&	142&	330&	27&	115&	1.38&	259.64&	128.07&	265.30\\
+Lysithea&	11.717&	0.11&	49&	330&	27&	5&	1.38&	259.20&	131.19&	292.04\\
+Pasiphae	&23.629&	0.40&	169&	279&	151&	314&	0.48&	743.61&	81.20&	81.17\\
+Sinope&	23.942&	0.25&	354&	165&	158&	309&	0.47&	758.89&	88.72&	87.40\\
+Carme&	23.401&	0.25&	26&	233&	164&	114&	0.49&	734.17&	80.98&	88.32\\
+Ananke&	21.254&	0.23&	95&	253&	148&	15&	0.57&	629.80&	144.92&	110.12\\
+\hline 
+\end{tabular} 
+\par\end{centering}
+\end{table}
+
+a: Semi-major Axis (mean value)\\
+\indent e: Eccentricity (mean value)\\
+\indent w: Argument of periapsis (mean value)\\
+\indent M: Mean anomaly (mean value)\\
+\indent i: Inclination with respect to the reference plane: ecliptic, ICRF, or local Laplace (mean value)\\
+\indent node: Longitude of the ascending node (mean value) measured from the node of the reference plane on the ICRF equator\\
+\indent n: Longitude rate (mean value)\\
+\indent P: Sidereal period (mean value)\\
+\indent $P_{w}$: Argument of periapsis precession period (mean value)\\
+\indent $P_{node}$: Longitude of the ascending node precession period (mean value)
+
 
 \chapter*{Sinope}
 
@@ -62,10 +99,12 @@ Ainda precisamos melhorar os ajustes, talvez limitando o peso para que noites co
 \indent \indent Para Sinope (RA), o ajuste foi feito utilizando a função \ref{eq:sin}. Vemos pelo gráfico em função do tempo e a tabela que a variação em função da anomalia verdadeira influencia menos que o tempo.\\
 
 \begin{figure}[h]
+\caption{Offset x tempo - Sinope - Ascensão Reta}
 \includegraphics[scale=0.45]{Sinope/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Sinope - Ascensão Reta}
 \includegraphics[scale=0.45]{Sinope/RA_anom.png}  
 \end{figure}
 
@@ -95,10 +134,12 @@ Residuo & 91 & 88 & mas\\
 \indent \indent Para Declinação também foi utilizada a função \ref{eq:sin}. Nesse, o seno da anomalia verdadeira tem uma importância maior que para RA e que a amplitude do tempo é bem menor que para RA.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Sinope - Declinação}
 \includegraphics[scale=0.45]{Sinope/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Sinope - Declinação}
 \includegraphics[scale=0.45]{Sinope/DEC_anom.png}  
 \end{figure}
 
@@ -131,10 +172,12 @@ Residuo & 30 & 38 & mas\\
 Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Pasiphae - Ascensão Reta}
 \includegraphics[scale=0.45]{Pasiphae/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Pasiphae - Ascensão Reta}
 \includegraphics[scale=0.45]{Pasiphae/RA_anom.png}  
 \end{figure}
 
@@ -163,10 +206,12 @@ Residuo & 57 & 84 & mas\\
 Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Pasiphae - Declinação}
 \includegraphics[scale=0.45]{Pasiphae/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Pasiphae - Declinação}
 \includegraphics[scale=0.45]{Pasiphae/DEC_anom.png}  
 \end{figure}
 
@@ -196,31 +241,41 @@ Residuo & 59 & 60 & mas\\
 
 \section*{Ascensão Reta}
 
-Foi utilizada a equação \ref{eq:cos}. A equação com seno dava um período de 2 anos
+\indent \indent Foi utilizada a equação \ref{eq:cos}. Na fig. 10 mostro o gráfico com os ajustes com o Cosseno (eq \ref{eq:cos}) e Seno (eq \ref{eq:sin}) juntos com peso. A tabela também mostra os valores para os dois ajustes. Devido ao pouco número de pontos e estarem pouco distribuídos ao longo da anomalia verdadeira os dois ajustes são razoáveis.
+
+Utilizando o cosseno do tempo, ele obtém um período do tempo próximo ao da órbita de Júpiter e as amplitudes do seno e do cosseno da anomalia verdadeira são significativos. Utilizando o seno do tempo, o período do tempo encontrado é mais baixo, da ordem de um quarto da órbita de Júpiter, mas o valor da amplitude do cosseno da anomalia verdadeira é menor que seu erro mostrando que ele não é significativo.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Ananke - Ascensão Reta}
 \includegraphics[scale=0.45]{Ananke/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x tempo - Ananke - Ascensão Reta - Seno e Cosseno do tempo}
+\includegraphics[scale=0.45]{Ananke/RA_cos_sen.png} 
+\end{figure}
+
+\begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Ananke - Ascensão Reta}
 \includegraphics[scale=0.45]{Ananke/RA_anom.png}  
 \end{figure}
 
 \begin{table}[h!]
 \caption{\label{Tab: Ananke-RA} Resultados dos ajustes para Ananke - RA}
 \begin{centering}
-\begin{tabular}{cccc}
+\begin{tabular}{cccccc}
 \hline
 \hline
-Parâmetro & Com peso & Sem peso & Unidade\tabularnewline
+ & \multicolumn{2}{c}{Cosseno} & \multicolumn{2}{c}{Seno} & Unidade\tabularnewline
+Parâmetro & Com peso & Sem peso & Com peso & Sem peso & Unidade\tabularnewline
 \hline
-p[0] & 246 $\pm$ 39 & 160 $\pm$ 43 & mas\\
-p[1] & 10.8 $\pm$ 0.5 & 12.0 $\pm$ 0.9 & anos\\
-p[2] & 5 $\pm$ 8 & 24 $\pm$ 10 & graus\\
-p[3] & 60 $\pm$ 29 & 44 $\pm$ 39 & mas\\
-p[4] & 152 $\pm$ 37 & 111 $\pm$ 32 & mas\\
-p[5] & -20 $\pm$ 37 & 5 $\pm$ 37 & mas\\
-Residuo & 71 & 82 & mas\\
+p[0] & 246 $\pm$ 39 & 160 $\pm$ 43 & 255 $\pm$ 43 & 202 $\pm$ 51 & mas\\
+p[1] & 10.8 $\pm$ 0.5 & 12.0 $\pm$ 0.9 & 2.94 $\pm$ 0.03 & 2.92 $\pm$ 0.04 & anos\\
+p[2] & 5 $\pm$ 8 & 24 $\pm$ 10 & -6 $\pm$ 8 & -12 $\pm$ 12 & graus\\
+p[3] & 60 $\pm$ 29 & 44 $\pm$ 39 & -106 $\pm$ 27 & -67 $\pm$ 39 & mas\\
+p[4] & 152 $\pm$ 37 & 111 $\pm$ 32 & 53 $\pm$ 57 & 39 $\pm$ 56 & mas\\
+p[5] & -20 $\pm$ 37 & 5 $\pm$ 37 & 106 $\pm$ 18 &  103 $\pm$ 28 & mas\\
+Residuo & 71 & 82 & 47 & 77 & mas\\
 \hline 
 \end{tabular} 
 \par\end{centering}
@@ -228,15 +283,15 @@ Residuo & 71 & 82 & mas\\
 
 \section*{Declinação}
 
-Foi utilizada a equação \ref{eq:cos}. A equação com o seno dava um período de 2 anos
+Foi utilizada a equação \ref{eq:cos}. A equação com o seno dava um período negativo.
 
 \begin{figure}[h]
-\begin{centering}
+\caption{Offset x tempo - Ananke - Declinação}
 \includegraphics[scale=0.45]{Ananke/DEC.png}
-\end{centering}
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Ananke - Declinação}
 \includegraphics[scale=0.45]{Ananke/DEC_anom.png}  
 \end{figure}
 
@@ -269,10 +324,12 @@ Residuo & 23 & 46 & mas\\
 Foi utilizada a equação \ref{eq:cos}. A equação com o seno não conseguia ajustar bem o período do tempo com o peso. encontrava 33 $\pm$ 43.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Carme - Ascensão Reta}
 \includegraphics[scale=0.45]{Carme/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Carme - Ascensão Reta}
 \includegraphics[scale=0.45]{Carme/RA_anom.png}  
 \end{figure}
 
@@ -298,13 +355,15 @@ Residuo & 45 & 83 & mas\\
 
 \section*{Declinação}
 
-Foi utilizada a equação \ref{eq:linear}.
+Foi utilizada a equação \ref{eq:linear}. As equações com seno ou cosseno do tempo divergiam muito. A linear com o tempo foi a melhor.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Carme - Declinação}
 \includegraphics[scale=0.45]{Carme/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Carme - Declinação}
 \includegraphics[scale=0.45]{Carme/DEC_anom.png}  
 \end{figure}
 
@@ -335,10 +394,12 @@ Residuo & 29 & 47 & mas\\
 Foi utilizada a equação \ref{eq:sin}
 
 \begin{figure}[h]
+\caption{Offset x tempo - Elara - Ascensão Reta}
 \includegraphics[scale=0.45]{Elara/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Elara - Ascensão Reta}
 \includegraphics[scale=0.45]{Elara/RA_anom.png}  
 \end{figure}
 
@@ -367,10 +428,12 @@ Residuo & 66 & 98 & mas\\
 Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Elara - Declinação}
 \includegraphics[scale=0.45]{Elara/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Elara - Declinação}
 \includegraphics[scale=0.45]{Elara/DEC_anom.png}  
 \end{figure}
 
@@ -400,13 +463,15 @@ Residuo & 41 & 55 & mas\\
 
 \section*{Ascensão Reta}
 
-Foi utilizada a equação \ref{eq:sin}.
+Foi utilizada a equação \ref{eq:sin}. Achei estranho a divergência para as observações mais recentes. Assim, a versão sem peso tem um período do tempo próximo ao de outros satélites.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Himalia - Ascensão Reta}
 \includegraphics[scale=0.45]{Himalia/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Himalia - Ascensão Reta}
 \includegraphics[scale=0.45]{Himalia/RA_anom.png}  
 \end{figure}
 
@@ -435,10 +500,12 @@ Residuo & 108 & 136 & mas\\
 Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Himalia - Declinação}
 \includegraphics[scale=0.45]{Himalia/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Himalia - Declinação}
 \includegraphics[scale=0.45]{Himalia/DEC_anom.png}  
 \end{figure}
 
@@ -471,10 +538,12 @@ Residuo & 34 & 51 & mas\\
 Foi utilizada a equação \ref{eq:cos}. A equação com o seno diverge muito com período de mais de 400 anos no tempo para o ajuste com peso.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Lysithea - Ascensão Reta}
 \includegraphics[scale=0.45]{Lysithea/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Lysithea - Ascensão Reta}
 \includegraphics[scale=0.45]{Lysithea/RA_anom.png}  
 \end{figure}
 
@@ -503,10 +572,12 @@ Residuo & 54 & 73 & mas\\
 Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Lysithea - Declinação}
 \includegraphics[scale=0.45]{Lysithea/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Lysithea - Declinação}
 \includegraphics[scale=0.45]{Lysithea/DEC_anom.png}  
 \end{figure}
 
@@ -539,10 +610,12 @@ Residuo & 32 & 46 & mas\\
 Foi utilizada a equação \ref{eq:sin}
 
 \begin{figure}[h]
+\caption{Offset x tempo - Phoebe - Ascensão Reta}
 \includegraphics[scale=0.45]{Phoebe/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Phoebe - Ascensão Reta}
 \includegraphics[scale=0.45]{Phoebe/RA_anom.png}  
 \end{figure}
 
@@ -571,10 +644,12 @@ Residuo & 49 & 43 & mas\\
 Foi utilizada a equação \ref{eq:sin}.
 
 \begin{figure}[h]
+\caption{Offset x tempo - Phoebe - Declinação}
 \includegraphics[scale=0.45]{Phoebe/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Phoebe - Declinação}
 \includegraphics[scale=0.45]{Phoebe/DEC_anom.png}  
 \end{figure}
 
@@ -607,10 +682,12 @@ Não mostro nenhum ajuste pois não encontrei nenhuma função com ajuste razoá
 \section*{Ascensão Reta}
 
 \begin{figure}[h]
+\caption{Offset x tempo - Nereida - Ascensão Reta}
 \includegraphics[scale=0.45]{Nereida/RA.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Nereida - Ascensão Reta}
 \includegraphics[scale=0.45]{Nereida/RA_anom.png}  
 \end{figure}
 
@@ -637,10 +714,12 @@ Não mostro nenhum ajuste pois não encontrei nenhuma função com ajuste razoá
 \section*{Declinação}
 
 \begin{figure}[h]
+\caption{Offset x tempo - Nereida - Declinação}
 \includegraphics[scale=0.45]{Nereida/DEC.png} 
 \end{figure}
 
 \begin{figure}[h]
+\caption{Offset x Anomalia Verdadeira - Nereida - Declinação}
 \includegraphics[scale=0.45]{Nereida/DEC_anom.png}  
 \end{figure}
 

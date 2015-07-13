@@ -22,7 +22,7 @@ n = eph[1]-m
 j = np.where(n < -100.0)
 
 r = []
-for i in np.arange(1995,2016,1):
+for i in np.arange(1992,2016,1):
     r.append(Time('{}-01-01 00:00:00'.format(i), format='iso').jd - 2451544.5)
 
 print r
@@ -121,7 +121,7 @@ plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 plt.vlines(eph[0][j] - 2451544.5, -500, 500)
 plt.ylim(-500,500)
 plt.xlabel('Tempo')
-plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2016,1)])
+plt.xticks(r, ['{}'.format(i) for i in np.arange(1992,2016,1)])
 plt.ylabel('Offset (mas)')
 plt.legend()
 plt.axhline(0, color='black')
@@ -184,7 +184,7 @@ plt.errorbar(y[0] - 2451544.5, z[0], yerr=z[2], fmt='s', label='Offsets')
 plt.vlines(eph[0][j] - 2451544.5, -500, 500)
 plt.ylim(-500,500)
 plt.xlabel('Tempo')
-plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2016,1)])
+plt.xticks(r, ['{}'.format(i) for i in np.arange(1992,2016,1)])
 plt.ylabel('Offset (mas)')
 plt.legend()
 plt.axhline(0, color='black')
