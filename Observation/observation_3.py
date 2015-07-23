@@ -389,12 +389,11 @@ class Observation(object):
             obs = self.obs[self.instants[i,0].iso]
             output.write(self.titles[i])
             if len(obs['names']) > 0:
-                a = '\n\n' + np.char.array(obs['names']) + obs['comments'] + '\n\tRA: ' + obs['ra'] + '\tDEC: ' + obs['dec'] + '\n\tHeight: ' + obs['height'] + \
-' deg\n\tCulmination: ' + obs['culmination'] + ' LT\n\tTime left to reach min height: ' + obs['time_left'] + obs['rest']
+                a = '\nRA: ' + obs['ra'] + ', DEC: ' + obs['dec'] + ', Height: ' + obs['height'] + ', Tleft: ' + obs['time_left'] + ' -- ' + np.char.array(obs['names']) + obs['comments']
                 for j in a:
                     output.write(j)
         self.resume_night()
-        output.write('\n---Observability of the Targets----------------------------------------------------------------\n')
+        output.write('\n\n---Observability of the Targets----------------------------------------------------------------\n')
         for i in self.night[0]:
             output.write(i)
         output.close()
@@ -409,9 +408,10 @@ class Observation(object):
         f.write(a)
         f.close()
         
-    def chart(self, size=None, force_reg=False):
+    def chart(self, size=None, server='eso', force_reg=False):
         """
         """
+        dss = {'eso': '-dsseso', 'sao': '-dsssao'}
         if size == None:
             size = self.limdist.to(u.arcmin).value
         if not os.path.isfile('ds9.reg') or force_reg == True:
@@ -427,22 +427,28 @@ class Observation(object):
             p = p + 1
             if p == 1:
                 key = self.obs.keys()[0]
-                names = self.obs[key]['names']
                 ra, dec = self.obs[key]['ra'], self.obs[key]['dec']
+                names = np.concatenate((['List all objects'], self.obs[key]['names']))
             elif p == 2:
-                names = self.samefov['names']
-                ra, dec = text_coord(self.samefov['coords'])
+                if hasattr(self, 'samefov'):
+                    ra, dec = text_coord(self.samefov['coords'])
+                    names = np.concatenate((['List all objects'], self.samefov['names']))
+                else:
+                    continue
             elif p == 3:
-                names = self.names
-                ra, dec = text_coord(self.coords)
+                if hasattr(self, 'coords'):
+                    ra, dec = text_coord(self.coords)
+                    names = np.concatenate((['Exit'], self.names))
+                else:
+                    print "There is no coordinates to show"
+                    return
             else:
                 return
-            names = np.concatenate((['List all objects'], names))
             print '\n'
             for i in np.arange(len(names)):
                 print '{}: {}'.format(i, names[i])
             a = input('Digite o numero referente ao alvo: ')
-        os.system('ds9 -dsseso size {} {} -dsseso coord {} {} -region ds9.reg'.format(size, size, ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
+        os.system('ds9 {} size {} {} {} coord {} {} -region ds9.reg'.format(dss[server], size, size, dss[server], ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
     def show_text(self):
         k = self.instants[:,0].iso
@@ -453,8 +459,9 @@ class Observation(object):
                 print '{}: {} LT'.format(l, k[l])
             i = input('Digite o numero da data que deseja ver: ')
         j = k[i]
-        a = '\n\n' + np.char.array(self.obs[j]['names']) + self.obs[j]['comments'] + '\n\tRA: ' + self.obs[j]['ra'] + '\tDEC: ' + self.obs[j]['dec'] + '\n\tHeight: ' + self.obs[j]['height'] + \
-' deg\n\tCulmination: ' + self.obs[j]['culmination'] + ' LT\n\tTime left to reach min height: ' + self.obs[j]['time_left'] + self.obs[j]['rest']
+        a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + ' -- ' + np.char.array(self.obs[j]['names']) + self.obs[j]['comments']
+#        a = '\n\n' + np.char.array(self.obs[j]['names']) + self.obs[j]['comments'] + '\n\tRA: ' + self.obs[j]['ra'] + '\tDEC: ' + self.obs[j]['dec'] + '\n\tHeight: ' + self.obs[j]['height'] + \
+#' deg\n\tCulmination: ' + self.obs[j]['culmination'] + ' LT\n\tTime left to reach min height: ' + self.obs[j]['time_left'] + self.obs[j]['rest']
         b = self.titles[i]
         for i in a:
             b = b + i
@@ -466,36 +473,37 @@ class Observation(object):
         elif hasattr(self, 'obs'):
             p=0
         elif hasattr(self, 'samefov'):
-            p=1
+            p =1
         else:
             p=2
         a = 0
         while a == 0:
             p = p + 1
             if p == 0:
-                names = self.observed
+                names = np.concatenate((self.observed))
             elif p == 1:
                 key = self.obs.keys()[0]
-                names = self.obs[key]['names']
                 ra, dec = self.obs[key]['ra'], self.obs[key]['dec']
+                names = np.concatenate((['List all objects'], self.obs[key]['names']))
             elif p == 2:
-                names = self.samefov['names']
-                ra, dec = text_coord(self.samefov['coords'])
+                if hasattr(self, 'samefov'):
+                    ra, dec = text_coord(self.samefov['coords'])
+                    names = np.concatenate((['List all objects'], self.samefov['names']))
+                else:
+                    continue
             elif p == 3:
-                names = self.names
-                ra, dec = text_coord(self.coords)
+                if hasattr(self, 'coords'):
+                    ra, dec = text_coord(self.coords)
+                    names = np.concatenate((['Exit'], self.names))
+                else:
+                    print "There is no coordinates to show"
+                    return
             else:
                 return
-            names = np.concatenate((['List all objects'], names))
             print '\n'
-            if edit == False:
-                for i in np.arange(len(names)):
-                    print '{}: {}'.format(i, names[i])
-                a = input('Digite o numero referente ao alvo: ')
-            else:
-                for i in np.arange(len(names))[1:]:
-                    print '{}: {}'.format(i, names[i])
-                a = input('Digite o numero referente ao alvo: ')
+            for i in np.arange(len(names)):
+                print '{}: {}'.format(i, names[i])
+            a = input('Digite o numero referente ao alvo: ')
         if edit == False:
             if not hasattr(self, 'observed'):
                 self.observed = [names[a]]
