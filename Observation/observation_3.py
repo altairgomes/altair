@@ -312,7 +312,11 @@ class Observation(object):
                     a = a + k + ' + '
                 a = a + self.names[i][-1]
                 midobj.append(a)
-                midcomment.append('')
+                b = ''
+                for k in self.comments[i][:-1]:
+                    b = b + k + ' + '
+                b = b + self.comments[i][-1]
+                midcomment.append(b)
             else:
                 midobj.append(self.names[i][0])
                 midcoord.append(self.coords[i][0])
@@ -356,17 +360,17 @@ class Observation(object):
             for j in alwaysup:
                 m = np.where(q == j)
                 self.obs[instants[i,0].iso]['time_left'][m] = np.char.array('Always up')
-            if hasattr(self, 'samefov'):
-                for t in np.arange(len(q)):
-                    p = q[t]
-                    if len(self.samefov['fov'][p]) == 1:
-                        continue
-                    g = ''
-                    for z in self.samefov['fov'][p]:
-                        ra1, dec1 = text_coord(self.coords[z])
-                        g = g + '\n\t\t' + self.names[z] + ' (' + np.char.array(self.comments[z]) + ')\n\t\t  RA: ' + ra1 + '\tDEC: ' + dec1
-                    self.obs[instants[i,0].iso]['rest'][t] = g[0]
-                    self.obs[instants[i,0].iso]['comments'][t] = ''
+#            if hasattr(self, 'samefov'):
+#                for t in np.arange(len(q)):
+#                    p = q[t]
+#                    if len(self.samefov['fov'][p]) == 1:
+#                        continue
+#                    g = ''
+#                    for z in self.samefov['fov'][p]:
+#                        ra1, dec1 = text_coord(self.coords[z])
+#                        g = g + '\n\t\t' + self.names[z] + ' (' + np.char.array(self.comments[z]) + ')\n\t\t  RA: ' + ra1 + '\tDEC: ' + dec1
+#                    self.obs[instants[i,0].iso]['rest'][t] = g[0]
+#                    self.obs[instants[i,0].iso]['comments'][t] = ''
 
     
     def resume_night(self):
@@ -384,12 +388,13 @@ class Observation(object):
         #### imprime os dados de cada objeto para cada instante ####
         output = open(nome, 'w')
         output.write('Observational Plan to the night: {}\n\n'.format(self.instants[0][0].iso.split(' ')[0]))
-        output.write('Latitude: {}  Longitude: {}\nMinimun height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
+        output.write('Latitude: {}  Longitude: {}\nMinimum height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
+        output.write('Height: Height above the horizons (deg)\nTleft: Time left to reach minimum height (hh:mm)\n\n')
         for i in np.arange(len(self.instants)):
             obs = self.obs[self.instants[i,0].iso]
             output.write(self.titles[i])
             if len(obs['names']) > 0:
-                a = '\nRA: ' + obs['ra'] + ', DEC: ' + obs['dec'] + ', Height: ' + obs['height'] + ', Tleft: ' + obs['time_left'] + ' -- ' + np.char.array(obs['names']) + obs['comments']
+                a = '\nRA: ' + obs['ra'] + ', DEC: ' + obs['dec'] + ', Height: ' + obs['height'] + ', Tleft: ' + obs['time_left'] + ' -- ' + np.char.array(obs['names']) + ' ' + obs['comments']
                 for j in a:
                     output.write(j)
         self.resume_night()
@@ -459,9 +464,7 @@ class Observation(object):
                 print '{}: {} LT'.format(l, k[l])
             i = input('Digite o numero da data que deseja ver: ')
         j = k[i]
-        a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + ' -- ' + np.char.array(self.obs[j]['names']) + self.obs[j]['comments']
-#        a = '\n\n' + np.char.array(self.obs[j]['names']) + self.obs[j]['comments'] + '\n\tRA: ' + self.obs[j]['ra'] + '\tDEC: ' + self.obs[j]['dec'] + '\n\tHeight: ' + self.obs[j]['height'] + \
-#' deg\n\tCulmination: ' + self.obs[j]['culmination'] + ' LT\n\tTime left to reach min height: ' + self.obs[j]['time_left'] + self.obs[j]['rest']
+        a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + ' -- ' + np.char.array(self.obs[j]['names']) + ' ' + self.obs[j]['comments']
         b = self.titles[i]
         for i in a:
             b = b + i
