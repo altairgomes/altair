@@ -15,7 +15,7 @@ alt_formatter = lambda x: "%.1f" %x
 int_formatter = lambda x: "%02d" %x
 int2_formatter = lambda x: "%+03d" %x
 
-def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd'):
+def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd', skiprows=0):
     """
     Parameters
     ----------
@@ -36,7 +36,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
     if name_col != None:
         if type(name_col) not in [list, tuple, np.ndarray]:
             name_col = [name_col]
-        nomes = np.loadtxt(datafile, usecols=(name_col), unpack=True, dtype ='S30', ndmin=1)
+        nomes = np.loadtxt(datafile, skiprows=skiprows, usecols=(name_col), unpack=True, dtype ='S30', ndmin=1)
         if len(name_col) > 1:
             nome = nomes[0]
             for i in np.arange(len(name_col))[1:]:
@@ -48,7 +48,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
     if coord_col != None:
         if type(coord_col) not in [list, tuple, np.ndarray]:
             coord_col = [coord_col]
-        coords = np.loadtxt(datafile, usecols=(coord_col), unpack=True, dtype ='S20', ndmin=1)
+        coords = np.loadtxt(datafile, skiprows=skiprows, usecols=(coord_col), unpack=True, dtype ='S20', ndmin=1)
         coor = coords[0]
         for i in np.arange(len(coord_col))[1:]:
             coor = np.core.defchararray.add(coor, ' ')
@@ -58,7 +58,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
     if comment_col != None:
         if type(comment_col) not in [list, tuple, np.ndarray]:
             comment_col = [comment_col]
-        comments = np.loadtxt(datafile, usecols=(comment_col), unpack=True, dtype ='S30', ndmin=1)
+        comments = np.loadtxt(datafile, skiprows=skiprows, usecols=(comment_col), unpack=True, dtype ='S30', ndmin=1)
         if len(comment_col) > 1:
             comment = comments[0]
             for i in np.arange(len(comment_col))[1:]:
@@ -71,7 +71,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
         fmt_time = {'iso': ['S20'], 'jd': ['f8']}
         if type(time_col) not in [list, tuple, np.ndarray]:
             time_col = [time_col]
-        times = np.loadtxt(datafile, usecols=(time_col), unpack=True, dtype =fmt_time[time_fmt][0], ndmin=1)
+        times = np.loadtxt(datafile, skiprows=skiprows, usecols=(time_col), unpack=True, dtype =fmt_time[time_fmt][0], ndmin=1)
         if time_fmt == 'iso':  ####### iso nao deve funcionar por enquanto
             tim = times[0]
             a = len(time_col)
@@ -252,6 +252,9 @@ def text_coord(coord):
     sign = np.char.array(np.sign(coord.dec)).replace('-1.0', '-').replace('1.0', '+').replace('0.0', '+')
     dec = sign + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.d)]) + ' ' + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.m)]) + ' ' + np.char.array([dec_formatter(j) for j in np.absolute(coord.dec.dms.s)])
     return ra, dec
+    
+#def read_ephem(eph, coord_col=None, time_col=None, time_fmt='jd', skiprows=0):
+#    return read(eph, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
 
 class Observation(object):
     """
@@ -280,6 +283,8 @@ class Observation(object):
         self.limdist = size*u.arcmin
 
     def read(self, datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd'):
+        """
+        """
         a = read(datafile, name_col, coord_col, comment_col, time_col, time_fmt)
         n = 0
         if name_col != None:
@@ -298,6 +303,16 @@ class Observation(object):
         if time_col != None:
             self.times = a[n]
             n = n + 1
+            
+    def ephem(self, path='./ephemeris', coord_col=None, time_col=None, time_fmt='jd', skiprows=0):
+        """
+        """
+        self.eph = {}
+        onlyeph = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
+        for i in onlyeph:
+            a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
+            name = i[:-4]
+            self.eph[name] = a
         
     def close_obj(self):
         """
