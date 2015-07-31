@@ -156,6 +156,18 @@ def precess(coord, timeut):
     fk5_data = FK5(equinox=timeut)
     coord_prec = coord.transform_to(fk5_data)
     return coord_prec
+    
+def identify_min(eph, time):
+    return
+    
+def mesh_coord(coord, time, ephem=None):
+    ra = coord.ra.deg
+    if not ephem == None:
+        ra = np.append(ra, [0]*len(ephem.keys()))
+    rs, ts = np.meshgrid(ra, time.sidereal_time('mean').deg)
+    if not ephem == None:
+        ra = np.append(ra, [0]*len(ephem.keys()))
+    return rs, ts
 
 def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0, 0.0, 0.0), fuse=TimeDelta(0, format='sec', scale='tai')):
     """
@@ -170,7 +182,7 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
         timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
     timeut.delta_ut1_utc = 0
     timeut.location = site
-    ra, ts = np.meshgrid(coord.ra.deg, timeut.sidereal_time('mean').deg )
+    ra, ts = mesh_coord(coord, timeut)
     dif_h_sid = Angle((ra-ts)*u.deg)
     dif_h_sid.wrap_at('180d', inplace=True)
     dif_h_sol = dif_h_sid * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
