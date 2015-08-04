@@ -570,3 +570,12 @@ class Observation(object):
 #obs.create_plan()
 #b = Time.now()
 #print 'tempo de reducao: {}'.format((b-a).sec)
+
+def func(coord, size):
+    ab, ba = np.meshgrid(np.arange(len(coord)), np.arange(len(coord)))
+    s = coord[ab].separation(coord[ba])
+    l = np.where(s < size)
+    k = np.where((l[0] != l[1]) & (l[0] < l[1]))
+    print l[0][k]
+    print l[1][k]
+
