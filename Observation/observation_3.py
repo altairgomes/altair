@@ -576,6 +576,31 @@ def func(coord, size):
     s = coord[ab].separation(coord[ba])
     l = np.where(s < size)
     k = np.where((l[0] != l[1]) & (l[0] < l[1]))
-    print l[0][k]
-    print l[1][k]
-
+    a = np.vstack((l[0][k],l[1][k]))
+    o = np.delete(np.arange(len(coord)), np.hstack((l[0][k],l[1][k])))
+    o = o.reshape(len(o),1).tolist()
+    n, m = np.unique(a[0], return_counts=True)
+    y = np.in1d(a[0], n[np.where(m == 1)])
+    n1, m1 = np.unique(a[1], return_counts=True)
+    y1 = np.in1d(a[1], n1[np.where(m1 == 1)])
+    o = o + a.T[y*y1].tolist()
+    q = a.T[-(y*y1)]
+    for z in np.unique(q.T[0]):
+        b = q.T[1][np.where(q.T[0] == z)]
+        w = [list(x) for x in itertools.combinations(b,2)]
+        if np.all([i in q for i in w]):
+            w.append([z,z])
+            w = np.unique(w).tolist()
+            d = False
+            for v in o:
+                e = all(k in v for k in w)
+                d = bool(d + e)
+            if d == False:
+                print "fazendo ", w
+                o = o + [w]
+                print o
+        else:
+            print "babou"
+    return np.sort(o)
+    
+    
