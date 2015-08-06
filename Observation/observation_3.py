@@ -572,6 +572,31 @@ class Observation(object):
 #print 'tempo de reducao: {}'.format((b-a).sec)
 
 def func(coord, size):
+
+def ff(q, o, a=[]):
+    print "a=",a
+    for z in np.unique(q[0]):
+        print "z=", z
+        print "q=", q[0], q[1]
+        b = q[1][np.where(q[0] == z)]
+        w = [list(x) for x in itertools.combinations(b,2)]
+        print "w=",w
+        print "qt=",q.T.tolist()
+        if np.all([i in q.T.tolist() for i in w]):
+            w1 = w + [[z,z]]
+            print 'w1=',w1
+            w1 = np.unique(w1)
+            d = False
+            for v in o:
+                e = all(k in v for k in w1.tolist() + a)
+                d = bool(d + e)
+            if d == False:
+                o = o + [a +  w1.tolist()]
+        else:
+            o = ff(w, o, a + [z])
+    print o
+    return o
+
     ab, ba = np.meshgrid(np.arange(len(coord)), np.arange(len(coord)))
     s = coord[ab].separation(coord[ba])
     l = np.where(s < size)
@@ -585,22 +610,9 @@ def func(coord, size):
     y1 = np.in1d(a[1], n1[np.where(m1 == 1)])
     o = o + a.T[y*y1].tolist()
     q = a.T[-(y*y1)]
-    for z in np.unique(q.T[0]):
-        b = q.T[1][np.where(q.T[0] == z)]
-        w = [list(x) for x in itertools.combinations(b,2)]
-        if np.all([i in q for i in w]):
-            w.append([z,z])
-            w = np.unique(w).tolist()
-            d = False
-            for v in o:
-                e = all(k in v for k in w)
-                d = bool(d + e)
-            if d == False:
-                print "fazendo ", w
-                o = o + [w]
-                print o
-        else:
-            print "babou"
+    print "q=",q
+    o = ff(q.T, o)
+
     return np.sort(o)
     
     
