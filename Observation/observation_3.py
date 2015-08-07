@@ -98,34 +98,38 @@ def coord_pack(coord):
     return coord
     
 def close_obj(coord, size):
-    """
-    """
     coord = coord_pack(coord)
-    if type(size) != u.quantity.Quantity:
-        size = size*u.arcmin
-    same_fov = []
-    for idx, value in enumerate(coord):
-        sep = coord[idx].separation(coord[idx+1:])
-        close = [i + 1 + idx for i in np.arange(len(sep)) if sep[i] < size]
+    ab, ba = np.meshgrid(np.arange(len(coord)), np.arange(len(coord)))
+    sep = coord[ab].separation(coord[ba])
+    c = np.where(sep < size)
+    close = np.where(c[0] < c[1])
+    pairs = np.vstack((c[0][close],c[1][close]))
+    samefov = np.delete(np.arange(len(coord)), np.hstack((c[0][close],c[1][close])))
+    samefov = samefov.reshape(len(samefov),1).tolist()
+    n, m = np.unique(pairs[0], return_counts=True)
+    y = np.in1d(pairs[0], n[np.where(m == 1)])
+    n1, m1 = np.unique(pairs[1], return_counts=True)
+    y1 = np.in1d(pairs[1], n1[np.where(m1 == 1)])
+    samefov = samefov + pairs.T[y*y1].tolist()
+    q = pairs.T[-(y*y1)]
+    for z in np.unique(q.T[0]):
+        b = q.T[1][np.where(q.T[0] == z)]
         combs = []
-        for i in np.arange(len(close),0, -1):
-            els = [[idx] + list(x) for x in itertools.combinations(close, i)]
+        for i in np.arange(len(b),0, -1):
+            els = [[z] + list(x) for x in itertools.combinations(b, i)]
             combs.append(els)
-        combs.append([[idx]])
         for i in combs:
             for a in i:
                 d = False
-                for j in same_fov:
-                    e = all(k in j for k in a)
-                    d = bool(d + e)
-                if d == True:
+                w = [list(x) for x in itertools.combinations(a,2)]
+                if not np.all([i in q.tolist() for i in w]):
                     continue
-                mean_coord, dist_center = midpoint_coord(coord[a])
-                if np.isscalar(dist_center.value):
-                    dist_center = [dist_center]
-                if all(k <= size/2 for k in dist_center):
-                    same_fov.append(a)
-    return same_fov
+                for v in samefov:
+                    e = all(k in v for k in a)
+                    d = bool(d + e)
+                if d == False:
+                    samefov = samefov + [a]
+    return np.sort(samefov).tolist()
 
 def midpoint_coord(coord, weighted=False, weight=None):
     """
@@ -326,7 +330,7 @@ class Observation(object):
             name = i[:-4]
             self.eph[name] = a
         
-    def close_obj(self):
+    def __close_obj__(self):
         """
         """
         fov =  close_obj(self.coords, self.limdist)
@@ -570,49 +574,5 @@ class Observation(object):
 #obs.create_plan()
 #b = Time.now()
 #print 'tempo de reducao: {}'.format((b-a).sec)
-
-def func(coord, size):
-
-def ff(q, o, a=[]):
-    print "a=",a
-    for z in np.unique(q[0]):
-        print "z=", z
-        print "q=", q[0], q[1]
-        b = q[1][np.where(q[0] == z)]
-        w = [list(x) for x in itertools.combinations(b,2)]
-        print "w=",w
-        print "qt=",q.T.tolist()
-        if np.all([i in q.T.tolist() for i in w]):
-            w1 = w + [[z,z]]
-            print 'w1=',w1
-            w1 = np.unique(w1)
-            d = False
-            for v in o:
-                e = all(k in v for k in w1.tolist() + a)
-                d = bool(d + e)
-            if d == False:
-                o = o + [a +  w1.tolist()]
-        else:
-            o = ff(w, o, a + [z])
-    print o
-    return o
-
-    ab, ba = np.meshgrid(np.arange(len(coord)), np.arange(len(coord)))
-    s = coord[ab].separation(coord[ba])
-    l = np.where(s < size)
-    k = np.where((l[0] != l[1]) & (l[0] < l[1]))
-    a = np.vstack((l[0][k],l[1][k]))
-    o = np.delete(np.arange(len(coord)), np.hstack((l[0][k],l[1][k])))
-    o = o.reshape(len(o),1).tolist()
-    n, m = np.unique(a[0], return_counts=True)
-    y = np.in1d(a[0], n[np.where(m == 1)])
-    n1, m1 = np.unique(a[1], return_counts=True)
-    y1 = np.in1d(a[1], n1[np.where(m1 == 1)])
-    o = o + a.T[y*y1].tolist()
-    q = a.T[-(y*y1)]
-    print "q=",q
-    o = ff(q.T, o)
-
-    return np.sort(o)
     
     
