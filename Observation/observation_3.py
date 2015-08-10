@@ -212,6 +212,8 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
             alwaysup = np.where(coord.dec <= -(90*u.deg + site.latitude + limalt))
             neverup = np.where(coord.dec >= 90*u.deg + site.latitude - limalt)
         culminacao = culminacao + fuse
+        sunrise = sunrise + fuse
+        sunset = sunset + fuse
         return culminacao, sunrise, sunset, alwaysup, neverup
     culminacao = culminacao + fuse
     return culminacao
@@ -231,7 +233,7 @@ def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocati
     altura = 90*u.deg - distzen
     if time_left == True:
         poente = sky_time(coord, time, rise_set=True, limalt=limalt, site=site, fuse=fuse)[2]
-        time_rest = poente - timeut
+        time_rest = poente - time
         return altura, time_rest
     return altura
 
@@ -255,7 +257,7 @@ def resume_night(coord, time, name, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.
     timeut = time - fuse
     coord = coord_pack(coord)
     coord_prec = precess(coord, timeut)
-    culminacao, nascer, poente, alwaysup, neverup = sky_time(coord_prec, time, rise_set=True, limalt=limalt, site=site)
+    culminacao, nascer, poente, alwaysup, neverup = sky_time(coord_prec, time, rise_set=True, limalt=limalt, site=site, fuse=fuse)
     ra, dec = text_coord(coord)
     night = '\nRA: ' + ra + ', DEC: ' +  dec + ', Rise: ' + np.char.array(nascer.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Culmination: ' + \
 np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Set: ' + np.char.array(poente.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + \
