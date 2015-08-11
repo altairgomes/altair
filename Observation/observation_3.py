@@ -131,7 +131,7 @@ def close_obj(coord, size):
                     samefov = samefov + [a]
     return np.sort(samefov).tolist()
 
-def midpoint_coord(coord, weighted=False, weight=None):
+def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
     """
     """
     i = coord_pack(coord)
@@ -147,6 +147,8 @@ def midpoint_coord(coord, weighted=False, weight=None):
         z = np.sum(i.cartesian.z*weight)/np.sum(weight)
     delta = np.arcsin(z/np.sqrt(x**2 + y**2 + z**2))
     alfa = np.arctan2(y, x)
+    if ra_dec == True:
+        return alfa,delta
     mean_coord = SkyCoord(alfa, delta, frame='fk5')
     dist_center = coord.separation(mean_coord)
     return mean_coord, dist_center
@@ -165,10 +167,10 @@ def identify_min(eph, time):
     return
     
 def mesh_coord(coord, time, ephem=None):
-    ra = coord.ra.deg
+    ra = coord.ra
     if not ephem == None:
         ra = np.append(ra, [0]*len(ephem.keys()))
-    rs, ts = np.meshgrid(ra, time.sidereal_time('mean').deg)
+    rs, ts = np.meshgrid(ra, time.sidereal_time('mean'))
     if not ephem == None:
         ra = np.append(ra, [0]*len(ephem.keys()))
     return rs, ts
@@ -187,7 +189,7 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
     timeut.delta_ut1_utc = 0
     timeut.location = site
     ra, ts = mesh_coord(coord, timeut)
-    dif_h_sid = Angle((ra-ts)*u.deg)
+    dif_h_sid = (ra-ts)
     dif_h_sid.wrap_at('180d', inplace=True)
     dif_h_sol = dif_h_sid * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
     dif = TimeDelta(dif_h_sol.hour*u.h, scale='tai')
@@ -351,11 +353,31 @@ class Observation(object):
                 b = b + self.comments[i][-1]
                 midcomment.append(b)
             else:
+                midcoord.append(self.coords[i[0]])
                 midobj.append(self.names[i][0])
-                midcoord.append(self.coords[i][0])
                 midcomment.append(self.comments[i][0])
         midcoord = coord_pack(midcoord)
         self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
+        
+#        for i in fov:
+#            if len(i) > 1:
+#                midcoord.append(midpoint_coord(self.coords[i])[0])
+#                a = ''
+#                for k in self.names[i][:-1]:
+#                    a = a + k + ' + '
+#                a = a + self.names[i][-1]
+#                midobj.append(a)
+#                b = ''
+#                for k in self.comments[i][:-1]:
+#                    b = b + k + ' + '
+#                b = b + self.comments[i][-1]
+#                midcomment.append(b)
+#            else:
+#                midobj.append(self.names[i][0])
+#                midcoord.append(self.coords[i][0])
+#                midcomment.append(self.comments[i][0])
+#        midcoord = coord_pack(midcoord)
+#        self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
     
     def instant_list(self, time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec')):
         self.instants = Time([[i] for i in instant_list(time_begin, time_end, time_step).jd], format='jd', scale='utc', location=self.site)
