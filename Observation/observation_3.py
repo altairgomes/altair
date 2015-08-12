@@ -189,7 +189,7 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
     timeut.delta_ut1_utc = 0
     timeut.location = site
     ra, ts = mesh_coord(coord, timeut)
-    dif_h_sid = (ra-ts)
+    dif_h_sid = Angle(ra-ts)
     dif_h_sid.wrap_at('180d', inplace=True)
     dif_h_sol = dif_h_sid * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
     dif = TimeDelta(dif_h_sol.hour*u.h, scale='tai')
@@ -198,7 +198,7 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
     culminacao.location = site
     if rise_set == True:
         hangle_lim = np.arccos((np.cos(90.0*u.deg-limalt) - np.sin(coord.dec)*np.sin(site.latitude)) / (np.cos(coord.dec)*np.cos(site.latitude)))
-        tsg_lim = Angle(ra*u.deg + hangle_lim)
+        tsg_lim = Angle(ra + hangle_lim)
         dtsg_lim = tsg_lim - culminacao.sidereal_time('mean')
         dtsg_lim.wrap_at(360 * u.deg, inplace=True)
         dtsg_lim_sol = dtsg_lim * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
@@ -229,8 +229,8 @@ def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocati
         timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
     timeut.location = site
     timeut.delta_ut1_utc = 0
-    ra, ts = np.meshgrid(coord.ra.deg, timeut.sidereal_time('mean').deg )
-    hourangle = Angle((ts-ra)*u.deg)
+    ra, ts = mesh_coord(coord, timeut)
+    hourangle = Angle(ts-ra)
     distzen = np.arccos(np.sin(coord.dec)*np.sin(site.latitude) + np.cos(coord.dec)*np.cos(site.latitude)*np.cos(hourangle))
     altura = 90*u.deg - distzen
     if time_left == True:
@@ -248,12 +248,9 @@ def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='s
         time_end = Time(time_end, format=fmt, scale='utc')
     if not type(time_step) == TimeDelta:
         time_step = TimeDelta(time_step, format='sec')
-    a = []
-    tempo = time_begin
-    while tempo <= time_end + TimeDelta(1,format='sec'):
-        a.append(tempo.iso)
-        tempo = tempo + time_step
-    return Time(a, format='iso', scale='utc')
+    c = np.arange(0,(time_end-time_begin).sec + time_step.sec,time_step.sec)
+    tempo = time_begin + c*u.s
+    return tempo
     
 def resume_night(coord, time, name, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.0, 0.0), fuse=TimeDelta(0, format='sec', scale='tai')):
     timeut = time - fuse
@@ -359,31 +356,11 @@ class Observation(object):
         midcoord = coord_pack(midcoord)
         self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
         
-#        for i in fov:
-#            if len(i) > 1:
-#                midcoord.append(midpoint_coord(self.coords[i])[0])
-#                a = ''
-#                for k in self.names[i][:-1]:
-#                    a = a + k + ' + '
-#                a = a + self.names[i][-1]
-#                midobj.append(a)
-#                b = ''
-#                for k in self.comments[i][:-1]:
-#                    b = b + k + ' + '
-#                b = b + self.comments[i][-1]
-#                midcomment.append(b)
-#            else:
-#                midobj.append(self.names[i][0])
-#                midcoord.append(self.coords[i][0])
-#                midcomment.append(self.comments[i][0])
-#        midcoord = coord_pack(midcoord)
-#        self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
-    
     def instant_list(self, time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec')):
         self.instants = Time([[i] for i in instant_list(time_begin, time_end, time_step).jd], format='jd', scale='utc', location=self.site)
         self.instants.delta_ut1_utc = 0
         
-    def plan(self, now=False):
+    def plan(self, now=False, samefov=False):
         coords = self.coords
         names = self.names
         comments = self.comments
