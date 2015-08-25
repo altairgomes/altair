@@ -272,7 +272,7 @@ def offset(datas, ca, pa, dist, vel, ob_off_ra, ob_off_de, st_off_ra, st_off_de)
     off_ra = ob_off_ra - st_off_ra
     off_de = ob_off_de - st_off_de
     dca = off_ra*np.sin(pa) + off_de*np.cos(pa)
-    dt = int(((off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/vel).value)*u.s
+    dt = -int(((off_ra*np.cos(pa) - off_de*np.sin(pa)).to(u.rad)*dist.to(u.km)/np.absolute(vel)).value)*u.s
     ca = ca + dca
     datas = datas + dt
     return ca, datas
