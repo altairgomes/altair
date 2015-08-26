@@ -76,13 +76,13 @@ plt.clf()
 #################### Dist - x ##################################
 
 plt.plot(eph[0] - 2451544.5, eph[7])
-plt.plot(y[0] - 2451544.5, z[0] + y[1], 's', color='red')
+plt.plot(y[0] - 2451544.5, z[0]/1000.0 + y[1], 's', color='red')
 
 for i in eph[0][j]:
     plt.axvline(i - 2451544.5, color='black')
 plt.xlabel('Tempo')
 plt.xticks(r, ['{}'.format(i) for i in np.arange(1990,2021,1)], rotation=90)
-plt.ylabel('Inclinacao (graus)')
+plt.ylabel(r'$\Delta \alpha \cos \delta$ (arcsec)')
 fig =plt.gcf()
 fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('{}-x.png'.format(nome),dpi=200, bbox_inches='tight')
@@ -91,13 +91,13 @@ plt.clf()
 #################### Dist - y ##################################
 
 plt.plot(eph[0] - 2451544.5, eph[8])
-plt.plot(y[0] - 2451544.5, z[1] + y[2], 's',  color='red')
+plt.plot(y[0] - 2451544.5, z[1]/1000.0 + y[2], 's',  color='red')
 
 for i in eph[0][j]:
     plt.axvline(i - 2451544.5, color='black')
 plt.xlabel('Tempo')
 plt.xticks(r, ['{}'.format(i) for i in np.arange(1990,2021,1)], rotation=90)
-plt.ylabel('Inclinacao (graus)')
+plt.ylabel(r'$\Delta \delta$ (arcsec)')
 fig =plt.gcf()
 fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('{}-y.png'.format(nome),dpi=200, bbox_inches='tight')
