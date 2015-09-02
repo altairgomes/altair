@@ -1,9 +1,7 @@
-from scipy.fftpack import fft, fftfreq, fftshift
 import numpy as np
 import matplotlib.pyplot as plt
 import astropy.units as u
 from astropy.time import Time
-import scipy.odr.odrpack as odrpack
 
 ######################################################################
 
@@ -30,17 +28,22 @@ r = np.array(r)
 
 #########################################################################
 x = eph[0]
-y = eph[8]
+y = eph[7]
 
 # number of signal points
 N = len(eph[0])
  # sample spacing
 T = (x.max()-x.min()) / N
-yf = fft(y)
-xf = fftfreq(N, T)
-xf = fftshift(xf)
-yplot = fftshift(yf)
-plt.plot(xf, 1.0/N * np.abs(yplot))
-plt.grid()
-plt.xlim(0.00,0.01)
-plt.savefig('frequencia.png', dpi=100)
+y_fft = np.fft.fft(y)
+x=1
+while True:
+    e = np.zeros(len(y_fft))
+    r = np.argsort(np.abs(y_fft[0:N/2])*2.0/N)
+    e[-r[-x:]] = 1.0
+    e[r[-x:]] = 1.0
+    y_fit = np.fft.ifft(y_fft*e).real
+    if np.mean((np.abs(y_fit-y)*u.arcsec).to(u.mas)) < 1000*u.mas:
+        break
+    x = x+1
+
+print x
