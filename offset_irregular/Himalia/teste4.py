@@ -1,3 +1,4 @@
+from scipy.fftpack import fft, fftfreq, fftshift
 import numpy as np
 import matplotlib.pyplot as plt
 import astropy.units as u
@@ -27,19 +28,29 @@ for i in np.arange(1990,2021,1):
 
 r = np.array(r)
 
-f = open('saida.dat', 'w')
+#########################################################################
+x = eph[0]
+y = eph[7]
 
-############## Funcoes ##############################################
+# number of signal points
+N = len(eph[0])
+ # sample spacing
+T = (x.max()-x.min()) / N
+yf = fft(y)
+xf = fftfreq(N, T)
+xf = fftshift(xf)
+yplot = fftshift(yf)
+fig, ax = plt.subplots(2, 1)
+ax[0].plot(x,y)
+ax[0].set_xlabel('Time')
+ax[0].set_ylabel('Amplitude')
+#ax[0].set_ticks(r)
+#ax[0].set_ticklabels(['{}'.format(i) for i in np.arange(1990,2021,1)], rotation=90)
+ax[1].plot(xf, 1.0/N * np.abs(yplot),'r') # plotting the spectrum
+ax[1].set_xlabel(r'Freq ($day^{-1}$)')
+ax[1].set_ylabel('|Y(freq)|')
+#plt.plot(xf, 1.0/N * np.abs(yplot))
+plt.grid()
+ax[1].set_xlim(0.00,0.01)
+plt.savefig('freq_x.png', dpi=100)
 
-def cn(n):
-   c = y*np.exp(-1j*2*n*np.pi*time/period)
-   return c.sum()/c.size
-
-def f(x, Nh):
-   f = np.array([2*cn(i)*np.exp(1j*2*i*np.pi*x/period) for i in range(1,Nh+1)])
-   return f.sum()
-
-y2 = np.array([f(t,50).real for t in time])
-
-plot(time, y)
-plot(time, y2)
