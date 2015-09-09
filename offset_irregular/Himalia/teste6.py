@@ -42,9 +42,7 @@ while True:
     e[-r[-x:]] = 1.0
     e[r[-x:]] = 1.0
     y_fit = np.fft.ifft(y_fft*e).real
-    a = np.mean((np.abs(y_fit-y)[N/4:-N/4]*u.arcsec).to(u.mas))
-    print x, a.to(u.arcsec)
-    if a < 1000*u.mas:
+    if np.mean((np.abs(y_fit-y)*u.arcsec).to(u.mas)) < 1000*u.mas:
         break
     x = x+1
 
