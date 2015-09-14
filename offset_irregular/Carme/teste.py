@@ -6,6 +6,17 @@ import scipy.odr.odrpack as odrpack
 
 ######################################################################
 
+plt.rcParams['text.latex.preamble']=[r"\usepackage{txfonts}"]
+
+params = {'text.usetex' : True,
+          'font.size' : 22,
+          'font.family' : 'txfonts',
+          'text.latex.unicode': True,
+          }
+          
+plt.rcParams.update(params)
+sizel=18
+
 f = open('entrada.dat', 'r')
 arq = f.readlines()
 f.close()
@@ -134,12 +145,13 @@ plt.clf()
 plt.errorbar(y[3], z[1], yerr=z[3], fmt='s', label='Offsets')
 plt.ylim(-500,500)
 plt.xlim(0,360)
-plt.xlabel('Anomalia Verdadeira')
-plt.ylabel('Offset (mas)')
-plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)])
+plt.xlabel('Anomalia Verdadeira', fontsize=sizel)
+plt.ylabel('Offset (mas)', fontsize=sizel)
+plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)], fontsize=sizel)
+plt.yticks([i for i in np.arange(-400,500,200)], [i for i in np.arange(-400,500,200)], fontsize=sizel)
 plt.axhline(0, color='black')
 fig =plt.gcf()
-fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
+fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(10.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('DEC_anom.png',dpi=100, bbox_inches='tight')
 plt.clf()
 
@@ -201,7 +213,7 @@ plt.ylabel('Offset (mas)')
 plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)])
 plt.axhline(0, color='black')
 fig =plt.gcf()
-fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
+fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(10.0*u.cm).to(u.imperial.inch).value)
 fig.savefig('RA_anom.png',dpi=100, bbox_inches='tight')
 
 #plt.savefig('RA.png', figsize(10,8))
