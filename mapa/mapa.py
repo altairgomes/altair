@@ -4,7 +4,7 @@ import numpy as np
 import os
 import astropy.units as u
 from astropy.time import Time, TimeDelta
-from astropy.coordinates import SkyCoord, EarthLocation
+from astropy.coordinates import SkyCoord, EarthLocation, Angle
 from multiprocessing import Pool
 
 ####################################### definindo funcoes ##################################################################
@@ -33,7 +33,15 @@ def calcfaixa(vel, data, star, dist, ca, pa, tamanho, step, erro=None, ring=None
         latlon['ring'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
     if not atm == None:
         latlon['atm'] = {'lon': [], 'lat': [], 'lon2':[], 'lat2':[]}
-    paplus = ((pa > 90*u.deg) and pa - 180*u.deg) or pa
+    pa = Angle(pa)
+    pa.wrap_at('180d', inplace=True)
+    if pa > 90*u.deg:
+        paplus = pa - 180*u.deg
+    elif pa < -90*u.deg:
+        paplus = pa + 180*u.deg
+    else:
+        paplus = pa
+    print pa
     for delt in g:
         deltatime = delt*u.s
         datas1 = data + TimeDelta(deltatime)

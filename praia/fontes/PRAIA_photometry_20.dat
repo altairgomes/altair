@@ -1,0 +1,216 @@
+list                                              | list of fits images for photometry            
+00000 00000                                       | set of fits images to process (0 0 = all images treated)
+photometry.dat                                    | output file: nt,nc,JD,airmass,tf(1,nt),tsnr(1,nt),tfwhm(1,nt),cf(1,nc),csnr(1,nc),cfwhm(1,nc)
+regions.ds9                                       | ds9 batch movie
+00                                                | number of frames for ds9 movie display (zero = display all)
+BITPIX  |-----------------------------------------| FITS header key: Bitpix of CCD
+EXTEND  |-----------------------------------------| FITS header key: FITS header extension key 
+WINSEC1 |-----------------------------------------| FITS header key: dimension of axes (1,2;x,y) together: windows section key
+NAXIS1  |-----------------------------------------| FITS header key: dimension of axis 1 (x) 
+NAXIS2  |-----------------------------------------| FITS header key: dimension of axis 2 (y)
+BSCALE  |-----------------------------------------| FITS header key: Scale of pixel counts (bscale)
+BZERO   |-----------------------------------------| FITS header key: zero level of pixel counts (bzero)
+GAIN    |-----------------------------------------| FITS header key: CCD gain
+RDNOISE |-----------------------------------------| FITS header key: CCD read noise
+AIRMASS |-----------------------------------------| FITS header key: Air mass
+JD      |-----------------------------------------| FITS header key: Julian Date
+JDM     |-----------------------------------------| FITS header key: Modified Julian Date
+DATE-OBS|-----------------------------------------| FITS header key: Observation Date, UTC
+TM-START|-----------------------------------------| FITS header key: Start instant of exposure, UT
+TIME-END|-----------------------------------------| FITS header key: End instant of exposure, UT
+TIME    |-----------------------------------------| FITS header key: Start and End exposure instants, UT
+EXPOSURE|-----------------------------------------| FITS header key: Exposure time (seconds)
+00 00 00.000                                      | Time offset (hh mm ss.sss)  
+01|-----------------------------------------------| (1,2) (or x, y) axes dimensions stamp key
+01|-----------------------------------------------| Time stamp key
+0                                                 | Pixel physical counts: 0 = from image header or 1 = from user (here)
+1.d0                                              | Pixel physical counts: bscale;  Pixel = bscale * matrix + bzero
+0.d0                                              | Pixel physical counts: bzero ;  Pixel = bscale * matrix + bzero
+-99                                               | bitpix (-99 = read from image header)
+0                                                 | litteendian x bigendian: byte-swap (0 = automatic; 1 = don't swap ; 2 = swap bytes)
+0.000                                             | exposure time correction (seconds) (put zero if no correction needed)
+0.000                                             | instant offset to convert between time scales (seconds)
+0                                                 | 0 = extract time information from header (start time, exposure); 1 = time information input by user (below)
+2013 01 08 20 24 18.100                           | yy mm dd hh mm ss star time of 1rst frame in the cube (frame number 1 in the list)
+0.3                                               | exposure time (seconds)
+0.3                                               | cicle time (seconds) (cicle = time interval between start times of consecutive exposures)
+1.00                                              | pixel scale (arcsec/pixel)
+65000                                             | ADU maximum counting cutoff (~saturation) (ex.: 32000, 65000, ...)
+00001                                             | ADU minimum counting cutoff (~sky background) (ex.: 0, -1, ...)
+2                                                 | S/N ratio formula:  1 - Classical  2 - Sky background dispersion based
+0.50                                              | dark current (e/pixel/hour) (default = 0)
+1                                                 | pixel binning factor (1=1x1 pixels; 2=2x2 pixels; 3=3x3 pixels ; ...)
+2                                                 | key for S/N ratios : 1 = automatic ; 2 = user  (gain, read out noise)
+01.0                                              | CCD gain           by user (key=2) 
+01.0                                              | CCD read out noise by user (key=2)
+0325 0425 0200 0270                               | (xmin,xmax,ymin,ymax) box area for guiding obj search
+2.50                                              | guide obj sky_factor: flux > sky + sky_factor*sky_sigma
+0010 0010 0016 0004                               | guide object:  box, diam_flux, sky_annulus, sky_width
+375 226                                           | (x,y)   guide obj initial position
+1                                                 | Centering algorithm: 1 - baricenter ;  2 - 2D Symetric Gaussian  
+1                                                 | number of calibration objs
+00                                                | nth calibration obj  1 = tracking ;  0 = no tracking ;  -1 = fixed
+2.50                                              | calibibrator sky_factor: flux > sky + sky_factor*sky_sigma
+0010 0008 0014 0004                               | box, diam_flux, sky_annulus, sky_width of  nth calibration obj (pixels)           
+375 226                                           | (x,y)   initial position of nth calibration obj                                  
+1                                                 | Centering algorithm: 1 - baricenter ;  2 - 2D Symetric Gaussian  
+1                                                 | number of targets                                                                 
+0                                                 | nth target:      1 = tracking ;  0 = no tracking ;  -1 = fixed   
+2.50                                              | target sky_factor: flux > sky + sky_factor*sky_sigma
+0010 0006 0012 0004                               | box, diam_flux, sky_annulus, sky_width of nth target (pixels)
+375 226                                           | (x,y)   initial position of nth target
+1                                                 | Centering algorithm: 1 - baricenter ;  2 - 2D Symetric Gaussian  
+*************************************************************************************************************************************************
+
+                                          
+  ** For a correct filling up of the above fields, please read the notes below carefully ** 
+           
+
+                                                     
+  ** Choose the axes dimensions stamp key according to one of the following options:
+
+
+01 - x and y axes dimensions furnished in separate keys (usually "NAXIS1" and "NAXIS2" for x and y respectivelly).
+
+02 - x and y axes dimensions furnished together in one key (usually "WINSEC"), in the form [N1_1:N1_2,N2_1:N2_2],
+     where:
+
+     NAXIS1 = N1_2 - N1_1 + 1
+     NAXIS2 = N2_2 - N2_1 + 1
+
+
+                                                     
+   ** Choose the time stamp key according to one of the following options:
+
+
+01 - Date and start time furnished together in one key: yr mo day (day mo yr) and hh mm ss.sss (usually
+     at "DATE-OBS" key).
+
+
+02 - Date and start time in separate keys: yr mo day (day mo yr) usually furnished in "DATE-OBS" key.
+
+     If the exposure time is given, only the UT start time (usually hh mm ss.sss) is needed, and given in a
+     separate key (usually "UT" or "TIME-BEG" keys).
+
+     If the exposure time is not given, then the UT start and end exposure times must be furnished. They
+     can be evoked by separate keys (usually "UT"/"TIME-BEG" and "TIME-END" keys), or evoked by the same
+     key (user-defined, usually "TIME"), usually in the hh mm ss.sss format.
+
+     The start and end times may be also furnished in hh mm.mmm or even in sss.sss format. 
+
+
+03 - Start time in Julian Date (JD): the date is computed from the JD (usually furnished by the
+     "JD" key); the exposure time must be also furnished.
+
+
+04 - Start time in Modified Julian Date (MJD): the date is computed from the MJD (usually
+     furnished by the "MJD" key); the exposure time must be also furnished.
+
+
+
+
+    *********************************************
+
+
+CCD 301 LNA (386x276 pixels)
+
+escala = 0.600  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.550  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.290  "/pixel  bin=1x1 1.6m sRF 
+30                                                | dark current (e/pixel/hour) (default = 0)
+2.5                                               | CCD gain           by user (key=2) 
+5.5 lento   12.8 rapido                           | CCD read out noise by user (key=2)
+
+
+CCD 106 LNA (1024x1024 pixels)
+
+escala = 0.660  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.600  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.310  "/pixel  bin=1x1 1.6m sRF
+43                                                | dark current (e/pixel/hour) (default = 0)
+5.0                                               | CCD gain           by user (key=2) 
+4.1 lento   09.5 rapido                           | CCD read out noise by user (key=2)
+
+
+CCD 105 LNA (2048x2048 pixels)
+
+escala = 0.370  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.340  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.180  "/pixel  bin=1x1 1.6m sRF 
+0.54                                              | dark current (e/pixel/hour) (default = 0)
+2.5                                               | CCD gain           by user (key=2) 
+2.5 lento   04.0 rapido                           | CCD read out noise by user (key=2)
+
+
+CCD 101 LNA (1024x1024 pixels)
+
+escala = 0.660  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.600  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.310  "/pixel  bin=1x1 1.6m sRF 
+0.5                                               | dark current (e/pixel/hour) (default = 0)
+5.0                                               | CCD gain           by user (key=2) 
+5.5 lento   09.5 rapido                           | CCD read out noise by user (key=2)
+
+
+CCD 48 LNA (770x1152 pixels)
+
+escala = 0.370  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.340  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.180  "/pixel  bin=1x1 1.6m sRF 
+0.5 ?                                             | dark current (e/pixel/hour) (default = 0)
+3.3                                               | CCD gain           by user (key=2) 
+6.6 lento   13.2 rapido                           | CCD read out noise by user (key=2)
+
+
+
+SOAR/SOI  (4096x4096 pixels)
+
+escala = 0.077  "/pixel  bin=1x1
+02                                                | dark current (e/pixel/hour) (default = 0)
+0.4 (lento) 2.0 (rapido)                          | CCD gain           by user (key=2) 
+3.1 lento   04.4 rapido                           | CCD read out noise by user (key=2)
+
+
+ESO/WFI  (2048x4096 pixels)
+
+escala = 0.238  "/pixel  bin=1x1
+06                                                | dark current (e/pixel/hour) (default = 0)
+2.0 (lento) 2.0 (rapido)                          | CCD gain           by user (key=2) 
+4.7 lento   04.7 rapido                           | CCD read out noise by user (key=2)
+
+
+
+S800 LNA (1024x1024 pixels)
+
+
+escala = 0.370  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.340  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.180  "/pixel  bin=1x1 1.6m sRF 
+58                                                | dark current (e/pixel/hour) (default = 0)
+2.335                                             | CCD gain           by user (key=2) 
+ 3.805 a  100Khz                                  | CCD read out noise by user (key=2)
+ 4.480 a  200Khz                                  | CCD read out noise by user (key=2)
+ 5.295 a  400Khz                                  | CCD read out noise by user (key=2)
+ 9.030 a  800Khz                                  | CCD read out noise by user (key=2)
+12.890 a 1000Khz                                  | CCD read out noise by user (key=2)
+
+
+
+Ikon LNA (1024x1024 pixels)
+
+
+escala = 0.370  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.340  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.180  "/pixel  bin=1x1 1.6m sRF 
+
+
+
+
+Ixion LNA (1024x1024 pixels)
+
+
+escala = 0.370  "/pixel  bin=1x1 Zeiss sRF
+escala = 0.340  "/pixel  bin=1x1 60cm IAG sRF
+escala = 0.180  "/pixel  bin=1x1 1.6m sRF 
+
+
