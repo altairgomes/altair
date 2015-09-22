@@ -5,6 +5,7 @@ import astropy.units as u
 from astropy.time import Time, TimeDelta
 from astropy.coordinates import SkyCoord, EarthLocation
 import pygmaps
+from mapa import coordpack, calcfaixa, offset
 
 ######################################### lendo arquivo de dados da ocultacao e de observatorios ##############################
 
@@ -51,37 +52,6 @@ def lerdados():
     return stars, datas, ca, pa, vel, dist, off_ra, off_de, dados['mR'], dados['mK'], dados['long']
 
 ################################### definido funcao que imprime o mapa #############################################
-def calcfaixa(idx):
-    g = np.arange(int(-8000/(np.absolute(vel[0].value))), int(8000/(np.absolute(vel[0].value))), 1)
-    lons1, lats1, lons2, lats2, clon, clat, lab = [], [], [], [], [], [], []
-    for delt in g:
-        deltatime = delt*u.s
-        datas1 = datas + TimeDelta(deltatime)
-        datas1.delta_ut1_utc = 0
-        lon = stars[idx].ra - datas1.sidereal_time('mean', 'greenwich')
-        m = Basemap(projection='ortho',lat_0=stars[idx].dec.value,lon_0=lon.value,resolution=None)
-        a, b =m(lon.value, stars[idx].dec.value)
-        a = a*u.m
-        b = b*u.m
-        dista = (dist[idx].to(u.km)*ca[idx].to(u.rad)).value*u.km
-        ax = a + dista*np.sin(pa[idx]) + (deltatime*vel[idx])*np.cos(pa[idx])
-        by = b + dista*np.cos(pa[idx]) - (deltatime*vel[idx])*np.sin(pa[idx])
-        ax2 = ax - tamanho/2*np.sin(pa[idx])
-        by2 = by - tamanho/2*np.cos(pa[idx])
-        ax3 = ax + tamanho/2*np.sin(pa[idx])
-        by3 = by + tamanho/2*np.cos(pa[idx])
-        clon1, clat1 = m(ax.value, by.value, inverse=True)
-#        if deltatime.value%5 == 0:
-        clon.append(clon1)
-        clat.append(clat1)
-        lab.append(datas1.iso.split()[1][0:8])
-        lon1, lat1 = m(ax2.value, by2.value, inverse=True)
-        lons1.append(lon1) 
-        lats1.append(lat1)
-        lon2, lat2 = m(ax3.value, by3.value, inverse=True)
-        lons2.append(lon2) 
-        lats2.append(lat2)
-    return lons1, lats1, lons2, lats2, clon, clat, lab
 
 def geramapa(idx):
 
