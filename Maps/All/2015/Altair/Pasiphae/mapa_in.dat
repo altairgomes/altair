@@ -1,0 +1,6 @@
+g4_occ_datauc4_PASIPHAE_2015_table                 # arquivo de entrada com os dados da ocultacao
+Pasiphae                                           # Nome do objeto
+60                                                 # tamanho do objeto em km
+40                                                # erro em mas do centro
+sites.dat                                         # lista de observatorios
+######################################################################################################

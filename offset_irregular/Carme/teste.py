@@ -6,16 +6,16 @@ import scipy.odr.odrpack as odrpack
 
 ######################################################################
 
-plt.rcParams['text.latex.preamble']=[r"\usepackage{txfonts}"]
+#plt.rcParams['text.latex.preamble']=[r"\usepackage{txfonts}"]
 
-params = {'text.usetex' : True,
-          'font.size' : 22,
-          'font.family' : 'txfonts',
-          'text.latex.unicode': True,
-          }
+#params = {'text.usetex' : True,
+#          'font.size' : 22,
+#          'font.family' : 'txfonts',
+#          'text.latex.unicode': True,
+#          }
           
-plt.rcParams.update(params)
-sizel=18
+#plt.rcParams.update(params)
+#sizel=18
 
 f = open('entrada.dat', 'r')
 arq = f.readlines()
@@ -125,16 +125,16 @@ f.write('Residuos: {} mas\n'.format(resid))
 plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 #plt.plot(y[3], z[1], 's', label='Offsets')
 plt.plot(eph[0] - 2451544.5, fun(ajdewg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
-plt.plot(eph[0] - 2451544.5, fun(ajdenwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
+#plt.plot(eph[0] - 2451544.5, fun(ajdenwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
 #plt.plot(eph[0] - 2451544.5, f(p[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('DEC = {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(p[0][0], p[0][1], p[0][2]))
-#plt.xlim(0,360)
+plt.xlim(2449353.5 - 2451544.,2457754.5 - 2457388.5)
 plt.vlines(eph[0][j] - 2451544.5, -500, 500)
 plt.ylim(-500,500)
 plt.xlabel('Tempo')
 plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2016,1)])
 plt.ylabel('Offset (mas)')
-plt.legend()
+#plt.legend()
 plt.axhline(0, color='black')
 fig =plt.gcf()
 fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)

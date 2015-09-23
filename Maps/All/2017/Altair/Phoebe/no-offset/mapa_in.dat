@@ -1,0 +1,47 @@
+1                                                 # input data (1) praia_occ_search output (2) this file input
+############## input (1)  ################################################################################
+g4_occ_datauc4_PHOEBE_2017_table                  # praia_occ_search output file
+############## input (2)  #############################################################################
+17 18 29.0080 -27 26 38.890                       # star coordinate
+2010-08-17 22:40:55.0                             # occultation instant
+0.250                                             # c/a in arcsec
+24.18                                             # position angle in degrees
+2.29                                              # delta (distance) in Astronomical Units
+3.92                                              # velocity in km/s
+0.0                                               # obj. offset in RA (mas)
+0.0                                               # obj. offset in DEC (mas)
+0.0                                               # star offset in RA (mas)
+0.0                                               # star offset in DEC (mas)
+9.9                                               # magR
+7.4                                               # magK
+-47                                               # long
+############## plot informations #####################################################################
+Phoebe                                            # Name of the object
+212                                               # Diameter of the object in km
+1000                                              # error in c/a in mas
+sites.dat                                         # observatories list
+l                                                 # resolution of boundary database to use. Can be ``c`` (crude), ``l`` (low), ``i`` (intermediate), ``h`` (high), ``f`` (full)
+46.0 38.0                                         # figure size in cm (x, y)
+1                                                 # map style. See below. Default = 1
+######################################################################################################
+
+Map Stype
+
+1) Basic map 
+- colorless
+- grey scale
+
+2) Basic map
+- monocolor continent (coral)
+- monocolor oceans (aqua)
+
+3) Shadedrelief
+- colored map
+- continent relief
+
+4) Draw the NASA ‘Blue Marble’ image
+- Satellite image style
+
+5) Draw an etopo relief image
+- colored map
+- continent and ocean relief
