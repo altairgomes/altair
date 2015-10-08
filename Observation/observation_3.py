@@ -164,7 +164,21 @@ def precess(coord, timeut):
     return coord_prec
     
 def identify_min(eph, time):
-    return
+    ephem_min = {}
+    for i in eph.keys():
+        a, b = np.meshgrid(np.arange(len(eph[i]['time'])), np.arange(len(time)))
+        c = (eph[i]['time'][a] - time[b]).value
+        d = np.absolute(c)
+        e = np.argsort(d)
+        f = e[:,0:2]
+        g = []
+        for j in np.arange(len(f)):
+            print eph[i]['coord'][f[j]], 1./(eph[i]['time'][f[j]] - time[j]).value
+            k = midpoint_coord(eph[i]['coord'][f[j]], weighted=True, weight=1./np.absolute((eph[i]['time'][f[j]] - time[j]).value))[0]
+            g.append(k)
+        g = coord_pack(g)
+        ephem_min[i] = g
+    return ephem_min
     
 def mesh_coord(coord, time, ephem=None):
     ra = coord.ra
@@ -329,7 +343,7 @@ class Observation(object):
         for i in onlyeph:
             a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
             name = i[:-4]
-            self.eph[name] = a
+            self.eph[name] = {'coord' : a[0], 'time' : a[1]}
         
     def __close_obj__(self):
         """
