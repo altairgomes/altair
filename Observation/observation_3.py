@@ -33,7 +33,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
        Subformat for inputting string times
     """
     retornar = []
-    if name_col != None:
+    if name_col:
         if type(name_col) not in [list, tuple, np.ndarray]:
             name_col = [name_col]
         nomes = np.loadtxt(datafile, skiprows=skiprows, usecols=(name_col), unpack=True, dtype ='S30', ndmin=1)
@@ -45,7 +45,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
         else:
             nome = nomes
         retornar.append(nome)
-    if coord_col != None:
+    if coord_col:
         if type(coord_col) not in [list, tuple, np.ndarray]:
             coord_col = [coord_col]
         coords = np.loadtxt(datafile, skiprows=skiprows, usecols=(coord_col), unpack=True, dtype ='S20', ndmin=1)
@@ -55,7 +55,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
             coor = np.core.defchararray.add(coor, coords[i])
         coord = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
         retornar.append(coord)
-    if comment_col != None:
+    if comment_col:
         if type(comment_col) not in [list, tuple, np.ndarray]:
             comment_col = [comment_col]
         comments = np.loadtxt(datafile, skiprows=skiprows, usecols=(comment_col), unpack=True, dtype ='S30', ndmin=1)
@@ -67,7 +67,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
         else:
             comment = comments
         retornar.append(comment)
-    if time_col != None:
+    if time_col:
         fmt_time = {'iso': ['S20'], 'jd': ['f8']}
         if type(time_col) not in [list, tuple, np.ndarray]:
             time_col = [time_col]
@@ -140,7 +140,7 @@ def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
         y = (np.max(i.cartesian.y) - np.min(i.cartesian.y))/2 + np.min(i.cartesian.y)
         z = (np.max(i.cartesian.z) - np.min(i.cartesian.z))/2 + np.min(i.cartesian.z)
     else:
-        if weight == None:
+        if not weight:
             weight = np.ones(len(i))
         x = np.sum(i.cartesian.x*weight)/np.sum(weight)
         y = np.sum(i.cartesian.y*weight)/np.sum(weight)
@@ -182,10 +182,10 @@ def mesh_coord(coord, time, ephem=None):
     """
     """
     ra = coord.ra
-    if not ephem == None:
+    if ephem:
         ra = np.append(ra, [0]*len(ephem.keys()))
     rs, ts = np.meshgrid(ra, time.sidereal_time('mean'))
-    if not ephem == None:
+    if ephem:
         ra = np.append(ra, [0]*len(ephem.keys()))
     return rs, ts
 
@@ -258,7 +258,7 @@ def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='s
     """
     if not type(time_begin) == Time:
         time_begin = Time(time_begin, format=fmt, scale='utc')
-    if time_end == None:
+    if not time_end:
         time_end = time_begin
     if not type(time_end) == Time:
         time_end = Time(time_end, format=fmt, scale='utc')
@@ -290,9 +290,6 @@ def text_coord(coord):
     dec = sign + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.d)]) + ' ' + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.m)]) + ' ' + np.char.array([dec_formatter(j) for j in np.absolute(coord.dec.dms.s)])
     return ra, dec
     
-#def read_ephem(eph, coord_col=None, time_col=None, time_fmt='jd', skiprows=0):
-#    return read(eph, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
-
 class Observation(object):
     """
     """
@@ -328,20 +325,20 @@ class Observation(object):
         """
         a = read(datafile, name_col, coord_col, comment_col, time_col, time_fmt)
         n = 0
-        if name_col != None:
+        if name_col:
             self.names = a[n]
             n = n + 1
         else:
             self.names = ['']*np.shape(a)[1]
-        if coord_col != None:
+        if coord_col:
             self.coords = a[n]
             n = n + 1
-        if comment_col != None:
+        if comment_col:
             self.comments = a[n]
             n = n + 1
         else:
             self.comments = ['']*np.shape(a)[1]
-        if time_col != None:
+        if time_col:
             self.times = a[n]
             n = n + 1
             
@@ -481,7 +478,7 @@ class Observation(object):
         """
         """
         dss = {'eso': '-dsseso', 'sao': '-dsssao'}
-        if size == None:
+        if not size:
             size = self.limdist.to(u.arcmin).value
         if not os.path.isfile('ds9.reg') or force_reg == True:
             self.__region__()
