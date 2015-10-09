@@ -163,24 +163,24 @@ def precess(coord, timeut):
     coord_prec = coord.transform_to(fk5_data)
     return coord_prec
     
-def identify_min(eph, time):
-    ephem_min = {}
-    for i in eph.keys():
-        a, b = np.meshgrid(np.arange(len(eph[i]['time'])), np.arange(len(time)))
-        c = (eph[i]['time'][a] - time[b]).value
-        d = np.absolute(c)
-        e = np.argsort(d)
-        f = e[:,0:2]
-        g = []
-        for j in np.arange(len(f)):
-            print eph[i]['coord'][f[j]], 1./(eph[i]['time'][f[j]] - time[j]).value
-            k = midpoint_coord(eph[i]['coord'][f[j]], weighted=True, weight=1./np.absolute((eph[i]['time'][f[j]] - time[j]).value))[0]
-            g.append(k)
-        g = coord_pack(g)
-        ephem_min[i] = g
-    return ephem_min
+def identify_min(coords, times, instants):
+    """
+    """
+    a, b = np.meshgrid(np.arange(len(times)), np.arange(len(instants)))
+    c = (times[a] - instants[b]).value
+    d = np.absolute(c)
+    e = np.argsort(d)
+    f = e[:,0:2]
+    g = []
+    for j in np.arange(len(f)):
+        k = midpoint_coord(coords[f[j]], weighted=True, weight=1./np.absolute((times[f[j]] - instants[j]).value))[0]
+        g.append(k)
+    g = coord_pack(g)
+    return g
     
 def mesh_coord(coord, time, ephem=None):
+    """
+    """
     ra = coord.ra
     if not ephem == None:
         ra = np.append(ra, [0]*len(ephem.keys()))
@@ -254,6 +254,8 @@ def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocati
     return altura
 
 def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec'), fmt='iso'):
+    """
+    """
     if not type(time_begin) == Time:
         time_begin = Time(time_begin, format=fmt, scale='utc')
     if time_end == None:
@@ -267,6 +269,8 @@ def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='s
     return tempo
     
 def resume_night(coord, time, name, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.0, 0.0), fuse=TimeDelta(0, format='sec', scale='tai')):
+    """
+    """
     timeut = time - fuse
     coord = coord_pack(coord)
     coord_prec = precess(coord, timeut)
@@ -278,6 +282,8 @@ np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'T
     return night
     
 def text_coord(coord):
+    """
+    """
     coord = coord_pack(coord)
     ra = np.char.array([int_formatter(j) for j in coord.ra.hms.h]) + ' ' + np.char.array([int_formatter(j) for j in coord.ra.hms.m]) + ' ' + np.char.array([ra_formatter(j) for j in coord.ra.hms.s])
     sign = np.char.array(np.sign(coord.dec)).replace('-1.0', '-').replace('1.0', '+').replace('0.0', '+')
@@ -308,9 +314,13 @@ class Observation(object):
         self.fuse = TimeDelta(fuse*3600, format='sec', scale='tai')
         
     def set_limheight(self, height):
+        """
+        """
         self.limheight = height*u.deg
         
     def set_limdist(self, size):
+        """
+        """
         self.limdist = size*u.arcmin
 
     def read(self, datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd'):
@@ -344,6 +354,14 @@ class Observation(object):
             a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
             name = i[:-4]
             self.eph[name] = {'coord' : a[0], 'time' : a[1]}
+            
+    def __ephem_min__(self, time):
+        """
+        """
+        self.ephem_min = {}
+        for i in self.eph.keys():
+            coords = identify_min(self.eph[i]['coord'], self.eph[i]['time'], time)
+            self.ephem_min[i] = coords
         
     def __close_obj__(self):
         """
@@ -558,36 +576,4 @@ class Observation(object):
                 self.observed = [names[a]]
             else:
                 self.observed.append(names[a])
-        
-#####################################################################
-
-#arquivo = 'alvos'				#### arquivo de alvos
-#horain = '2015-03-08 18:00:00'			#### hora inicial local da observacao
-#horafin = '2015-03-09 06:00:00'			#### hora final local da observacao
-#intinf = 60					#### intervalo entre as informacoes (minutos)
-#fuso = -3					#### fuso horario do local
-#latitude = '-22 32 7.8'				#### latitude do local
-#longitude = '314 25 2.5'			#### longitude do local
-#altitude = 1864					#### altitude em metros
-#limalt = 30.0					#### limite de altura para mostrar (graus)
-#limdist = 11					#### limite de distancia para field-of-view (arcmin)
-
-########################################################################
-
-#observation = Observation(fuso, latitude, longitude, altitude)
-#objs, coords, comments = observation.read(arquivo, [0], [1,2,3,4,5,6], [7])
-#observation.create_plan(coords,objs, comments, horain, horafin, intinf, limalt=limalt, size=limdist)
-#print observation.plan(coord, tempoin, objs, comments, limalt=30.0*u.deg, size=11.0*u.arcmin)
-
-#a = Time.now()
-#obs = Observation(fuso, latitude, longitude, altitude)
-#obs.read('alvos', name_col=[0], coord_col=[1,2,3,4,5,6], comment_col=[7])
-#obs.set_limheight(30)
-#obs.set_limdist(11)
-#obs.close_obj()
-#obs.instant_list(horain, horafin, intinf*60)
-#obs.create_plan()
-#b = Time.now()
-#print 'tempo de reducao: {}'.format((b-a).sec)
-    
-    
+                
