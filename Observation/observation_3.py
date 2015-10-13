@@ -140,7 +140,7 @@ def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
         y = (np.max(i.cartesian.y) - np.min(i.cartesian.y))/2 + np.min(i.cartesian.y)
         z = (np.max(i.cartesian.z) - np.min(i.cartesian.z))/2 + np.min(i.cartesian.z)
     else:
-        if not weight == None:
+        if weight == None:
             weight = np.ones(len(i))
         x = np.sum(i.cartesian.x*weight)/np.sum(weight)
         y = np.sum(i.cartesian.y*weight)/np.sum(weight)
