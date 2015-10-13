@@ -140,7 +140,7 @@ def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
         y = (np.max(i.cartesian.y) - np.min(i.cartesian.y))/2 + np.min(i.cartesian.y)
         z = (np.max(i.cartesian.z) - np.min(i.cartesian.z))/2 + np.min(i.cartesian.z)
     else:
-        if not weight:
+        if not weight == None:
             weight = np.ones(len(i))
         x = np.sum(i.cartesian.x*weight)/np.sum(weight)
         y = np.sum(i.cartesian.y*weight)/np.sum(weight)
@@ -173,8 +173,11 @@ def identify_min(coords, times, instants):
     f = e[:,0:2]
     g = []
     for j in np.arange(len(f)):
-        k = midpoint_coord(coords[f[j]], weighted=True, weight=1./np.absolute((times[f[j]] - instants[j]).value))[0]
-        g.append(k)
+        if instants[j].iso in times[f[j]].iso:
+            g.append(coords[f[j][np.where(instants[j].iso == times[f[j]].iso)]][0])
+        else:
+            k = midpoint_coord(coords[f[j]], weighted=True, weight=1./np.absolute((times[f[j]] - instants[j]).value))[0]
+            g.append(k)
     g = coord_pack(g)
     return g
     
@@ -357,7 +360,7 @@ class Observation(object):
         """
         self.ephem_min = {}
         for i in self.eph.keys():
-            coords = identify_min(self.eph[i]['coord'], self.eph[i]['time'], time)
+            coords = identify_min(self.eph[i]['coord'], self.eph[i]['time'], time[:,0])
             self.ephem_min[i] = coords
         
     def __close_obj__(self):
@@ -399,12 +402,24 @@ class Observation(object):
             comments = self.samefov['comments']
         if not hasattr(self, 'instants') or now == True:
             self.instant_list(Time.now() + self.fuse)
+        quant = len(names)
         instants = self.instants
         coord_prec = precess(coords, instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+        if hasattr(self, 'eph'):
+            self.__ephem_min__(instants)
+            for i in self.ephem_min.keys():
+                coord_prec_eph = precess(self.ephem_min[i], instants[0])
+                culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
+                alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+                culmination = Time([np.insert(culmination.value, len(culmination[0].value), culminatione[0,0].value)], scale='utc', format='jd')
+                altura = altura.insert(len(altura[0]), alturae.diagonal(), axis=1)
+                time_rest = TimeDelta(np.insert(time_rest.value, len(time_rest[0].value), time_reste.value.diagonal(), axis=1), scale='tai', format='jd')
+                ## Falta fazer alwaysup e neverup
+            names = np.append(names, self.ephem_min.keys())
+            comments = np.append(comments, self.ephem_min.keys())
         self.titles = []
-        ra, dec = text_coord(coords)
         self.obs = {}
         for i in np.arange(len(instants)):
             x = np.argsort(time_rest[i].sec)
@@ -415,12 +430,22 @@ class Observation(object):
             if len(q) == 0:
                 self.obs[instants[i,0].iso] = {'names': np.char.array([]), 'comments': np.char.array([]), 'ra': np.char.array([]), 'dec': np.char.array([]), 'height': np.char.array([]), 'culmination': np.char.array([]), 'time_left': np.char.array([]), 'rest': []}
                 continue
-            self.obs[instants[i,0].iso] = {'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'ra': ra[q], 'dec': dec[q], 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
+            self.obs[instants[i,0].iso] = {'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
 'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],\
 'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]), 'rest': ['']*len(q)}
-            for j in alwaysup:
-                m = np.where(q == j)
-                self.obs[instants[i,0].iso]['time_left'][m] = np.char.array('Always up')
+            ra0,dec0 = [], []
+            for p in q:
+                if p < quant:
+                    ra, dec = text_coord(coords[p])
+                else:
+                    ra, dec = text_coord(self.ephem_min[self.ephem_min.keys()[p-quant]][i])
+                ra0 = np.append(ra0, ra)
+                dec0 = np.append(dec0, dec)
+            self.obs[instants[i,0].iso]['ra'] = np.char.array(ra0)
+            self.obs[instants[i,0].iso]['dec'] = np.char.array(dec0)
+#            for j in alwaysup:
+#                m = np.where(q == j)
+#                self.obs[instants[i,0].iso]['time_left'][m] = np.char.array('Always up')
 #            if hasattr(self, 'samefov'):
 #                for t in np.arange(len(q)):
 #                    p = q[t]
@@ -464,12 +489,13 @@ class Observation(object):
             output.write(i)
         output.close()
         
-    def __region__(self, radius=10*u.arcsec):
+    def __region__(self, ra, dec, names, radius=10*u.arcsec):
         """
         """
         a = 'icrs\n'
-        for i in np.arange(len(self.coords)):
-            a = a + 'circle({}, {}, {}) # text = '.format(self.coords[i].ra.deg, self.coords[i].dec.deg, (radius.to(u.deg)).value) + '{' + self.names[i] +'}\n'
+        coords = SkyCoord(ra, dec, frame='fk5', unit=(u.hourangle, u.degree))
+        for i in np.arange(len(coords)):
+            a = a + 'circle({}, {}, {}) # text = '.format(coords[i].ra.deg, coords[i].dec.deg, (radius.to(u.deg)).value) + '{' + names[i] +'}\n'
         f = open('ds9.reg', 'w')
         f.write(a)
         f.close()
@@ -480,8 +506,6 @@ class Observation(object):
         dss = {'eso': '-dsseso', 'sao': '-dsssao'}
         if not size:
             size = self.limdist.to(u.arcmin).value
-        if not os.path.isfile('ds9.reg') or force_reg == True:
-            self.__region__()
         if hasattr(self, 'obs'):
             p=0
         elif hasattr(self, 'samefov'):
@@ -491,8 +515,16 @@ class Observation(object):
         a = 0
         while a == 0:
             p = p + 1
+            print p
             if p == 1:
-                key = self.obs.keys()[0]
+                keys = self.instants[:,0].iso
+                if len(keys) == 1:
+                    m = 0
+                else:
+                    for l in np.arange(len(keys)):
+                        print '{}: {} LT'.format(l, keys[l])
+                    m = input('Choose the number of the date you want to show: ')
+                key = keys[m]
                 ra, dec = self.obs[key]['ra'], self.obs[key]['dec']
                 names = np.concatenate((['List all objects'], self.obs[key]['names']))
             elif p == 2:
@@ -513,7 +545,9 @@ class Observation(object):
             print '\n'
             for i in np.arange(len(names)):
                 print '{}: {}'.format(i, names[i])
-            a = input('Digite o numero referente ao alvo: ')
+            a = input('Choose the number of the target: ')
+        if not os.path.isfile('ds9.reg') or force_reg == True:
+            self.__region__(ra, dec, names[1:])
         os.system('ds9 {} size {} {} {} coord {} {} -region ds9.reg'.format(dss[server], size, size, dss[server], ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
     def show_text(self):
@@ -523,7 +557,7 @@ class Observation(object):
         else:
             for l in np.arange(len(k)):
                 print '{}: {} LT'.format(l, k[l])
-            i = input('Digite o numero da data que deseja ver: ')
+            i = input('Choose the number of the date you want to show: ')
         j = k[i]
         a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + ' -- ' + np.char.array(self.obs[j]['names']) + ' ' + self.obs[j]['comments']
         b = self.titles[i]
