@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import astropy.units as u
 from astropy.time import Time
 import scipy.odr.odrpack as odrpack
+from astropy.coordinates import SkyCoord
 
 ######################################################################
 
@@ -23,8 +24,23 @@ f.close()
 
 y = np.loadtxt(arq[0].strip(), skiprows=3, usecols=(2, 20, 21, 37, 16, 36), unpack=True) ## 2: JD; 20: dist_prim X; 21: dist_prim Y; 37: anom. verd.; 16: distancia; 36: anom. med.
 z = np.loadtxt(arq[1].strip(), usecols=(0, 1, 2, 3), unpack=True) ## 0: off RA; 1: off DEC; 2: off_err RA; 3: off_err DEC
+coords = np.loadtxt(arq[3].strip(), skiprows=3, usecols=(2, 4, 5, 6, 7, 8, 9), unpack=True, dtype ='S20', ndmin=1)
+coor = coords[1]
+for i in np.arange(len(coords))[2:]:
+    coor = np.core.defchararray.add(coor, ' ')
+    coor = np.core.defchararray.add(coor, coords[i])
+lau = SkyCoord(coor, frame='icrs', unit=(u.hourangle, u.degree))
 
 eph = np.loadtxt(arq[2].strip(), skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
+ephcoord = np.loadtxt(arq[2].strip(), skiprows=3, usecols=(2, 4, 5, 6, 7, 8, 9), unpack=True, dtype ='S20', ndmin=1)
+coor = coords[1]
+for i in np.arange(len(ephcoord))[2:]:
+    coor = np.core.defchararray.add(coor, ' ')
+    coor = np.core.defchararray.add(coor, ephcoord[i])
+jpl = SkyCoord(coor, frame='icrs', unit=(u.hourangle, u.degree))
+
+dalfa = lau.ra*np.cos(lau.dec) - jpl.ra*np.cos(jpl.dec)
+ddelta = lau.dec - jpl.dec
 
 k = np.arange(361)
 
@@ -36,7 +52,7 @@ r = []
 for i in np.arange(1995,2016,1):
     r.append(Time('{}-01-01 00:00:00'.format(i), format='iso').jd - 2451544.5)
 
-print r
+#print r
 r = np.array(r)
 
 f = open('saida.dat', 'w')
@@ -124,7 +140,8 @@ f.write('Residuos: {} mas\n'.format(resid))
 
 plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 #plt.plot(y[3], z[1], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, fun(ajdewg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
+#plt.plot(eph[0] - 2451544.5, fun(ajdewg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
+plt.plot(eph[0] - 2451544.5, ddelta.mas, label='Laurene')
 #plt.plot(eph[0] - 2451544.5, fun(ajdenwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
 #plt.plot(eph[0] - 2451544.5, f(p[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('DEC = {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(p[0][0], p[0][1], p[0][2]))
@@ -145,10 +162,10 @@ plt.clf()
 plt.errorbar(y[3], z[1], yerr=z[3], fmt='s', label='Offsets')
 plt.ylim(-500,500)
 plt.xlim(0,360)
-plt.xlabel('Anomalia Verdadeira', fontsize=sizel)
-plt.ylabel('Offset (mas)', fontsize=sizel)
-plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)], fontsize=sizel)
-plt.yticks([i for i in np.arange(-400,500,200)], [i for i in np.arange(-400,500,200)], fontsize=sizel)
+plt.xlabel('Anomalia Verdadeira')#, fontsize=sizel)
+plt.ylabel('Offset (mas)')#, fontsize=sizel)
+plt.xticks([i for i in np.arange(0,361,30)], ['{}'.format(i) for i in np.arange(0,361,30)])#, fontsize=sizel)
+plt.yticks([i for i in np.arange(-400,500,200)], [i for i in np.arange(-400,500,200)])#, fontsize=sizel)
 plt.axhline(0, color='black')
 fig =plt.gcf()
 fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(10.0*u.cm).to(u.imperial.inch).value)
@@ -188,11 +205,12 @@ f.write('Residuos: {} mas\n'.format(resid))
 
 plt.errorbar(y[0] - 2451544.5, z[0], yerr=z[2], fmt='s', label='Offsets')
 #plt.plot(y[3], z[0], 's', label='Offsets')
-plt.plot(eph[0] - 2451544.5, fun(ajrawg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
-plt.plot(eph[0] - 2451544.5, fun(ajranwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
+#plt.plot(eph[0] - 2451544.5, fun(ajrawg.beta, np.vstack([eph[0], eph[1]])), label='Com peso')
+plt.plot(eph[0] - 2451544.5, dalfa.mas, label='Laurene')
+#plt.plot(eph[0] - 2451544.5, fun(ajranwg.beta, np.vstack([eph[0], eph[1]])), label='Sem peso')
 #plt.plot(eph[0] - 2451544.5, g(q[0], np.vstack([eph[0], eph[1]])), label='Ajuste2')
 #plt.title('RA = {:.2f}*sen^2(A.V.) + {:.2f}*cos^2(A.V.) + {:.2f}*sen(A.V.)*cos(A.V.) + {:.2f}*sen(A.V.) + {:.2f}*cos(A.V.) + {:.2f}'.format(q[0][0], q[0][1], q[0][2], q[0][3], q[0][4], q[0][5]))
-#plt.xlim(0,360)
+plt.xlim(2449353.5 - 2451544.,2457754.5 - 2457388.5)
 plt.vlines(eph[0][j] - 2451544.5, -500, 500)
 plt.ylim(-500,500)
 plt.xlabel('Tempo')
