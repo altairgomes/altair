@@ -295,6 +295,22 @@ def text_coord(coord):
     
 class Observation(object):
     """
+Location on the Earth for the observation instance.
+
+Parameters
+----------
+fuse : number
+    Fuse time of the site
+latitude : sequence, or list of numbers; optional
+    Columns that will be stacked into the name of objects
+longitude :  sequence, or list of numbers; optional
+    Columns refered to the coordinates of the objects
+height :  sequence, or list of numbers; optional
+    Columns that will be stacked into the name of objects
+limheight :  sequence, or list of numbers; optional
+    Columns that will be stacked into the name of objects
+limdist : str, optional
+    Subformat for inputting string times
     """
 
     def __init__(self, fuse = 0, latitude = 0.0, longitude = 0.0, height = 0.0, limheight=0.0, limdist=0.0):
@@ -305,6 +321,27 @@ class Observation(object):
         
     def set_site(self,longitude, latitude, height=0.0*u.m):
         """
+Location on the Earth.
+
+Initialization is first attempted assuming geocentric (x, y, z) coordinates
+are given; if that fails, another attempt is made assuming geodetic
+coordinates (longitude, latitude, height above a reference ellipsoid).
+When using the geodetic forms, Longitudes are measured increasing to the
+east, so west longitudes are negative. Internally, the coordinates are
+stored as geocentric.
+
+To ensure a specific type of coordinates is used, use the corresponding
+class methods (`from_geocentric` and `from_geodetic`) or initialize the
+arguments with names (``x``, ``y``, ``z`` for geocentric; ``lon``, ``lat``,
+``height`` for geodetic).  See the class methods for details.
+
+
+Notes
+-----
+This class fits into the coordinates transformation framework in that it
+encodes a position on the `~astropy.coordinates.ITRS` frame.  To get a
+proper `~astropy.coordinates.ITRS` object from this object, use the ``itrs``
+property.
         """
         self.site = EarthLocation(longitude, latitude, height)
 
@@ -389,10 +426,14 @@ class Observation(object):
         self.samefov = {'coords': midcoord, 'names': np.array(midobj), 'comments': np.array(midcomment), 'fov': fov}
         
     def instant_list(self, time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec')):
+        """
+        """
         self.instants = Time([[i] for i in instant_list(time_begin, time_end, time_step).jd], format='jd', scale='utc', location=self.site)
         self.instants.delta_ut1_utc = 0
         
     def plan(self, now=False, samefov=False):
+        """
+        """
         coords = self.coords
         names = self.names
         comments = self.comments
@@ -551,6 +592,8 @@ class Observation(object):
         os.system('ds9 {} size {} {} {} coord {} {} -region ds9.reg'.format(dss[server], size, size, dss[server], ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
     def show_text(self):
+        """
+        """
         k = self.instants[:,0].iso
         if len(k) == 1:
             i = 0
@@ -566,6 +609,8 @@ class Observation(object):
         print b
         
     def observe(self, edit=False):
+        """
+        """
         if edit == True:
             p=-1
         elif hasattr(self, 'obs'):
