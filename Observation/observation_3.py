@@ -449,7 +449,7 @@ property.
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
         if hasattr(self, 'eph'):
-            self.__ephem_min__(instants)
+            self.__ephem_min__(instants - self.fuse)
             for i in self.ephem_min.keys():
                 coord_prec_eph = precess(self.ephem_min[i], instants[0])
                 culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)

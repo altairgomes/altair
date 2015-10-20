@@ -31,8 +31,8 @@ for i in np.arange(len(coords))[2:]:
     coor = np.core.defchararray.add(coor, coords[i])
 lau = SkyCoord(coor, frame='icrs', unit=(u.hourangle, u.degree))
 
-eph = np.loadtxt(arq[2].strip(), skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
-ephcoord = np.loadtxt(arq[2].strip(), skiprows=3, usecols=(2, 4, 5, 6, 7, 8, 9), unpack=True, dtype ='S20', ndmin=1)
+eph = np.loadtxt(arq[4].strip(), skiprows=3, usecols=(2, 35, 16, 34), unpack=True) ## 2: JD; 37: anom. verd.; 16: distancia; 36: anom. med.
+ephcoord = np.loadtxt(arq[4].strip(), skiprows=3, usecols=(2, 4, 5, 6, 7, 8, 9), unpack=True, dtype ='S20', ndmin=1)
 coor = coords[1]
 for i in np.arange(len(ephcoord))[2:]:
     coor = np.core.defchararray.add(coor, ' ')
@@ -151,7 +151,7 @@ plt.ylim(-500,500)
 plt.xlabel('Tempo')
 plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2016,1)])
 plt.ylabel('Offset (mas)')
-#plt.legend()
+plt.legend()
 plt.axhline(0, color='black')
 fig =plt.gcf()
 fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
