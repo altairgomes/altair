@@ -11,7 +11,8 @@ import os
 
 ra_formatter = lambda x: "%07.4f" %x
 dec_formatter = lambda x: "%06.3f" %x
-alt_formatter = lambda x: "%.1f" %x
+alt_formatter = lambda x: "%3.1f" %x
+dist_formatter = lambda x: "%3.0f" %x
 int_formatter = lambda x: "%02d" %x
 int2_formatter = lambda x: "%+03d" %x
 
@@ -180,6 +181,7 @@ def identify_min(coords, times, instants):
             g.append(k)
     g = coord_pack(g)
     return g
+    
     
 def mesh_coord(coord, time, ephem=None):
     """
@@ -392,13 +394,11 @@ property.
             name = i[:-4]
             self.eph[name] = {'coord' : a[0], 'time' : a[1]}
             
-    def __ephem_min__(self, time):
+    def eph_moon(self, coord_col, time_col, ephem='Moon.eph', time_fmt='jd', skiprows=0):
         """
         """
-        self.ephem_min = {}
-        for i in self.eph.keys():
-            coords = identify_min(self.eph[i]['coord'], self.eph[i]['time'], time[:,0])
-            self.ephem_min[i] = coords
+        a = read(ephem, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
+        self.moon = {'coord' : a[0], 'time' : a[1]}
         
     def __close_obj__(self):
         """
@@ -448,18 +448,28 @@ property.
         coord_prec = precess(coords, instants[0])
         culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
         altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+        if hasattr(self, 'moon'):
+            moon_min = identify_min(self.moon['coord'], self.moon['time'], (instants - self.fuse)[:,0])
+            coord_prec_moon = precess(moon_min, instants[0])
+            alturam, time_restm = height_time(coord_prec_moon, instants, limalt=0*u.deg, time_left=True, site=self.site, fuse=self.fuse)
+            ab, ba = np.meshgrid(np.arange(len(coords)), np.arange(len(coord_prec_moon)))
+            distmoon = coords[ab].separation(coord_prec_moon[ba])
         if hasattr(self, 'eph'):
-            self.__ephem_min__(instants - self.fuse)
-            for i in self.ephem_min.keys():
-                coord_prec_eph = precess(self.ephem_min[i], instants[0])
+            ephem_min = {}
+            for i in self.eph.keys():
+                ephem_min[i] = identify_min(self.eph[i]['coord'], self.eph[i]['time'], (instants - self.fuse)[:,0])
+                coord_prec_eph = precess(ephem_min[i], instants[0])
                 culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
                 alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
                 culmination = Time([np.insert(culmination.value, len(culmination[0].value), culminatione[0,0].value)], scale='utc', format='jd')
                 altura = altura.insert(len(altura[0]), alturae.diagonal(), axis=1)
                 time_rest = TimeDelta(np.insert(time_rest.value, len(time_rest[0].value), time_reste.value.diagonal(), axis=1), scale='tai', format='jd')
+                if hasattr(self, 'moon'):
+                    sep = coord_prec_eph.separation(coord_prec_moon)
+                    distmoon = distmoon.insert(len(distmoon[0]), sep, axis=1)
                 ## Falta fazer alwaysup e neverup
-            names = np.append(names, self.ephem_min.keys())
-            comments = np.append(comments, self.ephem_min.keys())
+            names = np.append(names, ephem_min.keys())
+            comments = np.append(comments, ephem_min.keys())
         self.titles = []
         self.obs = {}
         for i in np.arange(len(instants)):
@@ -469,17 +479,20 @@ property.
             b = '\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(instants[i,0].iso.split(' ')[1][0:5], (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
             self.titles.append(b)
             if len(q) == 0:
-                self.obs[instants[i,0].iso] = {'names': np.char.array([]), 'comments': np.char.array([]), 'ra': np.char.array([]), 'dec': np.char.array([]), 'height': np.char.array([]), 'culmination': np.char.array([]), 'time_left': np.char.array([]), 'rest': []}
+                self.obs[instants[i,0].iso] = {'moon_h': alturam[i], 'LT': instants[i,0].iso.split(' ')[1][0:5], 'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], \
+'N': 0, 'names': np.char.array([]), 'comments': np.char.array([]), 'ra': np.char.array([]), 'dec': np.char.array([]), 'height': np.char.array([]), 'culmination': np.char.array([]), 'time_left': np.char.array([]), 'rest': []}
                 continue
-            self.obs[instants[i,0].iso] = {'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
+            self.obs[instants[i,0].iso] = {'distmoon': distmoon[i,q], 'moon_h': alturam[i], 'LT': instants[i,0].iso.split(' ')[1][0:5], 'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], \
+'N': len(q),'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
 'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],\
-'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]), 'rest': ['']*len(q)}
+'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]), \
+'rest': ['']*len(q)}
             ra0,dec0 = [], []
             for p in q:
                 if p < quant:
                     ra, dec = text_coord(coords[p])
                 else:
-                    ra, dec = text_coord(self.ephem_min[self.ephem_min.keys()[p-quant]][i])
+                    ra, dec = text_coord(ephem_min[ephem_min.keys()[p-quant]][i])
                 ra0 = np.append(ra0, ra)
                 dec0 = np.append(dec0, dec)
             self.obs[instants[i,0].iso]['ra'] = np.char.array(ra0)
@@ -602,7 +615,8 @@ property.
                 print '{}: {} LT'.format(l, k[l])
             i = input('Choose the number of the date you want to show: ')
         j = k[i]
-        a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + ' -- ' + np.char.array(self.obs[j]['names']) + ' ' + self.obs[j]['comments']
+        a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + \
+', DistMoon: ' + np.char.array([dist_formatter(b) for b in self.obs[j]['distmoon'].value]) + ' -- ' + np.char.array(self.obs[j]['names']) + ' ' + self.obs[j]['comments']
         b = self.titles[i]
         for i in a:
             b = b + i
