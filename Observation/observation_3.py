@@ -141,7 +141,7 @@ def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
         y = (np.max(i.cartesian.y) - np.min(i.cartesian.y))/2 + np.min(i.cartesian.y)
         z = (np.max(i.cartesian.z) - np.min(i.cartesian.z))/2 + np.min(i.cartesian.z)
     else:
-        if weight == None:
+        if weight is None:
             weight = np.ones(len(i))
         x = np.sum(i.cartesian.x*weight)/np.sum(weight)
         y = np.sum(i.cartesian.y*weight)/np.sum(weight)
@@ -320,6 +320,9 @@ limdist : str, optional
         self.set_site(longitude, latitude, height)
         self.set_limheight(limheight)
         self.set_limdist(limdist)
+        self.__heads=['RA_J2000_DEC', 'Height', 'Tleft', 'DMoon', 'Object']
+        self.__row_format ="{:^28}  {:^7}  {:^5}  {:^5}  {:<1}"
+
         
     def set_site(self,longitude, latitude, height=0.0*u.m):
         """
@@ -476,17 +479,32 @@ property.
             x = np.argsort(time_rest[i].sec)
             k = np.where(altura[i,x] >= self.limheight)
             q = x[k]
-            b = '\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(instants[i,0].iso.split(' ')[1][0:5], (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], len(q))
-            self.titles.append(b)
             if len(q) == 0:
-                self.obs[instants[i,0].iso] = {'moon_h': alturam[i], 'LT': instants[i,0].iso.split(' ')[1][0:5], 'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], \
-'N': 0, 'names': np.char.array([]), 'comments': np.char.array([]), 'ra': np.char.array([]), 'dec': np.char.array([]), 'height': np.char.array([]), 'culmination': np.char.array([]), 'time_left': np.char.array([]), 'rest': []}
+                self.obs[instants[i,0].iso] = {
+                'distmoon': np.char.array([]),
+                'moon_h': alturam[i],
+                'LT': instants[i,0].iso.split(' ')[1][0:5],
+                'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
+                'N': 0,
+                'names': np.char.array([]),
+                'comments': np.char.array([]),
+                'height': np.char.array([]),
+                'culmination': np.char.array([]),
+                'time_left': np.char.array([]),
+                'ra': np.char.array([]),
+                'dec': np.char.array([])}
                 continue
-            self.obs[instants[i,0].iso] = {'distmoon': distmoon[i,q], 'moon_h': alturam[i], 'LT': instants[i,0].iso.split(' ')[1][0:5], 'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5], \
-'N': len(q),'names': names[q], 'comments': '(' + np.char.array(comments[q]) + ')', 'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
-'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],\
-'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60]), \
-'rest': ['']*len(q)}
+            self.obs[instants[i,0].iso] = {
+            'distmoon': np.char.array([dist_formatter(b) for b in distmoon[i,q].value]),
+            'moon_h': alturam[i],
+            'LT': instants[i,0].iso.split(' ')[1][0:5],
+            'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
+            'N': len(q),
+            'names': names[q],
+            'comments': '(' + np.char.array(comments[q]) + ')',
+            'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
+            'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],
+            'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60])}
             ra0,dec0 = [], []
             for p in q:
                 if p < quant:
@@ -532,11 +550,14 @@ property.
         output.write('Height: Height above the horizons (deg)\nTleft: Time left to reach minimum height (hh:mm)\n\n')
         for i in np.arange(len(self.instants)):
             obs = self.obs[self.instants[i,0].iso]
-            output.write(self.titles[i])
+            output.write('\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------\n'.format(obs['LT'], obs['UT'], obs['N']))
             if len(obs['names']) > 0:
-                a = '\nRA: ' + obs['ra'] + ', DEC: ' + obs['dec'] + ', Height: ' + obs['height'] + ', Tleft: ' + obs['time_left'] + ' -- ' + np.char.array(obs['names']) + ' ' + obs['comments']
-                for j in a:
-                    output.write(j)
+                output.write(self.__row_format.format(*self.__heads) + '\n')
+                for row in zip(obs['ra'] + '  ' + obs['dec'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
+                    output.write(self.__row_format.format(*row) + '\n')
+#                a = '\nRA: ' + obs['ra'] + ', DEC: ' + obs['dec'] + ', Height: ' + obs['height'] + ', Tleft: ' + obs['time_left'] + ' -- ' + np.char.array(obs['names']) + ' ' + obs['comments']
+#                for j in a:
+#                    output.write(j)
         self.resume_night()
         output.write('\n\n---Observability of the Targets----------------------------------------------------------------\n')
         for i in self.night[0]:
@@ -615,13 +636,13 @@ property.
                 print '{}: {} LT'.format(l, k[l])
             i = input('Choose the number of the date you want to show: ')
         j = k[i]
-        a = '\nRA: ' + self.obs[j]['ra'] + ', DEC: ' + self.obs[j]['dec'] + ', Height: ' + self.obs[j]['height'] + ', Tleft: ' + self.obs[j]['time_left'] + \
-', DistMoon: ' + np.char.array([dist_formatter(b) for b in self.obs[j]['distmoon'].value]) + ' -- ' + np.char.array(self.obs[j]['names']) + ' ' + self.obs[j]['comments']
-        b = self.titles[i]
-        for i in a:
-            b = b + i
+        obs = self.obs[j]
+        b = '\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(obs['LT'], obs['UT'], obs['N'])
         print b
-        
+        print self.__row_format.format(*self.__heads)
+        for row in zip(obs['ra'] + '  ' + obs['dec'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
+            print self.__row_format.format(*row)
+                
     def observe(self, edit=False):
         """
         """
