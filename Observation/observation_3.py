@@ -5,6 +5,7 @@ import itertools
 from astropy.time import Time, TimeDelta
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5, EarthLocation, Angle
+from astropy.table import Table
 import os
 
 ######################################################################
@@ -482,7 +483,7 @@ property.
             if len(q) == 0:
                 self.obs[instants[i,0].iso] = {
                 'distmoon': np.char.array([]),
-                'moon_h': alturam[i],
+                'moon_h': np.char.array(alt_formatter(alturam[i].value)),
                 'LT': instants[i,0].iso.split(' ')[1][0:5],
                 'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
                 'N': 0,
@@ -496,7 +497,7 @@ property.
                 continue
             self.obs[instants[i,0].iso] = {
             'distmoon': np.char.array([dist_formatter(b) for b in distmoon[i,q].value]),
-            'moon_h': alturam[i],
+            'moon_h': np.char.array(alt_formatter(alturam[i].value)),
             'LT': instants[i,0].iso.split(' ')[1][0:5],
             'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
             'N': len(q),
@@ -639,9 +640,15 @@ property.
         obs = self.obs[j]
         b = '\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(obs['LT'], obs['UT'], obs['N'])
         print b
+        if len(obs['moon_h']) == 1:
+            print 'Moon height: ', obs['moon_h'][0]
         print self.__row_format.format(*self.__heads)
         for row in zip(obs['ra'] + '  ' + obs['dec'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
             print self.__row_format.format(*row)
+#        t = Table()
+#        for i in obs.keys():
+#            t[i] = obs[i]
+#        print t
                 
     def observe(self, edit=False):
         """
