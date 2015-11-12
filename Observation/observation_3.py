@@ -480,42 +480,39 @@ property.
             x = np.argsort(time_rest[i].sec)
             k = np.where(altura[i,x] >= self.limheight)
             q = x[k]
-            if len(q) == 0:
-                self.obs[instants[i,0].iso] = {
-                'distmoon': np.char.array([]),
-                'moon_h': np.char.array(alt_formatter(alturam[i].value)),
-                'LT': instants[i,0].iso.split(' ')[1][0:5],
-                'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
-                'N': 0,
-                'names': np.char.array([]),
-                'comments': np.char.array([]),
-                'height': np.char.array([]),
-                'culmination': np.char.array([]),
-                'time_left': np.char.array([]),
-                'ra': np.char.array([]),
-                'dec': np.char.array([])}
-                continue
+            t = Table()
             self.obs[instants[i,0].iso] = {
-            'distmoon': np.char.array([dist_formatter(b) for b in distmoon[i,q].value]),
-            'moon_h': np.char.array(alt_formatter(alturam[i].value)),
             'LT': instants[i,0].iso.split(' ')[1][0:5],
             'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
-            'N': len(q),
-            'names': names[q],
-            'comments': '(' + np.char.array(comments[q]) + ')',
-            'height': np.char.array([alt_formatter(j) for j in altura[i,q].value]),
-            'culmination': np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0],
-            'time_left': np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60])}
-            ra0,dec0 = [], []
+            'moon_h': np.char.array(alt_formatter(alturam[i].value)),
+            'N': len(q)}
+            if len(q) == 0:
+                t['names'] = []
+                t['comments'] = []
+                t['RA_J2000_DEC'] = []
+                t['height'] = []
+                t['time_left'] = []
+                t['distmoon'] = []
+                t['culmination'] = []
+#                'dec': np.char.array([])}
+                continue
+            t['names'] = names[q]
+            t['comments'] = comments[q]
+            coord_str0 = [], []
             for p in q:
                 if p < quant:
-                    ra, dec = text_coord(coords[p])
+                    coord_str = coords[p].to_string('hmsdms', precision=4, sep=' ')
                 else:
-                    ra, dec = text_coord(ephem_min[ephem_min.keys()[p-quant]][i])
-                ra0 = np.append(ra0, ra)
-                dec0 = np.append(dec0, dec)
-            self.obs[instants[i,0].iso]['ra'] = np.char.array(ra0)
-            self.obs[instants[i,0].iso]['dec'] = np.char.array(dec0)
+                    coord_str = ephem_min[ephem_min.keys()[p-quant]][i].to_string('hmsdms', precision=4, sep=' ')
+                coord_str0 = np.append(coord_str0, coord_str)
+            t['RA_J2000_DEC'] = coord_str0
+            t['height'] = altura[i,q]
+            t['time_left'] = np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60])
+            t['culmination'] = np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
+            t['distmoon'] = distmoon[i,q]
+            self.obs[instants[i,0].iso]['table'] = t
+#                dec0 = np.append(dec0, dec)
+#            self.obs[instants[i,0].iso]['dec'] = np.char.array(dec0)
 #            for j in alwaysup:
 #                m = np.where(q == j)
 #                self.obs[instants[i,0].iso]['time_left'][m] = np.char.array('Always up')
@@ -554,7 +551,7 @@ property.
             output.write('\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------\n'.format(obs['LT'], obs['UT'], obs['N']))
             if len(obs['names']) > 0:
                 output.write(self.__row_format.format(*self.__heads) + '\n')
-                for row in zip(obs['ra'] + '  ' + obs['dec'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
+                for row in zip(obs['RA_J2000_DEC'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
                     output.write(self.__row_format.format(*row) + '\n')
 #                a = '\nRA: ' + obs['ra'] + ', DEC: ' + obs['dec'] + ', Height: ' + obs['height'] + ', Tleft: ' + obs['time_left'] + ' -- ' + np.char.array(obs['names']) + ' ' + obs['comments']
 #                for j in a:
@@ -629,6 +626,7 @@ property.
     def show_text(self):
         """
         """
+        array=['RA_J2000_DEC', 'height', 'time_left', 'distmoon', 'names', 'comments']
         k = self.instants[:,0].iso
         if len(k) == 1:
             i = 0
@@ -642,13 +640,10 @@ property.
         print b
         if len(obs['moon_h']) == 1:
             print 'Moon height: ', obs['moon_h'][0]
-        print self.__row_format.format(*self.__heads)
-        for row in zip(obs['ra'] + '  ' + obs['dec'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
-            print self.__row_format.format(*row)
-#        t = Table()
-#        for i in obs.keys():
-#            t[i] = obs[i]
-#        print t
+#        print self.__row_format.format(*self.__heads)
+#        for row in zip(obs['RA_J2000_DEC'], obs['height'], obs['time_left'], obs['distmoon'], np.char.array(obs['names']) + ' ' + obs['comments']):
+#            print self.__row_format.format(*row)
+        print obs['table']
                 
     def observe(self, edit=False):
         """
