@@ -1,4 +1,4 @@
-from mapa import Map
+from mapa_run import Map
 
 mp = Map()
 mp.infile()

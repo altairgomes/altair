@@ -6,7 +6,7 @@ import astropy.units as u
 from astropy.time import Time, TimeDelta
 from astropy.coordinates import SkyCoord, EarthLocation, Angle
 from multiprocessing import Pool
-from mapa import coordpack, calcfaixa, offset
+from mapa import coord_pack, calcfaixa, offset
 
 ####################################### definindo funcoes ##################################################################
 
