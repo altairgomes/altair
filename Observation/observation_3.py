@@ -5,7 +5,7 @@ import itertools
 from astropy.time import Time, TimeDelta
 import astropy.units as u
 from astropy.coordinates import SkyCoord, FK5, EarthLocation, Angle
-from astropy.table import Table
+from astropy.table import Table, Column, vstack
 import os
 
 ######################################################################
@@ -435,87 +435,64 @@ property.
     def plan(self, now=False, samefov=False):
         """
         """
-        coords = self.coords
-        names = self.names
-        comments = self.comments
         if hasattr(self, 'samefov'):
             coords = self.samefov['coords']
             names = self.samefov['names']
             comments = self.samefov['comments']
+        elif hasattr(self, 'coords'):
+            coords = self.coords
+            names = self.names
+            comments = self.comments
         if not hasattr(self, 'instants') or now == True:
             self.instant_list(Time.now() + self.fuse)
-        quant = len(names)
         instants = self.instants
-        coord_prec = precess(coords, instants[0])
-        culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
-        altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+        obs = Table(names=('objects', 'comments', 'RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'time'),\
+            dtype=(np.str, np.str, np.unicode, np.float, np.str, np.float, np.str, np.str))
+        obs.meta = {'LT': instants[:,0], 'UT': (instants[:,0] - self.fuse)}
         if hasattr(self, 'moon'):
             moon_min = identify_min(self.moon['coord'], self.moon['time'], (instants - self.fuse)[:,0])
             coord_prec_moon = precess(moon_min, instants[0])
             alturam, time_restm = height_time(coord_prec_moon, instants, limalt=0*u.deg, time_left=True, site=self.site, fuse=self.fuse)
-            ab, ba = np.meshgrid(np.arange(len(coords)), np.arange(len(coord_prec_moon)))
-            distmoon = coords[ab].separation(coord_prec_moon[ba])
+            obs.meta['moon_h'] = alturam.value.diagonal()
+        if 'coords' in locals():
+            coord_prec = precess(coords, instants[0])
+            culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
+            altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+            if 'coord_prec_moon' in locals():
+                ab, ba = np.meshgrid(np.arange(len(coords)), np.arange(len(coord_prec_moon)))
+                distmoon = coords[ab].separation(coord_prec_moon[ba])
+            for i in np.arange(len(instants)):
+                t = Table()
+                t['objects'] = Column(names)
+                t['comments'] = Column(comments)
+                t['RA_J2000_DEC'] = Column(coords.to_string('hmsdms', precision=4, sep=' '))
+                t['height'] = Column(altura[i])
+                t['time_left'] = Column(np.char.array([int_formatter(j) for j in time_rest[i].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i].sec - (time_rest[i].sec/3600.0).astype(int)*3600)/60]))
+                if 'distmoon' in locals():
+                    t['d_moon'] = Column(distmoon[i])
+                t['culmination'] = Column(np.char.array(culmination[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0])
+                t['time'] = instants[i,0].iso
+                obs = vstack([obs, t[np.where(altura[i] > self.limheight)]])
         if hasattr(self, 'eph'):
-            ephem_min = {}
             for i in self.eph.keys():
-                ephem_min[i] = identify_min(self.eph[i]['coord'], self.eph[i]['time'], (instants - self.fuse)[:,0])
-                coord_prec_eph = precess(ephem_min[i], instants[0])
+                ephem_min = identify_min(self.eph[i]['coord'], self.eph[i]['time'], (instants - self.fuse)[:,0])
+                coord_prec_eph = precess(ephem_min, instants[0])
                 culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
                 alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
-                culmination = Time([np.insert(culmination.value, len(culmination[0].value), culminatione[0,0].value)], scale='utc', format='jd')
-                altura = altura.insert(len(altura[0]), alturae.diagonal(), axis=1)
-                time_rest = TimeDelta(np.insert(time_rest.value, len(time_rest[0].value), time_reste.value.diagonal(), axis=1), scale='tai', format='jd')
-                if hasattr(self, 'moon'):
-                    sep = coord_prec_eph.separation(coord_prec_moon)
-                    distmoon = distmoon.insert(len(distmoon[0]), sep, axis=1)
-                ## Falta fazer alwaysup e neverup
-            names = np.append(names, ephem_min.keys())
-            comments = np.append(comments, ephem_min.keys())
-        self.titles = []
-        self.obs = {}
-        for i in np.arange(len(instants)):
-            x = np.argsort(time_rest[i].sec)
-            k = np.where(altura[i,x] >= self.limheight)
-            q = x[k]
-            self.obs[instants[i,0].iso] = {
-            'LT': instants[i,0].iso.split(' ')[1][0:5],
-            'UT': (instants[i,0] - self.fuse).iso.split(' ')[1][0:5],
-            'moon_h': np.char.array(alt_formatter(alturam[i].value)),
-            'N': len(q)}
-            if len(q) == 0:
-                t = Table(names=('objects', 'comments', 'RA_J2000_DEC', 'height', 'time_left', 'distmoon', 'culmination'))
-                self.obs[instants[i,0].iso]['table'] = t
-                continue
-            t = Table()
-            t['objects'] = names[q]
-            t['comments'] = comments[q]
-            coord_str0 = [], []
-            for p in q:
-                if p < quant:
-                    coord_str = coords[p].to_string('hmsdms', precision=4, sep=' ')
-                else:
-                    coord_str = ephem_min[ephem_min.keys()[p-quant]][i].to_string('hmsdms', precision=4, sep=' ')
-                coord_str0 = np.append(coord_str0, coord_str)
-            t['RA_J2000_DEC'] = coord_str0
-            t['height'] = altura[i,q]
-            t['time_left'] = np.char.array([int_formatter(j) for j in time_rest[i,q].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i,q].sec - (time_rest[i,q].sec/3600.0).astype(int)*3600)/60])
-            t['distmoon'] = distmoon[i,q]
-            t['culmination'] = np.char.array(culmination[0,q].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
-            self.obs[instants[i,0].iso]['table'] = t
-#            for j in alwaysup:
-#                m = np.where(q == j)
-#                self.obs[instants[i,0].iso]['time_left'][m] = np.char.array('Always up')
-#            if hasattr(self, 'samefov'):
-#                for t in np.arange(len(q)):
-#                    p = q[t]
-#                    if len(self.samefov['fov'][p]) == 1:
-#                        continue
-#                    g = ''
-#                    for z in self.samefov['fov'][p]:
-#                        ra1, dec1 = text_coord(self.coords[z])
-#                        g = g + '\n\t\t' + self.names[z] + ' (' + np.char.array(self.comments[z]) + ')\n\t\t  RA: ' + ra1 + '\tDEC: ' + dec1
-#                    self.obs[instants[i,0].iso]['rest'][t] = g[0]
-#                    self.obs[instants[i,0].iso]['comments'][t] = ''
+                alturae = alturae.diagonal();
+                time_lefte = np.char.array([int_formatter(j) for j in time_reste.sec.diagonal()/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_reste.sec.diagonal() - (time_reste.sec.diagonal()/3600.0).astype(int)*3600)/60])
+                culmie = np.char.array(culminatione[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
+                teph = Table([[i]*len(alturae), ephem_min.to_string('hmsdms', precision=4, sep=' '), alturae, time_lefte, culmie, instants[:,0].iso], names=('objects', 'RA_J2000_DEC', 'height', 'time_left', 'culmination', 'time'))                
+                if 'coord_prec_moon' in locals():
+                    distmoon = coord_prec_eph.separation(coord_prec_moon)
+                    tephmoon = Column(distmoon, name='d_moon')
+                    teph.add_column(tephmoon, index=5)
+                obs = vstack([obs, teph[np.where(alturae > self.limheight)]])
+        obs['height'].format = '4.1f'
+        obs['culmination'].format = '^10s'
+        obs['d_moon'].format = '3.0f'
+        obs['time_left'].format = '^8s'
+        self.obs = obs
 
     
     def resume_night(self):
@@ -536,11 +513,13 @@ property.
         output.write('Latitude: {}  Longitude: {}\nMinimum height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
         output.write('Height: Height above the horizons (deg)\nTleft: Time left to reach minimum height (hh:mm)\n\n')
         for i in np.arange(len(self.instants)):
-            obs = self.obs[self.instants[i,0].iso]
-            output.write('\n\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------\n'.format(obs['LT'], obs['UT'], obs['N']))
-            if obs['N'] > 0:
-                for i in obs['table'].pformat(max_lines=-1, max_width=-1):
-                    output.write(i + '\n')
+            obs = self.obs[np.where(self.obs['time'] == self.instants[i,0].iso)]
+            obs.sort('time_left')
+            output.write('\n---LT: {} (UT: {}) ----------------------------------------------------------------\n'.format(obs.meta['LT'][i].iso.rpartition(' ')[2].rpartition(':')[0], obs.meta['UT'][i].iso.rpartition(' ')[2].rpartition(':')[0]))
+            if 'moon_h' in obs.meta:
+                output.write('Moon height: {:4.1f}\n\n'.format(obs.meta['moon_h'][i]))
+            for i in obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pformat(max_lines=-1, max_width=-1):
+                output.write(i + '\n')
         self.resume_night()
         output.write('\n\n---Observability of the Targets----------------------------------------------------------------\n')
         for i in self.night[0]:
@@ -618,13 +597,13 @@ property.
             for l in np.arange(len(k)):
                 print '{}: {} LT'.format(l, k[l])
             i = input('Choose the number of the date you want to show: ')
-        j = k[i]
-        obs = self.obs[j]
-        b = '\n---LT: {} (UT: {}), N_objects={} ----------------------------------------------------------------'.format(obs['LT'], obs['UT'], obs['N'])
+        obs = self.obs[np.where(self.obs['time'] == k[i])]
+        b = '\n---LT: {} (UT: {}) ----------------------------------------------------------------'.format(obs.meta['LT'][i].iso.rpartition(' ')[2].rpartition(':')[0], obs.meta['UT'][i].iso.rpartition(' ')[2].rpartition(':')[0])
         print b
-        if len(obs['moon_h']) == 1:
-            print 'Moon height: ', obs['moon_h'][0]
-        print obs['table'].pprint(max_lines=-1, max_width=-1)
+        if 'moon_h' in obs.meta:
+            print 'Moon height: {+4.1}'.format(obs.meta['moon_h'][i])
+        obs.sort('time_left')
+        print obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pprint(max_lines=-1, max_width=-1)
                 
     def observe(self, edit=False):
         """
