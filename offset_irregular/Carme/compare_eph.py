@@ -7,6 +7,18 @@ from astropy.coordinates import SkyCoord
 
 #####################################################################
 
+plt.rcParams['text.latex.preamble']=[r"\usepackage{txfonts}"]
+
+params = {'text.usetex' : True,
+          'font.size' : 22,
+          'font.family' : 'txfonts',
+          'text.latex.unicode': True,
+          }
+          
+plt.rcParams.update(params)
+
+sizel = 17
+
 f = open('entrada.dat', 'r')
 arq = f.readlines()
 f.close()
@@ -29,11 +41,15 @@ for i in np.arange(len(ephcoord))[2:]:
     coor = np.core.defchararray.add(coor, ephcoord[i])
 jpl = SkyCoord(coor, frame='icrs', unit=(u.hourangle, u.degree))
 
-dalfa = lau.ra*np.cos(lau.dec) - jpl.ra*np.cos(jpl.dec)
-ddelta = lau.dec - jpl.dec
+dalfa = jpl.ra*np.cos(jpl.dec) - lau.ra*np.cos(lau.dec)
+ddelta = jpl.dec - lau.dec
+
+a = np.where(tempo > Time('2015-01-01 00:00:00').jd)
+
+print 'RA: ', np.absolute(dalfa[a].mas).max(), ', Dec: ', np.absolute(ddelta[a].mas).max()
 
 r = []
-for i in np.arange(1995,2018,1):
+for i in np.arange(2015,2019,1):
     r.append(Time('{}-01-01 00:00:00'.format(i), format='iso').jd - 2451544.5)
 
 #print r
@@ -42,34 +58,22 @@ r = np.array(r)
 ############## Declinacao ############################################
 
 
-plt.plot(tempo - 2451544.5, ddelta.mas, label='Declination')
-plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
+plt.plot(tempo - 2451544.5, dalfa.mas, label=r'$\Delta\alpha\cos\delta$')
+plt.plot(tempo - 2451544.5, ddelta.mas, '--', label=r'$\Delta\delta$')
+#plt.errorbar(y[0] - 2451544.5, z[1], yerr=z[3], fmt='s', label='Offsets')
 #plt.xlim(2449353.5 - 2451544.,2457754.5 - 2457388.5)
 #plt.vlines(eph[0][j] - 2451544.5, -500, 500)
-plt.ylim(-500,500)
-plt.title('Laurene - JUP300')
-plt.xlabel('Time')
-plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2018,1)])
-plt.ylabel('Offset in DEC (mas)')
-plt.legend()
+plt.ylim(-300,300)
+plt.xlim(Time('2015-01-01 00:00:00').jd - 2451544.5, Time('2018-01-01 00:00:00').jd - 2451544.5)
+plt.title('Carme', fontsize=sizel)
+plt.xlabel('Time', fontsize=sizel)
+plt.xticks(r, ['{}'.format(i) for i in np.arange(2015,2019,1)])
+plt.ylabel('JUP300 - STE (mas)', fontsize=sizel)
+plt.legend(loc=4, labelspacing=0.25, borderpad=0.5, handlelength=1.7, prop={'size':sizel})
 plt.axhline(0, color='black')
+plt.tick_params(axis='both', which='major', labelsize=sizel)
 fig =plt.gcf()
-fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
-fig.savefig('LAU-JPL_DEC.png',dpi=100, bbox_inches='tight')
+fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(9.9*u.cm).to(u.imperial.inch).value)
+fig.savefig('JPL_DEC_Carme.eps', format='eps', dpi=300, bbox_inches='tight')
 plt.clf()
 
-
-
-plt.plot(tempo - 2451544.5, dalfa.mas, label='Right Ascencion')
-plt.errorbar(y[0] - 2451544.5, z[0], yerr=z[2], fmt='s', label='Offsets')
-plt.title('Laurene - JUP300')
-plt.ylim(-500,500)
-plt.xlabel('Time')
-plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2018,1)])
-plt.ylabel('Offset in RA (mas)')
-plt.legend()
-plt.axhline(0, color='black')
-fig =plt.gcf()
-fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
-fig.savefig('LAU-JPL_RA.png',dpi=100, bbox_inches='tight')
-plt.clf()
