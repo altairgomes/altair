@@ -490,6 +490,7 @@ property.
                 obs = vstack([obs, teph[np.where(alturae > self.limheight)]])
         obs['height'].format = '4.1f'
         obs['culmination'].format = '^10s'
+        obs['culmination'].unit = 'LT'
         obs['d_moon'].format = '3.0f'
         obs['time_left'].format = '^8s'
         self.obs = obs
@@ -601,7 +602,7 @@ property.
         b = '\n---LT: {} (UT: {}) ----------------------------------------------------------------'.format(obs.meta['LT'][i].iso.rpartition(' ')[2].rpartition(':')[0], obs.meta['UT'][i].iso.rpartition(' ')[2].rpartition(':')[0])
         print b
         if 'moon_h' in obs.meta:
-            print 'Moon height: {+4.1}'.format(obs.meta['moon_h'][i])
+            print 'Moon height: {:+4.1f}'.format(obs.meta['moon_h'][i])
         obs.sort('time_left')
         print obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pprint(max_lines=-1, max_width=-1)
                 
