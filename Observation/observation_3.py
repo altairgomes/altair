@@ -138,15 +138,15 @@ def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
     """
     i = coord_pack(coord)
     if weighted == False:
-        x = (np.max(i.cartesian.x) - np.min(i.cartesian.x))/2 + np.min(i.cartesian.x)
-        y = (np.max(i.cartesian.y) - np.min(i.cartesian.y))/2 + np.min(i.cartesian.y)
-        z = (np.max(i.cartesian.z) - np.min(i.cartesian.z))/2 + np.min(i.cartesian.z)
+        x = (np.max(i.cartesian.x, axis=0) - np.min(i.cartesian.x, axis=0))/2 + np.min(i.cartesian.x, axis=0)
+        y = (np.max(i.cartesian.y, axis=0) - np.min(i.cartesian.y, axis=0))/2 + np.min(i.cartesian.y, axis=0)
+        z = (np.max(i.cartesian.z, axis=0) - np.min(i.cartesian.z, axis=0))/2 + np.min(i.cartesian.z, axis=0)
     else:
-        if weight is None:
-            weight = np.ones(len(i))
-        x = np.sum(i.cartesian.x*weight)/np.sum(weight)
-        y = np.sum(i.cartesian.y*weight)/np.sum(weight)
-        z = np.sum(i.cartesian.z*weight)/np.sum(weight)
+        if not weight:
+            weight = np.ones(i.shape)
+        x = np.sum(i.cartesian.x*weight, axis=0)/np.sum(weight, axis=0)
+        y = np.sum(i.cartesian.y*weight, axis=0)/np.sum(weight, axis=0)
+        z = np.sum(i.cartesian.z*weight, axis=0)/np.sum(weight, axis=0)
     delta = np.arcsin(z/np.sqrt(x**2 + y**2 + z**2))
     alfa = np.arctan2(y, x)
     if ra_dec == True:
@@ -281,20 +281,13 @@ def resume_night(coord, time, name, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.
     coord = coord_pack(coord)
     coord_prec = precess(coord, timeut)
     culminacao, nascer, poente, alwaysup, neverup = sky_time(coord_prec, time, rise_set=True, limalt=limalt, site=site, fuse=fuse)
-    ra, dec = text_coord(coord)
+    ra, dec = coord.ra
     night = '\nRA: ' + ra + ', DEC: ' +  dec + ', Rise: ' + np.char.array(nascer.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Culmination: ' + \
 np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Set: ' + np.char.array(poente.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + \
 ' TL, ' + np.char.array(name)
     return night
-    
-def text_coord(coord):
-    """
-    """
-    coord = coord_pack(coord)
-    ra = np.char.array([int_formatter(j) for j in coord.ra.hms.h]) + ' ' + np.char.array([int_formatter(j) for j in coord.ra.hms.m]) + ' ' + np.char.array([ra_formatter(j) for j in coord.ra.hms.s])
-    sign = np.char.array(np.sign(coord.dec)).replace('-1.0', '-').replace('1.0', '+').replace('0.0', '+')
-    dec = sign + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.d)]) + ' ' + np.char.array([int_formatter(j) for j in np.absolute(coord.dec.dms.m)]) + ' ' + np.char.array([dec_formatter(j) for j in np.absolute(coord.dec.dms.s)])
-    return ra, dec
+
+#################################################################################################################
     
 class Observation(object):
     """
@@ -390,10 +383,18 @@ property.
         """
         self.eph = {}
         onlyeph = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
+        ra, dec, body = np.array([]), np.array([]), [] ## teste1
         for i in onlyeph:
             a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
             name = i[:-4]
+            body.append(name) ## teste1
             self.eph[name] = {'coord' : a[0], 'time' : a[1]}
+            ra = np.concatenate((ra, a[0].ra.to_string(unit=u.hourangle, precision=4))) ## teste1
+            dec = np.concatenate((dec, a[0].dec.to_string(unit=u.deg, precision=3)))  ## teste1
+        ra = ra.reshape((len(body), len(ra)/len(body)))  ## teste1
+        dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
+        coord = SkyCoord(ra,dec, unit=(u.hourangle, u.deg))  ## teste1
+        self.teste1 = {'name' : body, 'coord' : coord, 'time' : a[1]}  ## teste1
             
     def eph_moon(self, coord_col, time_col, ephem='Moon.eph', time_fmt='jd', skiprows=0):
         """
@@ -567,13 +568,13 @@ property.
                 names = np.concatenate((['List all objects'], self.obs[key]['names']))
             elif p == 2:
                 if hasattr(self, 'samefov'):
-                    ra, dec = text_coord(self.samefov['coords'])
+                    ra, dec = self.samefov['coords'].to_string('hmsdms', precision=4, sep=' ')
                     names = np.concatenate((['List all objects'], self.samefov['names']))
                 else:
                     continue
             elif p == 3:
                 if hasattr(self, 'coords'):
-                    ra, dec = text_coord(self.coords)
+                    ra, dec = self.coords.to_string('hmsdms', precision=4, sep=' ')
                     names = np.concatenate((['Exit'], self.names))
                 else:
                     print "There is no coordinates to show"
@@ -628,13 +629,13 @@ property.
                 names = np.concatenate((['List all objects'], self.obs[key]['names']))
             elif p == 2:
                 if hasattr(self, 'samefov'):
-                    ra, dec = text_coord(self.samefov['coords'])
+                    coord = self.samefov['coords'].to_string('hmsdms', precision=4, sep=' ')
                     names = np.concatenate((['List all objects'], self.samefov['names']))
                 else:
                     continue
             elif p == 3:
                 if hasattr(self, 'coords'):
-                    ra, dec = text_coord(self.coords)
+                    coord = self.coords.to_string('hmsdms', precision=4, sep=' ')
                     names = np.concatenate((['Exit'], self.names))
                 else:
                     print "There is no coordinates to show"
