@@ -1,0 +1,47 @@
+2                                                 # input data: (1) praia_occ_search output (2) this file input
+############## input (1)  ################################################################################
+g4_occ_datauc4_CARME_2015_table                   # praia_occ_search output file
+############## input (2)  #############################################################################
+08 56 54.5042  +17 51 43.656                      # star coordinate
+2015-03-30 01:45:13.000                           # occultation instant
+1.082                                             # c/a in arcsec
+25.6                                              # position angle in degrees
+4.74                                              # delta (distance) in Astronomical Units
+-4.46                                             # velocity in km/s
+-84.6                                             # obj. offset in RA (mas) 83.0
+-1.8                                              # obj. offset in DEC (mas) -6.6
+45.9                                              # star offset in RA (mas)
+42.0                                              # star offset in DEC (mas)
+13.5                                              # magR
+-1.6                                              # magK
+281                                               # long
+############## plot informations #####################################################################
+Elara                                           # Name of the object
+80                                               # Diameter of the object in km
+1000                                              # error in c/a in mas
+sites.dat                                         # observatories list
+l                                                 # resolution of boundary database to use. Can be ``c`` (crude), ``l`` (low), ``i`` (intermediate), ``h`` (high), ``f`` (full)
+17.6 14.5                                         # figure size in cm (x, y)
+1                                                 # map style. See below. Default = 1
+######################################################################################################
+
+Map Stype
+
+1) Basic map 
+- colorless
+- grey scale
+
+2) Basic map
+- monocolor continent (coral)
+- monocolor oceans (aqua)
+
+3) Shadedrelief
+- colored map
+- continent relief
+
+4) Draw the NASA ‘Blue Marble’ image
+- Satellite image style
+
+5) Draw an etopo relief image
+- colored map
+- continent and ocean relief
