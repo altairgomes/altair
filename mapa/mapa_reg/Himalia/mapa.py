@@ -269,7 +269,7 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
 #    m.plot(ax6.to(u.m), by6.to(u.m), '--', color=dscolor)
 #    plt.legend(fontsize=mapsize[0].value*21/46)
 
-    m.plot(5771363.97687, 4156344.21479, '+', color='black', markersize=mapsize[0].value*20/46)
+#    m.plot(5771363.97687, 4156344.21479, '+', color='black', markersize=mapsize[0].value*20/46)
 #5771363.97687 4156344.21479
 
 #    fig = plt.gcf()
