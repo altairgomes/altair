@@ -4,7 +4,7 @@ import numpy as np
 import itertools
 from astropy.time import Time, TimeDelta
 import astropy.units as u
-from astropy.coordinates import SkyCoord, FK5, EarthLocation, Angle
+from astropy.coordinates import SkyCoord, FK5, EarthLocation, Angle, AltAz
 from astropy.table import Table, Column, vstack
 import os
 
@@ -16,6 +16,7 @@ alt_formatter = lambda x: "%3.1f" %x
 dist_formatter = lambda x: "%3.0f" %x
 int_formatter = lambda x: "%02d" %x
 int2_formatter = lambda x: "%+03d" %x
+sentinel = object()
 
 def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd', skiprows=0):
     """
@@ -133,7 +134,7 @@ def close_obj(coord, size):
                     samefov = samefov + [a]
     return np.sort(samefov).tolist()
 
-def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
+def midpoint_coord(coord, weighted=False, weight=[], ra_dec=False):
     """
     """
     i = coord_pack(coord)
@@ -142,7 +143,7 @@ def midpoint_coord(coord, weighted=False, weight=None, ra_dec=False):
         y = (np.max(i.cartesian.y, axis=0) - np.min(i.cartesian.y, axis=0))/2 + np.min(i.cartesian.y, axis=0)
         z = (np.max(i.cartesian.z, axis=0) - np.min(i.cartesian.z, axis=0))/2 + np.min(i.cartesian.z, axis=0)
     else:
-        if not weight:
+        if weight == []:
             weight = np.ones(i.shape)
         x = np.sum(i.cartesian.x*weight, axis=0)/np.sum(weight, axis=0)
         y = np.sum(i.cartesian.y*weight, axis=0)/np.sum(weight, axis=0)
@@ -173,16 +174,19 @@ def identify_min(coords, times, instants):
     d = np.absolute(c)
     e = np.argsort(d)
     f = e[:,0:2]
-    g = []
+    ra, dec = np.array([]), np.array([])
     for j in np.arange(len(f)):
         if instants[j].iso in times[f[j]].iso:
-            g.append(coords[f[j][np.where(instants[j].iso == times[f[j]].iso)]][0])
+            coor = coords[f[j][np.where(instants[j].iso == times[f[j]].iso)]][0]
         else:
-            k = midpoint_coord(coords[f[j]], weighted=True, weight=1./np.absolute((times[f[j]] - instants[j]).value))[0]
-            g.append(k)
-    g = coord_pack(g)
+            t = np.repeat([1./np.absolute((times[f[j]] - instants[j]).value)], len(coords[f[j]][0]), axis=0)
+            coor = midpoint_coord(coords[f[j]], weighted=True, weight=t.transpose())[0]
+        ra = np.concatenate((ra, coor.ra.to_string(unit=u.hourangle, precision=4)))
+        dec = np.concatenate((dec, coor.dec.to_string(unit=u.deg, precision=3)))
+    ra = ra.reshape((len(coords[f[j]][0]), len(ra)/len(coords[f[j]][0])))  ## teste1
+    dec = dec.reshape((len(coords[f[j]][0]), len(dec)/len(coords[f[j]][0])))  ## teste1
+    g = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))
     return g
-    
     
 def mesh_coord(coord, time, ephem=None):
     """
@@ -208,6 +212,9 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
         timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
     timeut.delta_ut1_utc = 0
     timeut.location = site
+
+#    modificar para caber ephemerides
+
     ra, ts = mesh_coord(coord, timeut)
     dif_h_sid = Angle(ra-ts)
     dif_h_sid.wrap_at('180d', inplace=True)
@@ -245,19 +252,13 @@ def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocati
     """
     coord = coord_pack(coord)
     timeut = time - fuse
-    if len(time.shape) == 1:
-        timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
     timeut.location = site
-    timeut.delta_ut1_utc = 0
-    ra, ts = mesh_coord(coord, timeut)
-    hourangle = Angle(ts-ra)
-    distzen = np.arccos(np.sin(coord.dec)*np.sin(site.latitude) + np.cos(coord.dec)*np.cos(site.latitude)*np.cos(hourangle))
-    altura = 90*u.deg - distzen
+    altaz = coord.transform_to(AltAz(obstime=timeut,location=site))
     if time_left == True:
         poente = sky_time(coord, time, rise_set=True, limalt=limalt, site=site, fuse=fuse)[2]
         time_rest = poente - time
-        return altura, time_rest
-    return altura
+        return altaz.alt, time_rest
+    return altaz.alt
 
 def instant_list(time_begin, time_end=None, time_step=TimeDelta(60*60, format='sec'), fmt='iso'):
     """
@@ -381,26 +382,27 @@ property.
     def ephem(self, path='./ephemeris', coord_col=None, time_col=None, time_fmt='jd', skiprows=0):
         """
         """
-        self.eph = {}
         onlyeph = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
         ra, dec, body = np.array([]), np.array([]), [] ## teste1
         for i in onlyeph:
             a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
             name = i[:-4]
             body.append(name) ## teste1
-            self.eph[name] = {'coord' : a[0], 'time' : a[1]}
             ra = np.concatenate((ra, a[0].ra.to_string(unit=u.hourangle, precision=4))) ## teste1
             dec = np.concatenate((dec, a[0].dec.to_string(unit=u.deg, precision=3)))  ## teste1
         ra = ra.reshape((len(body), len(ra)/len(body)))  ## teste1
         dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
-        coord = SkyCoord(ra,dec, unit=(u.hourangle, u.deg))  ## teste1
-        self.teste1 = {'name' : body, 'coord' : coord, 'time' : a[1]}  ## teste1
+        coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))  ## teste1
+        self.eph = {'name' : body, 'coord' : coord, 'time' : a[1]}  ## teste1
             
     def eph_moon(self, coord_col, time_col, ephem='Moon.eph', time_fmt='jd', skiprows=0):
         """
         """
         a = read(ephem, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
-        self.moon = {'coord' : a[0], 'time' : a[1]}
+        ra = a[0].ra.to_string(unit=u.hourangle, precision=4).reshape((1, len(a[0])))  ## teste1
+        dec = a[0].dec.to_string(unit=u.deg, precision=3).reshape((1, len(a[0])))  ## teste1
+        coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))
+        self.moon = {'coord' : coord, 'time' : a[1]}
         
     def __close_obj__(self):
         """
@@ -475,20 +477,22 @@ property.
                 t['time'] = instants[i,0].iso
                 obs = vstack([obs, t[np.where(altura[i] > self.limheight)]])
         if hasattr(self, 'eph'):
-            for i in self.eph.keys():
-                ephem_min = identify_min(self.eph[i]['coord'], self.eph[i]['time'], (instants - self.fuse)[:,0])
-                coord_prec_eph = precess(ephem_min, instants[0])
-                culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
-                alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
-                alturae = alturae.diagonal();
-                time_lefte = np.char.array([int_formatter(j) for j in time_reste.sec.diagonal()/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_reste.sec.diagonal() - (time_reste.sec.diagonal()/3600.0).astype(int)*3600)/60])
-                culmie = np.char.array(culminatione[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
-                teph = Table([[i]*len(alturae), ephem_min.to_string('hmsdms', precision=4, sep=' '), alturae, time_lefte, culmie, instants[:,0].iso], names=('objects', 'RA_J2000_DEC', 'height', 'time_left', 'culmination', 'time'))                
-                if 'coord_prec_moon' in locals():
-                    distmoon = coord_prec_eph.separation(coord_prec_moon)
-                    tephmoon = Column(distmoon, name='d_moon')
-                    teph.add_column(tephmoon, index=5)
-                obs = vstack([obs, teph[np.where(alturae > self.limheight)]])
+            ephem_min = identify_min(self.eph[i]['coord'], self.eph[i]['time'], (instants - self.fuse)[:,0])
+            coord_prec_eph = precess(ephem_min, instants[0])
+
+##         continuar conferindo para ver se efemerides servem
+
+            culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
+            alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+            alturae = alturae.diagonal();
+            time_lefte = np.char.array([int_formatter(j) for j in time_reste.sec.diagonal()/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_reste.sec.diagonal() - (time_reste.sec.diagonal()/3600.0).astype(int)*3600)/60])
+            culmie = np.char.array(culminatione[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
+            teph = Table([[i]*len(alturae), ephem_min.to_string('hmsdms', precision=4, sep=' '), alturae, time_lefte, culmie, instants[:,0].iso], names=('objects', 'RA_J2000_DEC', 'height', 'time_left', 'culmination', 'time'))                
+            if 'coord_prec_moon' in locals():
+                distmoon = coord_prec_eph.separation(coord_prec_moon)
+                tephmoon = Column(distmoon, name='d_moon')
+                teph.add_column(tephmoon, index=5)
+            obs = vstack([obs, teph[np.where(alturae > self.limheight)]])
         obs['height'].format = '4.1f'
         obs['culmination'].format = '^10s'
         obs['culmination'].unit = 'LT'
