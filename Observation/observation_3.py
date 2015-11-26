@@ -188,15 +188,15 @@ def identify_min(coords, times, instants):
     g = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))
     return g
     
-def mesh_coord(coord, time, ephem=None):
+def mesh_coord(coord, time):
     """
     """
     ra = coord.ra
-    if ephem:
-        ra = np.append(ra, [0]*len(ephem.keys()))
+    if len(ra.shape) > 1:
+        a, b = np.indices(ra.shape)
+        ts = time.sidereal_time('mean')[a]
+        return ra, ts
     rs, ts = np.meshgrid(ra, time.sidereal_time('mean'))
-    if ephem:
-        ra = np.append(ra, [0]*len(ephem.keys()))
     return rs, ts
 
 def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0, 0.0, 0.0), fuse=TimeDelta(0, format='sec', scale='tai')):
@@ -208,8 +208,8 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
         time = Time([time.iso], format='iso', scale='utc')
     coord = coord_pack(coord)
     timeut = time - fuse
-    if len(time.shape) == 1:
-        timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
+#    if len(time.shape) == 1:
+#        timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
     timeut.delta_ut1_utc = 0
     timeut.location = site
 
@@ -484,7 +484,7 @@ property.
 
             culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
             alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
-            alturae = alturae.diagonal();
+#            alturae = alturae.diagonal();
             time_lefte = np.char.array([int_formatter(j) for j in time_reste.sec.diagonal()/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_reste.sec.diagonal() - (time_reste.sec.diagonal()/3600.0).astype(int)*3600)/60])
             culmie = np.char.array(culminatione[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
             teph = Table([[i]*len(alturae), ephem_min.to_string('hmsdms', precision=4, sep=' '), alturae, time_lefte, culmie, instants[:,0].iso], names=('objects', 'RA_J2000_DEC', 'height', 'time_left', 'culmination', 'time'))                
