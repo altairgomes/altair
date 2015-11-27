@@ -136,7 +136,7 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
     if not centermap == None:
         center_map = EarthLocation(centermap[0],centermap[1])
 #    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution)
-    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution,llcrnrx=-4000000.,llcrnry=-4130000.,urcrnrx=1000000.,urcrnry=0000000.)
+    m = Basemap(projection='ortho',lat_0=center_map.latitude.value,lon_0=center_map.longitude.value,resolution=resolution,llcrnrx=-3500000.,llcrnry=-3717000.,urcrnrx=500000.,urcrnry=-413000.)
     kx = fig.add_axes([0.105,0.1,0.894,0.894])
     kx.set_rasterization_zorder(1)
     m.nightshade(data.datetime, alpha=0.3, zorder=0.5)  ## desenha a sombra da noite
@@ -167,13 +167,13 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         xs, ys = m(lats[tipo][0], lats[tipo][1])
         xs = [i for i in xs if i < 1e+30]
         ys = [i for i in ys if i < 1e+30]
-        m.plot(xs, ys, color=mapsstyle[tipo])
+#        m.plot(xs, ys, color=mapsstyle[tipo])
         xt, yt = m(lats[tipo][2], lats[tipo][3])
         xt = [i for i in xt if i < 1e+30]
         yt = [i for i in yt if i < 1e+30]
-        m.plot(xt, yt, color=mapsstyle[tipo])
-        m.plot(lats[tipo][4], lats[tipo][5], color=mapsstyle[tipo], zorder=-0.2)
-        m.plot(lats[tipo][6], lats[tipo][7], color=mapsstyle[tipo], zorder=-0.2)
+#        m.plot(xt, yt, color=mapsstyle[tipo])
+#        m.plot(lats[tipo][4], lats[tipo][5], color=mapsstyle[tipo], zorder=-0.2)
+#        m.plot(lats[tipo][6], lats[tipo][7], color=mapsstyle[tipo], zorder=-0.2)
 #    else:
 #        m.plot(lats[4], lats[5], color=style[mapstyle]['outcolor'], clip_on=False, zorder=0.2)
 #        m.plot(lats[6], lats[7], color=style[mapstyle]['outcolor'], clip_on=False, zorder=0.2)
@@ -209,40 +209,41 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
         cp = Time(clat[tipo][5], format='iso')
         vec = np.arange(0, (cp[-1] - data).sec, cpoints)
         vec = np.sort(np.concatenate((vec,-vec[1:]), axis=0))*u.s
-        for i in vec:
-            g = data + TimeDelta(i) + TimeDelta(off*u.s)
-            if g.iso in clat[tipo][2]:
-                a = np.where(np.array(clat[tipo][2]) == g.iso)
-                x, y = m(np.array(clat[tipo][0])[a], np.array(clat[tipo][1])[a])
-                xc.append(x)
-                yc.append(y)
-                lab.append(g.iso.split()[1][0:8])
-            elif g.iso in clat[tipo][5]:
-                a = np.where(np.array(clat[tipo][5]) == g.iso)
-                xc.append(np.array(clat[tipo][3])[a])
-                yc.append(np.array(clat[tipo][4])[a])
-                lab.append(g.iso.split()[1][0:8])
-            else:
-                if len(clat[tipo][2]) == 0:
-                    a = [0]
-                else:
-                    co = Time(clat[tipo][2], format='iso')
-                    a = np.argsort(np.absolute(co - g))[0:2]
-                if 0 not in a and len(co)-1 not in a:
-                    b = np.absolute((co[a] - g).sec)
-                    x, y = m(np.array(clat[tipo][0])[a], np.array(clat[tipo][1])[a])
-                    xc.append(np.sum(x*(1/b))/np.sum(1/b))
-                    yc.append(np.sum(y*(1/b))/np.sum(1/b))
-                    lab.append(g.iso.split()[1][0:8])
-                else:
-                    co = Time(clat[tipo][5], format='iso')
-                    a = np.argsort(np.absolute(co - g))[0:2]
-                    b = np.absolute((co[a] - g).sec)
-                    xc.append(np.sum(np.array(clat[tipo][3])[a]*(1/b))/np.sum(1/b))
-                    yc.append(np.sum(np.array(clat[tipo][4])[a]*(1/b))/np.sum(1/b))
-                    lab.append(g.iso.split()[1][0:8])
-#        m.plot(xc, yc, 'o', color=style[mapstyle]['ptcolor'], markersize=mapsize[0].value*8/46)
-#        m.plot(clat[tipo][6][0], clat[tipo][6][1], 'o', color=style[mapstyle]['ptcolor'], markersize=mapsize[0].value*20/46)
+#        for i in vec:
+#            g = data + TimeDelta(i) + TimeDelta(off*u.s)
+#            if g.iso in clat[tipo][2]:
+#                a = np.where(np.array(clat[tipo][2]) == g.iso)
+#                x, y = m(np.array(clat[tipo][0])[a], np.array(clat[tipo][1])[a])
+#                xc.append(x)
+#                yc.append(y)
+#                lab.append(g.iso.split()[1][0:8])
+#            elif g.iso in clat[tipo][5]:
+#                a = np.where(np.array(clat[tipo][5]) == g.iso)
+#                xc.append(np.array(clat[tipo][3])[a])
+#                yc.append(np.array(clat[tipo][4])[a])
+#                lab.append(g.iso.split()[1][0:8])
+#            else:
+#                if len(clat[tipo][2]) == 0:
+#                    a = [0]
+#                else:
+#                    co = Time(clat[tipo][2], format='iso')
+#                    a = np.argsort(np.absolute(co - g))[0:2]
+#                if 0 not in a and len(co)-1 not in a:
+#                    b = np.absolute((co[a] - g).sec)
+#                    x, y = m(np.array(clat[tipo][0])[a], np.array(clat[tipo][1])[a])
+#                    xc.append(np.sum(x*(1/b))/np.sum(1/b))
+#                    yc.append(np.sum(y*(1/b))/np.sum(1/b))
+#                    lab.append(g.iso.split()[1][0:8])
+#                else:
+#                    co = Time(clat[tipo][5], format='iso')
+#                    a = np.argsort(np.absolute(co - g))[0:2]
+#                    b = np.absolute((co[a] - g).sec)
+#                    xc.append(np.sum(np.array(clat[tipo][3])[a]*(1/b))/np.sum(1/b))
+#                    yc.append(np.sum(np.array(clat[tipo][4])[a]*(1/b))/np.sum(1/b))
+#                    lab.append(g.iso.split()[1][0:8])
+        x, y = m(np.array(clat[tipo][0]), np.array(clat[tipo][1]))
+        m.plot(x, y, color=mapsstyle[tipo])#, markersize=mapsize[0].value*8/46)
+        m.plot(clat[tipo][6][0], clat[tipo][6][1], 'o', color=mapsstyle[tipo], markersize=mapsize[0].value*10/46)#, marker=(2,0,165))
 #        print clat[6][0], clat[6][1]
 
 #    for label, axpt, bypt in zip(lab, xc, yc):
@@ -279,12 +280,19 @@ def geramapa(star, data, title, labelx, nameimg, mapstyle='1', resolution='l', c
 #    fig.set_size_inches(mapsize[0].to(u.imperial.inch).value, mapsize[1].to(u.imperial.inch).value)
 #    plt.title(title, fontsize=mapsize[0].value*25/46, fontproperties='FreeMono', weight='bold')
 #    plt.xlabel(labelx, fontsize=mapsize[0].value*21/46, fontproperties='FreeMono', weight='bold')
-    e,w = m(center_map.longitude.value,center_map.latitude.value)
+#    e,w = m(center_map.longitude.value,center_map.latitude.value)
+    e, w = clat['STE'][6][0], clat['STE'][6][1]
+    
+    plt.errorbar(e - 50000, w + 1250000, yerr=75000, color='black')
+    plt.errorbar(e - 50000, w + 1000000, yerr=98000, color='black')
+    plt.text(e, w + 1225000, 'Himalia Diameter (150 km)', fontsize=sizel)
+    plt.text(e, w + 975000, 'Estimated Error (60 mas)', fontsize=sizel)
+    
     plt.xscale(u'linear')
-    plt.xticks(np.arange(0, 5000000, 500000) + e - 4000000, np.arange(0.0, 5.0, 0.5), fontsize=sizel)
+    plt.xticks(np.arange(-2500000, 1500000, 500000) + e, np.arange(-2.5, 1.5, 0.5), fontsize=sizel)
     plt.xlabel(r'$\times 10^{3}$(km)', fontsize=sizel)
     plt.yscale(u'linear')
-    plt.yticks(np.arange(0, 4500000, 500000) + w - 4130000, np.arange(0.0, 4.5, 0.5), fontsize=sizel)#, rotation=90)
+    plt.yticks(np.arange(-1500000, 2000000, 500000) + w, np.arange(-1.5, 2.0, 0.5), fontsize=sizel)#, rotation=90)
     plt.ylabel(r'$\times 10^{3}$(km)', fontsize=sizel)
     plt.savefig('HIMALIA.{}'.format(fmt), format=fmt, dpi=dpi, bbox_inches='tight')
     print 'Gerado: HIMALIA.{}'.format(fmt)
