@@ -1,5 +1,6 @@
-entrada="photometry_Chariklo.dat"
-saida="photometry_Chariklo_med.dat"
+export LC_NUMERIC="en_US.UTF-8"    ## define sistema numerico americano pro sistema
+entrada="photometry.dat"
+saida="photometry_med.dat"
 count=0
 bin=$1
 num=$(echo "($bin - 1)/2" | bc)
@@ -22,7 +23,6 @@ init=$(echo "$num" | bc)
 fini=$(echo "$quant - $num - 1" | bc)
 n=$init
 while [ $n -le $fini ];do
-  echo $n
   come=$(echo "$n - $num" | bc)
   term=$(echo "$n + $num" | bc)
   x=$come

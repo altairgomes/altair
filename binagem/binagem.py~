@@ -53,6 +53,7 @@ te = t.iso.split(' ')
 data = te[0]
 inicio = te[1]
 
+####### aplicando correcao de tempo ###############
 if timedif == 'Yes':
     tempoantes = Time(x[0], format='jd', scale='utc')
     temponovo = tempoantes + TimeDelta(timedifv, format='sec')

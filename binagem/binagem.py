@@ -11,7 +11,7 @@ from multiprocessing import Pool
 
 arquivo = 'photometry.dat'			### arquivo de dados de entrada
 binsum = [1, 5, 10]					### binagem para concatenar pontos
-binagemcor = [1, 3, 5, 15]				### lista de binagenspara media corrida, ps: feito apos binagem para concatenar
+binagemcor = [1, 3, 5, 15]				### lista de binagens para media corrida, ps: feito apos binagem para concatenar
 coltime = [2]                                   ### coluna do tempo
 coltarg = [4, 7, 10, 13, 16]                    ### colunas das estrelas alvo
 targcom = ['6px', '8px', '10px', '12px', '14px']			### nomes das colunas da estrela alvo - plot issue
