@@ -183,15 +183,16 @@ def identify_min(coords, times, instants):
             coor = midpoint_coord(coords[f[j]], weighted=True, weight=t.transpose())[0]
         ra = np.concatenate((ra, coor.ra.to_string(unit=u.hourangle, precision=4)))
         dec = np.concatenate((dec, coor.dec.to_string(unit=u.deg, precision=3)))
-    ra = ra.reshape((len(coords[f[j]][0]), len(ra)/len(coords[f[j]][0])))  ## teste1
-    dec = dec.reshape((len(coords[f[j]][0]), len(dec)/len(coords[f[j]][0])))  ## teste1
-    g = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))
+    ra = ra.reshape((len(ra)/len(coords[f[j]][0]), len(coords[f[j]][0])))  ## teste1
+    dec = dec.reshape((len(dec)/len(coords[f[j]][0]), len(coords[f[j]][0])))  ## teste1
+    g = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
     return g
     
 def mesh_coord(coord, time):
     """
     """
     ra = coord.ra
+    time.delta_ut1_utc = 0
     if len(ra.shape) > 1:
         a, b = np.indices(ra.shape)
         ts = time.sidereal_time('mean')[a]
@@ -208,14 +209,11 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
         time = Time([time.iso], format='iso', scale='utc')
     coord = coord_pack(coord)
     timeut = time - fuse
-#    if len(time.shape) == 1:
-#        timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
+    if len(time.shape) == 1:
+        timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
     timeut.delta_ut1_utc = 0
     timeut.location = site
-
-#    modificar para caber ephemerides
-
-    ra, ts = mesh_coord(coord, timeut)
+    ra, ts = mesh_coord(coord, timeut[:,0])
     dif_h_sid = Angle(ra-ts)
     dif_h_sid.wrap_at('180d', inplace=True)
     dif_h_sol = dif_h_sid * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
@@ -223,6 +221,12 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
     culminacao = timeut + dif
     culminacao.delta_ut1_utc = 0
     culminacao.location = site
+    if (site.latitude > 0*u.deg):
+        alwaysup = np.where(coord.dec >= 90*u.deg - site.latitude + limalt)
+        neverup = np.where(coord.dec <= -(90*u.deg - site.latitude - limalt))
+    else:
+        alwaysup = np.where(coord.dec <= -(90*u.deg + site.latitude + limalt))
+        neverup = np.where(coord.dec >= 90*u.deg + site.latitude - limalt)
     if rise_set == True:
         hangle_lim = np.arccos((np.cos(90.0*u.deg-limalt) - np.sin(coord.dec)*np.sin(site.latitude)) / (np.cos(coord.dec)*np.cos(site.latitude)))
         tsg_lim = Angle(ra + hangle_lim)
@@ -234,24 +238,19 @@ def sky_time(coord, time, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0
         dtsg_np = TimeDelta((dtsg_lim_sol.hour*u.h))
         sunrise = culminacao - dtsg_np
         sunset = culminacao + dtsg_np
-        if (site.latitude > 0*u.deg):
-            alwaysup = np.where(coord.dec >= 90*u.deg - site.latitude + limalt)
-            neverup = np.where(coord.dec <= -(90*u.deg - site.latitude - limalt))
-        else:
-            alwaysup = np.where(coord.dec <= -(90*u.deg + site.latitude + limalt))
-            neverup = np.where(coord.dec >= 90*u.deg + site.latitude - limalt)
         culminacao = culminacao + fuse
         sunrise = sunrise + fuse
         sunset = sunset + fuse
         return culminacao, sunrise, sunset, alwaysup, neverup
     culminacao = culminacao + fuse
-    return culminacao
+    return culminacao, alwaysup, neverup
 
 def height_time(coord, time, time_left=False, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.0, 0.0), fuse=TimeDelta(0, format='sec', scale='tai')):
     """
     """
     coord = coord_pack(coord)
     timeut = time - fuse
+    timeut.delta_ut1_utc = 0
     timeut.location = site
     altaz = coord.transform_to(AltAz(obstime=timeut,location=site))
     if time_left == True:
@@ -459,7 +458,7 @@ property.
             obs.meta['moon_h'] = alturam.value.diagonal()
         if 'coords' in locals():
             coord_prec = precess(coords, instants[0])
-            culmination, lixo, lixo2, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
+            culmination, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
             altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
             if 'coord_prec_moon' in locals():
                 ab, ba = np.meshgrid(np.arange(len(coords)), np.arange(len(coord_prec_moon)))
@@ -477,14 +476,11 @@ property.
                 t['time'] = instants[i,0].iso
                 obs = vstack([obs, t[np.where(altura[i] > self.limheight)]])
         if hasattr(self, 'eph'):
-            ephem_min = identify_min(self.eph[i]['coord'], self.eph[i]['time'], (instants - self.fuse)[:,0])
+            ephem_min = identify_min(self.eph['coord'], self.eph['time'], (instants - self.fuse)[:,0])
             coord_prec_eph = precess(ephem_min, instants[0])
-
-##         continuar conferindo para ver se efemerides servem
-
-            culminatione, lixo, lixo2, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=True, site=self.site, fuse=self.fuse)
+            culminatione, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
             alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
-#            alturae = alturae.diagonal();
+### continuar aqui fazer meshgrid
             time_lefte = np.char.array([int_formatter(j) for j in time_reste.sec.diagonal()/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_reste.sec.diagonal() - (time_reste.sec.diagonal()/3600.0).astype(int)*3600)/60])
             culmie = np.char.array(culminatione[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
             teph = Table([[i]*len(alturae), ephem_min.to_string('hmsdms', precision=4, sep=' '), alturae, time_lefte, culmie, instants[:,0].iso], names=('objects', 'RA_J2000_DEC', 'height', 'time_left', 'culmination', 'time'))                
