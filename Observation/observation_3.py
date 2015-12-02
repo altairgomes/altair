@@ -179,10 +179,10 @@ def identify_min(coords, times, instants):
         if instants[j].iso in times[f[j]].iso:
             coor = coords[f[j][np.where(instants[j].iso == times[f[j]].iso)]][0]
         else:
-            t = np.repeat([1./np.absolute((times[f[j]] - instants[j]).value)], len(coords[f[j]][0]), axis=0)
+            t = np.ones((coords.shape[1], 2))*1./np.absolute((times[f[j]] - instants[j]).value)
             coor = midpoint_coord(coords[f[j]], weighted=True, weight=t.transpose())[0]
-        ra = np.concatenate((ra, coor.ra.to_string(unit=u.hourangle, precision=4)))
-        dec = np.concatenate((dec, coor.dec.to_string(unit=u.deg, precision=3)))
+        ra = np.concatenate((ra, coor.ra.hourangle))
+        dec = np.concatenate((dec, coor.dec.deg))
     ra = ra.reshape((len(ra)/len(coords[f[j]][0]), len(coords[f[j]][0])))  ## teste1
     dec = dec.reshape((len(dec)/len(coords[f[j]][0]), len(coords[f[j]][0])))  ## teste1
     g = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
@@ -392,7 +392,7 @@ property.
         ra = ra.reshape((len(body), len(ra)/len(body)))  ## teste1
         dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
         coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))  ## teste1
-        self.eph = {'name' : body, 'coord' : coord, 'time' : a[1]}  ## teste1
+        self.eph = {'name' : np.array(body), 'coord' : coord, 'time' : a[1]}  ## teste1
             
     def eph_moon(self, coord_col, time_col, ephem='Moon.eph', time_fmt='jd', skiprows=0):
         """
@@ -455,40 +455,47 @@ property.
             moon_min = identify_min(self.moon['coord'], self.moon['time'], (instants - self.fuse)[:,0])
             coord_prec_moon = precess(moon_min, instants[0])
             alturam, time_restm = height_time(coord_prec_moon, instants, limalt=0*u.deg, time_left=True, site=self.site, fuse=self.fuse)
-            obs.meta['moon_h'] = alturam.value.diagonal()
+            obs.meta['moon_h'] = alturam[:,0].value
         if 'coords' in locals():
             coord_prec = precess(coords, instants[0])
-            culmination, alwaysup, neverup = sky_time(coord_prec, instants[0], limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
+            culmination, alwaysup, neverup = sky_time(coord_prec, instants, limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
             altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+            a, b = np.indices((altura.shape))
+            t = Table()
+            t['objects'] = Column(names[b.reshape((b.size,))])
+            t['comments'] = Column(comments[b.reshape((b.size,))])
+            t['RA_J2000_DEC'] = Column(coords[b.reshape((b.size,))].to_string('hmsdms', precision=4, sep=' '))
+            t['height'] = Column(altura.reshape((b.size,)))
+            time_left = time_rest.sec.reshape((b.size,))
+            t['time_left'] = Column(np.char.array([int_formatter(j) for j in time_left/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_left - (time_left/3600.0).astype(int)*3600)/60]))
             if 'coord_prec_moon' in locals():
                 ab, ba = np.meshgrid(np.arange(len(coords)), np.arange(len(coord_prec_moon)))
-                distmoon = coords[ab].separation(coord_prec_moon[ba])
-            for i in np.arange(len(instants)):
-                t = Table()
-                t['objects'] = Column(names)
-                t['comments'] = Column(comments)
-                t['RA_J2000_DEC'] = Column(coords.to_string('hmsdms', precision=4, sep=' '))
-                t['height'] = Column(altura[i])
-                t['time_left'] = Column(np.char.array([int_formatter(j) for j in time_rest[i].sec/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_rest[i].sec - (time_rest[i].sec/3600.0).astype(int)*3600)/60]))
-                if 'distmoon' in locals():
-                    t['d_moon'] = Column(distmoon[i])
-                t['culmination'] = Column(np.char.array(culmination[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0])
-                t['time'] = instants[i,0].iso
-                obs = vstack([obs, t[np.where(altura[i] > self.limheight)]])
+                distmoon = coords[ab].separation(coord_prec_moon)
+                t['d_moon'] = Column(distmoon.reshape((b.size,)))
+            culmi = culmination.iso.reshape((b.size,))
+            t['culmination'] = Column(np.char.array(culmi).rpartition(' ')[:,2].rpartition(':')[:,0])
+            t['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
+            obs = vstack([obs, t[np.where(altura.reshape((b.size,)) > self.limheight)]])
         if hasattr(self, 'eph'):
             ephem_min = identify_min(self.eph['coord'], self.eph['time'], (instants - self.fuse)[:,0])
             coord_prec_eph = precess(ephem_min, instants[0])
-            culminatione, alwaysupe, neverupe = sky_time(coord_prec_eph, instants[0], limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
+            culminatione, alwaysupe, neverupe = sky_time(coord_prec_eph, instants, limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
             alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
-### continuar aqui fazer meshgrid
-            time_lefte = np.char.array([int_formatter(j) for j in time_reste.sec.diagonal()/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_reste.sec.diagonal() - (time_reste.sec.diagonal()/3600.0).astype(int)*3600)/60])
-            culmie = np.char.array(culminatione[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0]
-            teph = Table([[i]*len(alturae), ephem_min.to_string('hmsdms', precision=4, sep=' '), alturae, time_lefte, culmie, instants[:,0].iso], names=('objects', 'RA_J2000_DEC', 'height', 'time_left', 'culmination', 'time'))                
+            a, b = np.indices(ephem_min.shape)
+            teph = Table()
+            teph['objects'] = Column(self.eph['name'][b.reshape((b.size,))])
+#            t['comments'] = Column(comments)
+            teph['RA_J2000_DEC'] = Column(ephem_min.to_string('hmsdms', precision=4, sep=' ').reshape((b.size,)))
+            teph['height'] = Column(alturae.reshape((b.size,)))
+            time_lefte = time_reste.sec.reshape((b.size,))
+            teph['time_left'] = Column(np.char.array([int_formatter(j) for j in time_lefte/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_lefte - (time_lefte/3600.0).astype(int)*3600)/60]))
             if 'coord_prec_moon' in locals():
                 distmoon = coord_prec_eph.separation(coord_prec_moon)
-                tephmoon = Column(distmoon, name='d_moon')
-                teph.add_column(tephmoon, index=5)
-            obs = vstack([obs, teph[np.where(alturae > self.limheight)]])
+                teph['d_moon'] = Column(distmoon.reshape((b.size,)))
+            culmie = culminatione.iso.reshape((b.size,))
+            teph['culmination'] = Column(np.char.array(culmie).rpartition(' ')[:,2].rpartition(':')[:,0])
+            teph['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
+            obs = vstack([obs, teph[np.where(alturae.reshape((b.size,)) > self.limheight)]])
         obs['height'].format = '4.1f'
         obs['culmination'].format = '^10s'
         obs['culmination'].unit = 'LT'
@@ -496,7 +503,6 @@ property.
         obs['time_left'].format = '^8s'
         self.obs = obs
 
-    
     def resume_night(self):
         """
         """
@@ -522,10 +528,10 @@ property.
                 output.write('Moon height: {:4.1f}\n\n'.format(obs.meta['moon_h'][i]))
             for i in obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pformat(max_lines=-1, max_width=-1):
                 output.write(i + '\n')
-        self.resume_night()
-        output.write('\n\n---Observability of the Targets----------------------------------------------------------------\n')
-        for i in self.night[0]:
-            output.write(i)
+#        self.resume_night()
+#        output.write('\n\n---Observability of the Targets----------------------------------------------------------------\n')
+#        for i in self.night[0]:
+#            output.write(i)
         output.close()
         
     def __region__(self, ra, dec, names, radius=10*u.arcsec):
