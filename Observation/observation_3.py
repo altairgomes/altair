@@ -42,7 +42,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
         nomes = np.loadtxt(datafile, skiprows=skiprows, usecols=(name_col), unpack=True, dtype ='S30', ndmin=1)
         if len(name_col) > 1:
             nome = nomes[0]
-            for i in np.arange(len(name_col))[1:]:
+            for i in np.arange(len(name_col), dtype=np.int8)[1:]:
                 nome = np.core.defchararray.add(nome, ' ')
                 nome = np.core.defchararray.add(nome, nomes[i])
         else:
@@ -53,7 +53,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
             coord_col = [coord_col]
         coords = np.loadtxt(datafile, skiprows=skiprows, usecols=(coord_col), unpack=True, dtype ='S20', ndmin=1)
         coor = coords[0]
-        for i in np.arange(len(coord_col))[1:]:
+        for i in np.arange(len(coord_col), dtype=np.int8)[1:]:
             coor = np.core.defchararray.add(coor, ' ')
             coor = np.core.defchararray.add(coor, coords[i])
         coord = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
@@ -64,7 +64,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
         comments = np.loadtxt(datafile, skiprows=skiprows, usecols=(comment_col), unpack=True, dtype ='S30', ndmin=1)
         if len(comment_col) > 1:
             comment = comments[0]
-            for i in np.arange(len(comment_col))[1:]:
+            for i in np.arange(len(comment_col), dtype=np.int8)[1:]:
                 comment = np.core.defchararray.add(comment, ' ')
                 comment = np.core.defchararray.add(comment, comments[i])
         else:
@@ -79,7 +79,7 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
             tim = times[0]
             a = len(time_col)
             len_iso = {2: [' '], 6: ['-', '-', ' ', ':',':']}
-            for i in np.arange(len(time_col))[1:]:
+            for i in np.arange(len(time_col), dtype=np.int8)[1:]:
                 tim = np.core.defchararray.add(tim, len_iso[a][i-1]) 
                 tim = np.core.defchararray.add(tim, coords[i])
             time = Time(tim, format=time_fmt, scale='utc')
@@ -102,12 +102,12 @@ def coord_pack(coord):
     
 def close_obj(coord, size):
     coord = coord_pack(coord)
-    ab, ba = np.meshgrid(np.arange(len(coord)), np.arange(len(coord)))
+    ba, ab = np.indices((len(coord), len(coord)), dtype=np.int16)
     sep = coord[ab].separation(coord[ba])
     c = np.where(sep < size)
     close = np.where(c[0] < c[1])
     pairs = np.vstack((c[0][close],c[1][close]))
-    samefov = np.delete(np.arange(len(coord)), np.hstack((c[0][close],c[1][close])))
+    samefov = np.delete(np.arange(len(coord), dtype=np.int16), np.hstack((c[0][close],c[1][close])))
     samefov = samefov.reshape(len(samefov),1).tolist()
     n, m = np.unique(pairs[0], return_counts=True)
     y = np.in1d(pairs[0], n[np.where(m == 1)])
@@ -118,7 +118,7 @@ def close_obj(coord, size):
     for z in np.unique(q.T[0]):
         b = q.T[1][np.where(q.T[0] == z)]
         combs = []
-        for i in np.arange(len(b),0, -1):
+        for i in np.arange(len(b),0, -1, dtype=np.int16):
             els = [[z] + list(x) for x in itertools.combinations(b, i)]
             combs.append(els)
         for i in combs:
@@ -134,20 +134,20 @@ def close_obj(coord, size):
                     samefov = samefov + [a]
     return np.sort(samefov).tolist()
 
-def midpoint_coord(coord, weighted=False, weight=[], ra_dec=False):
+def midpoint_coord(coord, center=False, weight=[], ra_dec=False, axis=0):
     """
     """
     i = coord_pack(coord)
-    if weighted == False:
-        x = (np.max(i.cartesian.x, axis=0) - np.min(i.cartesian.x, axis=0))/2 + np.min(i.cartesian.x, axis=0)
-        y = (np.max(i.cartesian.y, axis=0) - np.min(i.cartesian.y, axis=0))/2 + np.min(i.cartesian.y, axis=0)
-        z = (np.max(i.cartesian.z, axis=0) - np.min(i.cartesian.z, axis=0))/2 + np.min(i.cartesian.z, axis=0)
+    if center == True:
+        x = (np.max(i.cartesian.x, axis=axis) + np.min(i.cartesian.x, axis=axis))/2
+        y = (np.max(i.cartesian.y, axis=axis) + np.min(i.cartesian.y, axis=axis))/2
+        z = (np.max(i.cartesian.z, axis=axis) + np.min(i.cartesian.z, axis=axis))/2
     else:
         if weight == []:
-            weight = np.ones(i.shape)
-        x = np.sum(i.cartesian.x*weight, axis=0)/np.sum(weight, axis=0)
-        y = np.sum(i.cartesian.y*weight, axis=0)/np.sum(weight, axis=0)
-        z = np.sum(i.cartesian.z*weight, axis=0)/np.sum(weight, axis=0)
+            weight = np.ones(i.shape, dtype=np.int8)
+        x = np.sum(i.cartesian.x*weight, axis=axis)/np.sum(weight, axis=axis)
+        y = np.sum(i.cartesian.y*weight, axis=axis)/np.sum(weight, axis=axis)
+        z = np.sum(i.cartesian.z*weight, axis=axis)/np.sum(weight, axis=axis)
     delta = np.arcsin(z/np.sqrt(x**2 + y**2 + z**2))
     alfa = np.arctan2(y, x)
     if ra_dec == True:
@@ -169,18 +169,21 @@ def precess(coord, timeut):
 def identify_min(coords, times, instants):
     """
     """
-    a, b = np.meshgrid(np.arange(len(times)), np.arange(len(instants)))
+    b, a = np.indices((len(instants), len(times)), dtype=np.int16)
     c = (times[a] - instants[b]).value
     d = np.absolute(c)
     e = np.argsort(d)
     f = e[:,0:2]
     ra, dec = np.array([]), np.array([])
-    for j in np.arange(len(f)):
+    for j in np.arange(len(f), dtype=np.int16):
         if instants[j].iso in times[f[j]].iso:
             coor = coords[f[j][np.where(instants[j].iso == times[f[j]].iso)]][0]
         else:
-            t = np.ones((coords.shape[1], 2))*1./np.absolute((times[f[j]] - instants[j]).value)
-            coor = midpoint_coord(coords[f[j]], weighted=True, weight=t.transpose())[0]
+            t = np.ones((coords.shape[1], 2), dtype=np.int8)*1./np.absolute((times[f[j]] - instants[j]).value)
+            t2 = Time.now()
+            coor = midpoint_coord(coords[f[j]], weight=t.transpose())[0]
+            t3 = Time.now()
+            print "midpoint: ", (t3-t2).sec
         ra = np.concatenate((ra, coor.ra.hourangle))
         dec = np.concatenate((dec, coor.dec.deg))
     ra = ra.reshape((len(ra)/len(coords[f[j]][0]), len(coords[f[j]][0])))  ## teste1
@@ -286,6 +289,58 @@ def resume_night(coord, time, name, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.
 np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Set: ' + np.char.array(poente.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + \
 ' TL, ' + np.char.array(name)
     return night
+
+#################################################################################################################
+
+class Ephemeris(object):
+
+
+    def __init__(self, fuse = 0, latitude = 0.0, longitude = 0.0, height = 0.0, limheight=0.0, limdist=0.0):
+        self.set_fuse(fuse)
+        self.set_site(longitude, latitude, height)
+        self.set_limheight(limheight)
+        self.set_limdist(limdist)
+        
+    def ephem(self, path='./ephemeris', coord_col=None, time_col=None, time_fmt='jd', skiprows=0):
+        """
+        """
+        onlyeph = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
+        ra, dec, body = np.array([]), np.array([]), [] ## teste1
+        for i in onlyeph:
+            a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
+            name = i[:-4]
+            body.append(name) ## teste1
+            ra = np.concatenate((ra, a[0].ra.to_string(unit=u.hourangle, precision=4))) ## teste1
+            dec = np.concatenate((dec, a[0].dec.to_string(unit=u.deg, precision=3)))  ## teste1
+        ra = ra.reshape((len(body), len(ra)/len(body)))  ## teste1
+        dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
+        coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))  ## teste1
+        self.eph = {'name' : np.array(body), 'coord' : coord, 'time' : a[1]}  ## teste1
+        
+    def identify_min(self, instants):
+        """
+        """
+        b, a = np.indices((len(instants), len(self.times)), dtype=np.int16)
+        c = (self.times[a] - instants[b]).value
+        d = np.absolute(c)
+        e = np.argsort(d)
+        f = e[:,0:2]
+        ra, dec = np.array([]), np.array([])
+        for j in np.arange(len(f), dtype=np.int16):
+            if instants[j].iso in self.times[f[j]].iso:
+                coor = self.coords[f[j][np.where(instants[j].iso == self.times[f[j]].iso)]][0]
+            else:
+                t = np.ones((self.coords.shape[1], 2), dtype=np.int8)*1./np.absolute((self.times[f[j]] - instants[j]).value)
+                t2 = Time.now()
+                coor = midpoint_coord(self.coords[f[j]], weight=t.transpose())[0]
+                t3 = Time.now()
+                print "midpoint: ", (t3-t2).sec
+            ra = np.concatenate((ra, coor.ra.hourangle))
+            dec = np.concatenate((dec, coor.dec.deg))
+        ra = ra.reshape((len(ra)/len(self.coords[f[j]][0]), len(self.coords[f[j]][0])))  ## teste1
+        dec = dec.reshape((len(dec)/len(self.coords[f[j]][0]), len(self.coords[f[j]][0])))  ## teste1
+        g = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
+        return g
 
 #################################################################################################################
     
@@ -410,7 +465,7 @@ property.
         midcoord, midobj, midcomment = [], [], []
         for i in fov:
             if len(i) > 1:
-                midcoord.append(midpoint_coord(self.coords[i])[0])
+                midcoord.append(midpoint_coord(self.coords[i], center=True)[0])
                 a = ''
                 for k in self.names[i][:-1]:
                     a = a + k + ' + '
@@ -469,18 +524,21 @@ property.
             time_left = time_rest.sec.reshape((b.size,))
             t['time_left'] = Column(np.char.array([int_formatter(j) for j in time_left/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_left - (time_left/3600.0).astype(int)*3600)/60]))
             if 'coord_prec_moon' in locals():
-                ab, ba = np.meshgrid(np.arange(len(coords)), np.arange(len(coord_prec_moon)))
+                ba, ab = np.indices((len(coord_prec_moon), len(coords)), dtype=np.int16)
                 distmoon = coords[ab].separation(coord_prec_moon)
                 t['d_moon'] = Column(distmoon.reshape((b.size,)))
             culmi = culmination.iso.reshape((b.size,))
             t['culmination'] = Column(np.char.array(culmi).rpartition(' ')[:,2].rpartition(':')[:,0])
             t['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
             obs = vstack([obs, t[np.where(altura.reshape((b.size,)) > self.limheight)]])
+        t1 = Time.now()
         if hasattr(self, 'eph'):
             ephem_min = identify_min(self.eph['coord'], self.eph['time'], (instants - self.fuse)[:,0])
+            t2 = Time.now()
             coord_prec_eph = precess(ephem_min, instants[0])
             culminatione, alwaysupe, neverupe = sky_time(coord_prec_eph, instants, limalt=self.limheight, rise_set=False, site=self.site, fuse=self.fuse)
             alturae, time_reste = height_time(coord_prec_eph, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
+            t3 = Time.now()
             a, b = np.indices(ephem_min.shape)
             teph = Table()
             teph['objects'] = Column(self.eph['name'][b.reshape((b.size,))])
@@ -496,6 +554,10 @@ property.
             teph['culmination'] = Column(np.char.array(culmie).rpartition(' ')[:,2].rpartition(':')[:,0])
             teph['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
             obs = vstack([obs, teph[np.where(alturae.reshape((b.size,)) > self.limheight)]])
+        t4 = Time.now()
+        print "min: ", (t2-t1).sec
+        print "culmi, alti: ", (t3-t2).sec
+        print "table", (t4-t3).sec
         obs['height'].format = '4.1f'
         obs['culmination'].format = '^10s'
         obs['culmination'].unit = 'LT'
@@ -520,7 +582,7 @@ property.
         output.write('Observational Plan to the night: {}\n\n'.format(self.instants[0][0].iso.split(' ')[0]))
         output.write('Latitude: {}  Longitude: {}\nMinimum height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
         output.write('Height: Height above the horizons (deg)\nTleft: Time left to reach minimum height (hh:mm)\n\n')
-        for i in np.arange(len(self.instants)):
+        for i in np.arange(len(self.instants), dtype=np.int16):
             obs = self.obs[np.where(self.obs['time'] == self.instants[i,0].iso)]
             obs.sort('time_left')
             output.write('\n---LT: {} (UT: {}) ----------------------------------------------------------------\n'.format(obs.meta['LT'][i].iso.rpartition(' ')[2].rpartition(':')[0], obs.meta['UT'][i].iso.rpartition(' ')[2].rpartition(':')[0]))
@@ -539,7 +601,7 @@ property.
         """
         a = 'icrs\n'
         coords = SkyCoord(ra, dec, frame='fk5', unit=(u.hourangle, u.degree))
-        for i in np.arange(len(coords)):
+        for i in np.arange(len(coords), dtype=np.int16):
             a = a + 'circle({}, {}, {}) # text = '.format(coords[i].ra.deg, coords[i].dec.deg, (radius.to(u.deg)).value) + '{' + names[i] +'}\n'
         f = open('ds9.reg', 'w')
         f.write(a)
@@ -566,7 +628,7 @@ property.
                 if len(keys) == 1:
                     m = 0
                 else:
-                    for l in np.arange(len(keys)):
+                    for l in np.arange(len(keys), dtype=np.int16):
                         print '{}: {} LT'.format(l, keys[l])
                     m = input('Choose the number of the date you want to show: ')
                 key = keys[m]
@@ -588,21 +650,21 @@ property.
             else:
                 return
             print '\n'
-            for i in np.arange(len(names)):
+            for i in np.arange(len(names), dtype=np.int16):
                 print '{}: {}'.format(i, names[i])
             a = input('Choose the number of the target: ')
         if not os.path.isfile('ds9.reg') or force_reg == True:
             self.__region__(ra, dec, names[1:])
         os.system('ds9 {} size {} {} {} coord {} {} -region ds9.reg'.format(dss[server], size, size, dss[server], ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
-    def show_text(self):
+    def show_text(self, sort='time_left'):
         """
         """
         k = self.instants[:,0].iso
         if len(k) == 1:
             i = 0
         else:
-            for l in np.arange(len(k)):
+            for l in np.arange(len(k), dtype=np.int16):
                 print '{}: {} LT'.format(l, k[l])
             i = input('Choose the number of the date you want to show: ')
         obs = self.obs[np.where(self.obs['time'] == k[i])]
@@ -610,7 +672,7 @@ property.
         print b
         if 'moon_h' in obs.meta:
             print 'Moon height: {:+4.1f}'.format(obs.meta['moon_h'][i])
-        obs.sort('time_left')
+        obs.sort(sort)
         print obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pprint(max_lines=-1, max_width=-1)
                 
     def observe(self, edit=False):
@@ -649,7 +711,7 @@ property.
             else:
                 return
             print '\n'
-            for i in np.arange(len(names)):
+            for i in np.arange(len(names), dtype=np.int16):
                 print '{}: {}'.format(i, names[i])
             a = input('Digite o numero referente ao alvo: ')
         if edit == False:
