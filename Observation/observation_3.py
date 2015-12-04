@@ -16,7 +16,6 @@ alt_formatter = lambda x: "%3.1f" %x
 dist_formatter = lambda x: "%3.0f" %x
 int_formatter = lambda x: "%02d" %x
 int2_formatter = lambda x: "%+03d" %x
-sentinel = object()
 
 def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd', skiprows=0):
     """
@@ -86,6 +85,79 @@ def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=Non
         elif time_fmt == 'jd':
             time = Time(times, format='jd', scale='utc')
         retornar.append(time)
+    return retornar
+    
+def read2(datafile, name_col=[], coord_col=[], comment_col=[], time_col=[], time_fmt='jd', skiprows=0):
+    """
+    Parameters
+    ----------
+    datafile : str
+       Name of the file to read
+    name_col : sequence, or list of numbers; optional
+       Columns that will be stacked into the name of objects
+    coord_col :  sequence, or list of numbers; optional
+       Columns refered to the coordinates of the objects
+    comment_col :  sequence, or list of numbers; optional
+       Columns that will be stacked into the name of objects
+    time_col :  sequence, or list of numbers; optional
+       Columns that will be stacked into the name of objects
+    time_fmt : str, optional
+       Subformat for inputting string times
+    """
+    cols = name_col + coord_col + comment_col + time_col
+    dados = np.loadtxt(datafile, skiprows=skiprows, usecols=cols, unpack=True, dtype ='S30', ndmin=2)
+    retornar = {}
+#        if type(name_col) not in [list, tuple, np.ndarray]:
+#            name_col = [name_col]
+#        nomes = np.loadtxt(datafile, skiprows=skiprows, usecols=(name_col), unpack=True, dtype ='S30', ndmin=1)
+    if len(name_col) > 0:
+        nomes = np.arange(0,len(name_col), dtype=np.int8)
+        nome = dados[0]
+        for i in nomes[1:]:
+            nome = np.core.defchararray.add(nome, ' ')
+            nome = np.core.defchararray.add(nome, dados[i])
+        retornar['names'] = nome
+#    elif len(name_col) == 1:
+#        retornar['names'] = dados[0]
+    if len(coord_col) > 0:
+#        if type(coord_col) not in [list, tuple, np.ndarray]:
+#            coord_col = [coord_col]
+        coords = np.arange(0, len(coord_col), dtype=np.int8) + len(name_col)
+        coor = dados[coords[0]]
+        for i in coords[1:]:
+            coor = np.core.defchararray.add(coor, ' ')
+            coor = np.core.defchararray.add(coor, dados[i])
+        coord = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
+        retornar['coords'] = coord
+#    if len(comment_col) > 0:
+#        if type(comment_col) not in [list, tuple, np.ndarray]:
+#            comment_col = [comment_col]
+    if len(comment_col) > 0:
+        comments = np.arange(0,len(comment_col), dtype=np.int8) + len(name_col) + len(coord_col)
+        comment = dados[comments[0]]
+        for i in comments[1:]:
+            comment = np.core.defchararray.add(comment, ' ')
+            comment = np.core.defchararray.add(comment, comments[i])
+        retornar['comments'] = comment
+#    else:
+#        comment = comments
+#        retornar.append(comment)
+    if len(time_col) > 0:
+#        fmt_time = {'iso': ['S20'], 'jd': ['f8']}
+        times = np.arange(0, len(time_col), dtype=np.int8) + len(name_col) + len(coord_col) + len(comment_col)
+#        if type(time_col) not in [list, tuple, np.ndarray]:
+#            time_col = [time_col]
+        if time_fmt == 'iso':  ####### iso nao deve funcionar por enquanto
+            tim = dados[times[0]]
+            a = len(time_col)
+            len_iso = {2: [' '], 6: ['-', '-', ' ', ':',':']}
+            for i in times[1:]:
+                tim = np.core.defchararray.add(tim, len_iso[a][i-1]) 
+                tim = np.core.defchararray.add(tim, coords[i])
+            time = Time(tim, format=time_fmt, scale='utc')
+        elif time_fmt == 'jd':
+            time = Time(times.astype(np.float), format='jd', scale='utc')
+        retornar['times'] = time
     return retornar
     
 def coord_pack(coord):
