@@ -10,12 +10,7 @@ import os
 
 ######################################################################
 
-ra_formatter = lambda x: "%07.4f" %x
-dec_formatter = lambda x: "%06.3f" %x
-alt_formatter = lambda x: "%3.1f" %x
-dist_formatter = lambda x: "%3.0f" %x
 int_formatter = lambda x: "%02d" %x
-int2_formatter = lambda x: "%+03d" %x
 
 def read(datafile, name_col=None, coord_col=None, comment_col=None, time_col=None, time_fmt='jd', skiprows=0):
     """
@@ -123,13 +118,19 @@ def read2(datafile, name_col=[], coord_col=[], comment_col=[], time_col=[], time
 #        if type(coord_col) not in [list, tuple, np.ndarray]:
 #            coord_col = [coord_col]
         n = len(coord_col)
-        coords = np.arange(0, n, dtype=np.int8) + len(name_col)
-        coor = dados[coords[0]]
+        coords = np.arange(0, n/2, dtype=np.int8) + len(name_col)
+        ra = dados[coords[0]]
+        dec = dados[coords[0]+n/2]
+#        coor = dados[coords[0]]
         for i in coords[1:]:
-            coor = np.core.defchararray.add(coor, ' ')
-            coor = np.core.defchararray.add(coor, dados[i])
-        coord = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
-        retornar['coords'] = coord
+            ra = np.core.defchararray.add(ra, ' ')
+            ra = np.core.defchararray.add(ra, dados[i])
+            dec = np.core.defchararray.add(dec, ' ')
+            dec = np.core.defchararray.add(dec, dados[i+n/2])
+#            coor = np.core.defchararray.add(coor, ' ')
+#            coor = np.core.defchararray.add(coor, dados[i])
+#        coord = SkyCoord(coor, frame='fk5', unit=(u.hourangle, u.degree))
+        retornar['coords'] = np.array([ra, dec])#coor
 #    if len(comment_col) > 0:
 #        if type(comment_col) not in [list, tuple, np.ndarray]:
 #            comment_col = [comment_col]
@@ -157,10 +158,11 @@ def read2(datafile, name_col=[], coord_col=[], comment_col=[], time_col=[], time
                 print a, i
                 tim = np.core.defchararray.add(tim, len_iso[a][i-n-1]) 
                 tim = np.core.defchararray.add(tim, dados[i])
-            time = Time(tim, format='iso', scale='utc')
+#            time = Time(tim, format='iso', scale='utc')
         elif time_fmt == 'jd':
-            time = Time(dados[times[0]].astype(np.float), format='jd', scale='utc')
-        retornar['times'] = time
+            tim = dados[times[0]].astype(np.float)
+#            time = Time(dados[times[0]].astype(np.float), format='jd', scale='utc')
+        retornar['times'] = tim
     return retornar
     
 def coord_pack(coord):
@@ -368,29 +370,39 @@ np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'T
 #################################################################################################################
 
 class Ephemeris(object):
+#__init__
+#__read__
+#identify_min
 
-
-    def __init__(self, fuse = 0, latitude = 0.0, longitude = 0.0, height = 0.0, limheight=0.0, limdist=0.0):
-        self.set_fuse(fuse)
-        self.set_site(longitude, latitude, height)
-        self.set_limheight(limheight)
-        self.set_limdist(limdist)
+    def __init__(self, body=[], ra=[], dec=[], time=[], path='./ephemeris', coord_col=[], time_col=[], time_fmt='jd', skiprows=0):
+        if len(body) == len(ra) == len(dec) == len(time) != 0:
+            if type(body) == str:
+                body = np.array(body)
+            ra = np.array(ra).reshape((len(ra), 1))
+            dec = np.array(dec).reshape((len(dec), 1))
+        else:
+            files = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
+            body, ra, dec, time = self.__read__(path, files, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
+        self.body = body
+        self.coord = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
+        self.times = Time(time, format=time_fmt, scale='utc')
         
-    def ephem(self, path='./ephemeris', coord_col=None, time_col=None, time_fmt='jd', skiprows=0):
+    def __read__(self, path, files, coord_col=[], time_col=[], time_fmt='jd', skiprows=0):
         """
         """
-        onlyeph = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
         ra, dec, body = np.array([]), np.array([]), [] ## teste1
-        for i in onlyeph:
-            a = read('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
+        for i in files:
+            a = read2('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
             name = i[:-4]
             body.append(name) ## teste1
-            ra = np.concatenate((ra, a[0].ra.to_string(unit=u.hourangle, precision=4))) ## teste1
-            dec = np.concatenate((dec, a[0].dec.to_string(unit=u.deg, precision=3)))  ## teste1
+            ra = np.concatenate((ra, a['coords'][0])) ## teste1
+            dec = np.concatenate((dec, a['coords'][1]))  ## teste1
         ra = ra.reshape((len(body), len(ra)/len(body)))  ## teste1
         dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
-        coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))  ## teste1
-        self.eph = {'name' : np.array(body), 'coord' : coord, 'time' : a[1]}  ## teste1
+        return np.array(body), ra.transpose(), dec.transpose(), a['times']  ## teste1
+
+    def __value__(self):
+        return self.coord
         
     def identify_min(self, instants):
         """
@@ -420,6 +432,23 @@ class Ephemeris(object):
 #################################################################################################################
     
 class Observation(object):
+#__init__ ok
+#set_site ok
+#set_fuse ok
+#set_limheight ok
+#set_limdist ok
+#read ok
+#ephem ok
+#eph_moon ok
+#__close_obj__
+#instant_list ok
+#plan ok
+#resume_night
+#create_plan - falta resume night
+#__region__
+#chart
+#show_text ok
+# observe
     """
 Location on the Earth for the observation instance.
 
@@ -534,21 +563,21 @@ property.
             a = read2('{}/{}'.format(path,i), coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
             name = i[:-4]
             body.append(name) ## teste1
-            ra = np.concatenate((ra, a['coords'].ra.hourangle)) ## teste1
-            dec = np.concatenate((dec, a['coords'].dec.deg))  ## teste1
+            ra = np.concatenate((ra, a['coords'][0])) ## teste1
+            dec = np.concatenate((dec, a['coords'][1]))  ## teste1
         ra = ra.reshape((len(body), len(ra)/len(body)))  ## teste1
         dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
         coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))  ## teste1
-        self.eph = {'name' : np.array(body), 'coord' : coord, 'time' : a['times']}  ## teste1
+        self.eph = {'name' : np.array(body), 'coord' : coord, 'time' : Time(a['times'], format=time_fmt, scale='utc')}  ## teste1
             
     def eph_moon(self, coord_col, time_col, ephem='Moon.eph', time_fmt='jd', skiprows=0):
         """
         """
         a = read2(ephem, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
-        ra = a['coords'].ra.hourangle.reshape((1, len(a['coords'])))  ## teste1
-        dec = a['coords'].dec.deg.reshape((1, len(a['coords'])))  ## teste1
-        coord = SkyCoord(ra.transpose(), dec.transpose(), unit=(u.hourangle, u.deg))
-        self.moon = {'coord' : coord, 'time' : a['times']}
+        ra = a['coords'][0].reshape((len(a['coords'][0]), 1))  ## teste1
+        dec = a['coords'][1].reshape((len(a['coords'][1]), 1))  ## teste1
+        coord = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
+        self.moon = {'coord' : coord, 'time' : Time(a['times'], format=time_fmt, scale='utc')}
         
     def __close_obj__(self):
         """
