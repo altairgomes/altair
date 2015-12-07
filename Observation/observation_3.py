@@ -401,9 +401,6 @@ class Ephemeris(object):
         dec = dec.reshape((len(body), len(dec)/len(body)))  ## teste1
         return np.array(body), ra.transpose(), dec.transpose(), a['times']  ## teste1
 
-    def __value__(self):
-        return self.coord
-        
     def identify_min(self, instants):
         """
         """
@@ -418,16 +415,13 @@ class Ephemeris(object):
                 coor = self.coords[f[j][np.where(instants[j].iso == self.times[f[j]].iso)]][0]
             else:
                 t = np.ones((self.coords.shape[1], 2), dtype=np.int8)*1./np.absolute((self.times[f[j]] - instants[j]).value)
-                t2 = Time.now()
                 coor = midpoint_coord(self.coords[f[j]], weight=t.transpose())[0]
-                t3 = Time.now()
-#                print "midpoint: ", (t3-t2).sec
             ra = np.concatenate((ra, coor.ra.hourangle))
             dec = np.concatenate((dec, coor.dec.deg))
         ra = ra.reshape((len(ra)/len(self.coords[f[j]][0]), len(self.coords[f[j]][0])))  ## teste1
         dec = dec.reshape((len(dec)/len(self.coords[f[j]][0]), len(self.coords[f[j]][0])))  ## teste1
-        g = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
-        return g
+#        g = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
+        return Ephemeris(self.body, ra, dec, self.times)
 
 #################################################################################################################
     
@@ -443,8 +437,8 @@ class Observation(object):
 #__close_obj__
 #instant_list ok
 #plan ok
-#resume_night
-#create_plan - falta resume night
+#resume_night - falta ephem
+#create_plan ok
 #__region__
 #chart
 #show_text ok
@@ -624,7 +618,7 @@ property.
         if not hasattr(self, 'instants') or now == True:
             self.instant_list(Time.now() + self.fuse)
         instants = self.instants
-        obs = Table(names=('objects', 'comments', 'RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'time'),\
+        obs = Table(names=('Objects', 'Comments', 'RA_J2000_DEC', 'Height', 'Time_left', 'D_moon', 'Culmination', 'time'),\
             dtype=(np.str, np.str, np.unicode, np.float, np.str, np.float, np.str, np.str))
         obs.meta = {'LT': instants[:,0], 'UT': (instants[:,0] - self.fuse)}
         if hasattr(self, 'moon'):
@@ -638,18 +632,18 @@ property.
             altura, time_rest = height_time(coord_prec, instants, limalt=self.limheight, time_left=True, site=self.site, fuse=self.fuse)
             a, b = np.indices((altura.shape))
             t = Table()
-            t['objects'] = Column(names[b.reshape((b.size,))])
-            t['comments'] = Column(comments[b.reshape((b.size,))])
+            t['Objects'] = Column(names[b.reshape((b.size,))])
+            t['Comments'] = Column(comments[b.reshape((b.size,))])
             t['RA_J2000_DEC'] = Column(coords[b.reshape((b.size,))].to_string('hmsdms', precision=4, sep=' '))
-            t['height'] = Column(altura.reshape((b.size,)))
+            t['Height'] = Column(altura.reshape((b.size,)))
             time_left = time_rest.sec.reshape((b.size,))
-            t['time_left'] = Column(np.char.array([int_formatter(j) for j in time_left/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_left - (time_left/3600.0).astype(int)*3600)/60]))
+            t['Time_left'] = Column(np.char.array([int_formatter(j) for j in time_left/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_left - (time_left/3600.0).astype(int)*3600)/60]))
             if 'coord_prec_moon' in locals():
                 ba, ab = np.indices((len(coord_prec_moon), len(coords)), dtype=np.int16)
                 distmoon = coords[ab].separation(coord_prec_moon)
-                t['d_moon'] = Column(distmoon.reshape((b.size,)))
+                t['D_moon'] = Column(distmoon.reshape((b.size,)))
             culmi = culmination.iso.reshape((b.size,))
-            t['culmination'] = Column(np.char.array(culmi).rpartition(' ')[:,2].rpartition(':')[:,0])
+            t['Culmination'] = Column(np.char.array(culmi).rpartition(' ')[:,2].rpartition(':')[:,0])
             t['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
             obs = vstack([obs, t[np.where(altura.reshape((b.size,)) > self.limheight)]])
         t1 = Time.now()
@@ -662,36 +656,51 @@ property.
             t3 = Time.now()
             a, b = np.indices(ephem_min.shape)
             teph = Table()
-            teph['objects'] = Column(self.eph['name'][b.reshape((b.size,))])
+            teph['Objects'] = Column(self.eph['name'][b.reshape((b.size,))])
 #            t['comments'] = Column(comments)
             teph['RA_J2000_DEC'] = Column(ephem_min.to_string('hmsdms', precision=4, sep=' ').reshape((b.size,)))
-            teph['height'] = Column(alturae.reshape((b.size,)))
+            teph['Height'] = Column(alturae.reshape((b.size,)))
             time_lefte = time_reste.sec.reshape((b.size,))
-            teph['time_left'] = Column(np.char.array([int_formatter(j) for j in time_lefte/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_lefte - (time_lefte/3600.0).astype(int)*3600)/60]))
+            teph['Time_left'] = Column(np.char.array([int_formatter(j) for j in time_lefte/3600.0]) + ':' + np.char.array([int_formatter(j) for j in (time_lefte - (time_lefte/3600.0).astype(int)*3600)/60]))
             if 'coord_prec_moon' in locals():
                 distmoon = coord_prec_eph.separation(coord_prec_moon)
-                teph['d_moon'] = Column(distmoon.reshape((b.size,)))
+                teph['D_moon'] = Column(distmoon.reshape((b.size,)))
             culmie = culminatione.iso.reshape((b.size,))
-            teph['culmination'] = Column(np.char.array(culmie).rpartition(' ')[:,2].rpartition(':')[:,0])
+            teph['Culmination'] = Column(np.char.array(culmie).rpartition(' ')[:,2].rpartition(':')[:,0])
             teph['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
             obs = vstack([obs, teph[np.where(alturae.reshape((b.size,)) > self.limheight)]])
         t4 = Time.now()
 #        print "min: ", (t2-t1).sec
 #        print "culmi, alti: ", (t3-t2).sec
 #        print "table", (t4-t3).sec
-        obs['height'].format = '4.1f'
-        obs['culmination'].format = '^10s'
-        obs['culmination'].unit = 'LT'
-        obs['d_moon'].format = '3.0f'
-        obs['time_left'].format = '^8s'
+        obs['Height'].format = '4.1f'
+        obs['Culmination'].format = '^10s'
+        obs['Culmination'].unit = 'LT'
+        obs['D_moon'].format = '3.0f'
+        obs['Time_left'].format = '^8s'
         self.obs = obs
 
-    def resume_night(self):
+    def __resume_night__(self, time):
         """
         """
-        self.night = resume_night(self.coords, self.instants[0], self.names, limalt=self.limheight, site=self.site, fuse=self.fuse)
+        timeut = time - self.fuse
+        coord = coord_pack(self.coords)
+        coord_prec = precess(coord, timeut)
+        culminacao, nascer, poente, alwaysup, neverup = sky_time(coord_prec, time, rise_set=True, limalt=self.limheight, site=self.site, fuse=self.fuse)
+        night = Table()
+        night['Objects'] = Column(self.names)
+        night['Comments'] = Column(self.comments)
+        night['RA_J2000_DEC'] = Column(coord.to_string('hmsdms', precision=4, sep=' '))
+        night['Rise'] = Column(np.char.array(nascer[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0], format='^10s', unit='TL')
+        night['Culmination'] = Column(np.char.array(culminacao[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0], format='^10s', unit='TL')
+        night['Set'] = Column(np.char.array(poente[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0], format='^10s', unit='TL')
+#        night = '\nRA: ' + ra + ', DEC: ' +  dec + ', Rise: ' + np.char.array(nascer.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Culmination: ' + \
+#np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Set: ' + np.char.array(poente.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + \
+#' TL, ' + np.char.array(name)
+        return night
+#        self.night = resume_night(self.coords, self.instants[0], self.names, limalt=self.limheight, site=self.site, fuse=self.fuse)
             
-    def create_plan(self, path='.', now=False):
+    def create_plan(self, path='.', now=False, sort='Time_left'):
         """
         """
         if not hasattr(self, 'instants') or now == True:
@@ -705,16 +714,19 @@ property.
         output.write('Height: Height above the horizons (deg)\nTleft: Time left to reach minimum height (hh:mm)\n\n')
         for i in np.arange(len(self.instants), dtype=np.int16):
             obs = self.obs[np.where(self.obs['time'] == self.instants[i,0].iso)]
-            obs.sort('time_left')
+            obs.sort(sort)
             output.write('\n---LT: {} (UT: {}) ----------------------------------------------------------------\n'.format(obs.meta['LT'][i].iso.rpartition(' ')[2].rpartition(':')[0], obs.meta['UT'][i].iso.rpartition(' ')[2].rpartition(':')[0]))
             if 'moon_h' in obs.meta:
                 output.write('Moon height: {:4.1f}\n\n'.format(obs.meta['moon_h'][i]))
-            for i in obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pformat(max_lines=-1, max_width=-1):
+            for i in obs['RA_J2000_DEC', 'Height', 'Time_left', 'D_moon', 'Culmination', 'Objects', 'Comments'].pformat(max_lines=-1, max_width=-1):
                 output.write(i + '\n')
-#        self.resume_night()
-#        output.write('\n\n---Observability of the Targets----------------------------------------------------------------\n')
-#        for i in self.night[0]:
-#            output.write(i)
+        night = self.__resume_night__(self.instants[0])
+        night.sort('Objects')
+        output.write('\n\n' + '-'*100 + '\n')
+        output.write('---Observability of the Targets----------------------------------------------------------------------\n')
+        output.write('-'*100 + '\n')
+        for i in night['RA_J2000_DEC', 'Rise', 'Culmination', 'Set', 'Objects','Comments'].pformat(max_lines=-1, max_width=-1):
+            output.write(i + '\n')
         output.close()
         
     def __region__(self, ra, dec, names, radius=10*u.arcsec):
@@ -778,7 +790,7 @@ property.
             self.__region__(ra, dec, names[1:])
         os.system('ds9 {} size {} {} {} coord {} {} -region ds9.reg'.format(dss[server], size, size, dss[server], ra[a-1].replace(' ', ':'), dec[a-1].replace(' ', ':')))
         
-    def show_text(self, sort='time_left'):
+    def show_text(self, sort='Time_left'):
         """
         """
         k = self.instants[:,0].iso
@@ -794,7 +806,7 @@ property.
         if 'moon_h' in obs.meta:
             print 'Moon height: {:+4.1f}'.format(obs.meta['moon_h'][i])
         obs.sort(sort)
-        print obs['RA_J2000_DEC', 'height', 'time_left', 'd_moon', 'culmination', 'objects', 'comments'].pprint(max_lines=-1, max_width=-1)
+        print obs['RA_J2000_DEC', 'Height', 'Time_left', 'D_moon', 'Culmination', 'Objects', 'Comments'].pprint(max_lines=-1, max_width=-1)
                 
     def observe(self, edit=False):
         """
