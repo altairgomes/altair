@@ -369,25 +369,189 @@ np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'T
 
 #################################################################################################################
 
+class Coord(object):
+    def __init__(self, name=[], ra=[], dec=[], datafile='', name_col=[], coord_col=[], mag_col=[], skiprows=0):
+        if name.shape == ra.shape == dec.shape != []:
+            self.name = name
+            self.coords = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
+        else:
+            a = read(datafile=datafile, name_col=name_col, coord_col=coord_col, comment_col=mag_col, skiprows=skiprows)
+            n = 0
+            if name_col:
+                self.name = a[n]
+                n = n + 1
+            else:
+                self.body = np.array(['']*np.shape(a)[0])
+            if coord_col:
+                self.coords = a[n]
+                n = n + 1
+            if mag_col:
+                self.magnitudes = a[n]
+                n = n + 1
+            else:
+                self.magnitudes = np.array(['']*np.shape(a)[0])
+            
+    def __read(self, datafile, name_col=[], coord_col=[], mag_col=[], time_fmt='jd', skiprows=0):
+        """
+        """
+        a = read(datafile=datafile, name_col=name_col, coord_col=coord_col, comment_col=mag_col, time_fmt=time_fmt)
+        n = 0
+        if name_col:
+            self.names = a[n]
+            n = n + 1
+        else:
+            self.names = ['']*np.shape(a)[1]
+        if coord_col:
+            self.coords = a[n]
+            n = n + 1
+        if mag_col:
+            self.magnitudes = a[n]
+            n = n + 1
+        else:
+            self.comments = ['']*np.shape(a)[1]
+            
+    def midpoint_coord(self, weight=[], center=False, ra_dec=False, axis=0):
+        """
+        """
+        coords = coord_pack(self.coords)
+        if center == True:
+            x = (np.max(coords.cartesian.x, axis=axis) + np.min(coords.cartesian.x, axis=axis))/2
+            y = (np.max(coords.cartesian.y, axis=axis) + np.min(coords.cartesian.y, axis=axis))/2
+            z = (np.max(coords.cartesian.z, axis=axis) + np.min(coords.cartesian.z, axis=axis))/2
+        else:
+            if weight == []:
+                weight = np.ones(coords.shape, dtype=np.int8)
+            x = np.sum(coords.cartesian.x*weight, axis=axis)/np.sum(weight, axis=axis)
+            y = np.sum(coords.cartesian.y*weight, axis=axis)/np.sum(weight, axis=axis)
+            z = np.sum(coords.cartesian.z*weight, axis=axis)/np.sum(weight, axis=axis)
+        delta = np.arcsin(z/np.sqrt(x**2 + y**2 + z**2))
+        alfa = np.arctan2(y, x)
+        if ra_dec == True:
+            return alfa,delta
+        mean_coord = SkyCoord(alfa, delta, frame='fk5')
+        dist_center = coords.separation(mean_coord)
+        return mean_coord, dist_center
+    
+    def precess(self, timeut):
+        """
+        """
+        while not timeut.isscalar:
+            timeut=timeut[0]
+        coord = coord_pack(self.coords)
+        fk5_data = FK5(equinox=timeut)
+        coord_prec = coord.transform_to(fk5_data)
+        c = Coord(self.body, coord_prec.ra, coord_prec.dec)
+        c.magnitudes = self.magnitudes
+        return c
+        
+    def __mesh_coord(self, time):
+        """
+        """
+        ra = self.coords.ra
+        time.delta_ut1_utc = 0
+        if len(ra.shape) > 1:
+            a, b = np.indices(ra.shape)
+            ts = time.sidereal_time('mean')[a]
+            return ra, ts
+        rs, ts = np.meshgrid(ra, time.sidereal_time('mean'))
+        return rs, ts
+    
+    def sky_time(self, timeut, rise_set=False, limalt=0*u.deg, site=EarthLocation(0.0, 0.0, 0.0)):
+        """
+        """
+        if type(limalt) != u.quantity.Quantity:
+            limalt = limalt*u.deg
+        if timeut.isscalar == True:
+            timeut = Time([timeut.iso], format='iso', scale='utc')
+        coord = coord_pack(self.coords)
+        if len(timeut.shape) == 1:
+            timeut = Time([[i] for i in timeut.jd], format='jd', scale='utc')
+        timeut.delta_ut1_utc = 0
+        timeut.location = site
+        ra, ts = self.__mesh_coord(timeut[:,0])
+        dif_h_sid = Angle(ra-ts)
+        dif_h_sid.wrap_at('180d', inplace=True)
+        dif_h_sol = dif_h_sid * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
+        dif = TimeDelta(dif_h_sol.hour*u.h, scale='tai')
+        culminacao = timeut + dif
+        culminacao.delta_ut1_utc = 0
+        culminacao.location = site
+        if (site.latitude > 0*u.deg):
+            alwaysup = np.where(coord.dec >= 90*u.deg - site.latitude + limalt)
+            neverup = np.where(coord.dec <= -(90*u.deg - site.latitude - limalt))
+        else:
+            alwaysup = np.where(coord.dec <= -(90*u.deg + site.latitude + limalt))
+            neverup = np.where(coord.dec >= 90*u.deg + site.latitude - limalt)
+        if rise_set == True:
+            hangle_lim = np.arccos((np.cos(90.0*u.deg-limalt) - np.sin(coord.dec)*np.sin(site.latitude)) / (np.cos(coord.dec)*np.cos(site.latitude)))
+            tsg_lim = Angle(ra + hangle_lim)
+            dtsg_lim = tsg_lim - culminacao.sidereal_time('mean')
+            dtsg_lim.wrap_at(360 * u.deg, inplace=True)
+            dtsg_lim_sol = dtsg_lim * (23.0 + 56.0/60.0 + 4.0916/3600.0) / 24.0
+            a = np.where(np.isnan(dtsg_lim_sol))
+            dtsg_lim_sol[a] = Angle([48.0]*len(a[0])*u.hour)
+            dtsg_np = TimeDelta((dtsg_lim_sol.hour*u.h))
+            sunrise = culminacao - dtsg_np
+            sunset = culminacao + dtsg_np
+            culminacao = culminacao
+            sunrise = sunrise
+            sunset = sunset
+            return culminacao, sunrise, sunset, alwaysup, neverup
+        culminacao = culminacao
+        return culminacao, alwaysup, neverup
+    
+    def height_time(self, timeut, time_left=False, limalt=0.0*u.deg, site=EarthLocation(0.0, 0.0, 0.0)):
+        """
+        """
+        coord = coord_pack(self.coords)
+        timeut.delta_ut1_utc = 0
+        timeut.location = site
+        altaz = coord.transform_to(AltAz(obstime=timeut,location=site))
+        if time_left == True:
+            poente = self.sky_time(timeut, rise_set=True, limalt=limalt, site=site)[2]
+            time_rest = poente - timeut
+            return altaz.alt, time_rest
+        return altaz.alt
+    
+    def resume_night(self, timeut):
+        """
+        """
+        coord = coord_pack(self.coords)
+        coord_prec = self.precess(timeut)
+        culminacao, nascer, poente, alwaysup, neverup = coord_prec.sky_time(timeut, rise_set=True, limalt=self.limheight, site=self.site)
+        night = Table()
+        night['Objects'] = Column(self.names)
+        night['Comments'] = Column(self.magnitudes)
+        night['RA_J2000_DEC'] = Column(coord.to_string('hmsdms', precision=4, sep=' '))
+        night['Rise'] = Column(np.char.array(nascer[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0], format='^10s', unit='TL')
+        night['Culmination'] = Column(np.char.array(culminacao[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0], format='^10s', unit='TL')
+        night['Set'] = Column(np.char.array(poente[0].iso).rpartition(' ')[:,2].rpartition(':')[:,0], format='^10s', unit='TL')
+#        night = '\nRA: ' + ra + ', DEC: ' +  dec + ', Rise: ' + np.char.array(nascer.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Culmination: ' + \
+#np.char.array(culminacao.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + 'TL, Set: ' + np.char.array(poente.iso).rpartition(' ')[:,:,2].rpartition(':')[:,:,0] + \
+#' TL, ' + np.char.array(name)
+        return night
+
+#################################################################################################################
+
 class Ephemeris(object):
 #__init__
 #__read__
 #identify_min
 
-    def __init__(self, body=[], ra=[], dec=[], time=[], path='./ephemeris', coord_col=[], time_col=[], time_fmt='jd', skiprows=0):
-        if len(body) == len(ra) == len(dec) == len(time) != 0:
-            if type(body) == str:
-                body = np.array(body)
-            ra = np.array(ra).reshape((len(ra), 1))
-            dec = np.array(dec).reshape((len(dec), 1))
+    def __init__(self, name=[], ra=np.array([]), dec=np.array([]), time=[], path='./ephemeris', coord_col=[], time_col=[], time_fmt='jd', skiprows=0):
+        if ra.shape == dec.shape == (len(time), len(name)) != []:
+            if type(name) == str:
+                name = np.array(name)
+#            ra = np.array(ra).reshape((len(ra), 1))
+#            dec = np.array(dec).reshape((len(dec), 1))
         else:
             files = [ i for i in os.listdir(path) if i[-4:] == '.eph' ]
-            body, ra, dec, time = self.__read__(path, files, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
+            body, ra, dec, time = self.__read(path, files, coord_col=coord_col, time_col=time_col, time_fmt=time_fmt, skiprows=skiprows)
         self.body = body
-        self.coord = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
+        self.coords = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
         self.times = Time(time, format=time_fmt, scale='utc')
         
-    def __read__(self, path, files, coord_col=[], time_col=[], time_fmt='jd', skiprows=0):
+    def __read(self, path, files, coord_col=[], time_col=[], time_fmt='jd', skiprows=0):
         """
         """
         ra, dec, body = np.array([]), np.array([]), [] ## teste1
@@ -421,7 +585,8 @@ class Ephemeris(object):
         ra = ra.reshape((len(ra)/len(self.coords[f[j]][0]), len(self.coords[f[j]][0])))  ## teste1
         dec = dec.reshape((len(dec)/len(self.coords[f[j]][0]), len(self.coords[f[j]][0])))  ## teste1
 #        g = SkyCoord(ra, dec, unit=(u.hourangle, u.deg))
-        return Ephemeris(self.body, ra, dec, self.times)
+        print ra.shape, dec.shape, len(self.body), len(instants)
+        return Ephemeris(body=self.body, ra=ra, dec=dec, time=instants)
 
 #################################################################################################################
     
