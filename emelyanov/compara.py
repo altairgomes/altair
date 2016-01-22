@@ -7,6 +7,7 @@ from observation_3 import read2
 
 a = 'Nereida_eme.eph'
 b = 'Nereida_jpl.eph'
+m = 'Triton_zhang.eph'
 
 c = read2(a, time_col=[0,1,2,3,4,5], time_fmt='iso', coord_col=[6,7], skiprows=8)
 #c = read2(a, time_col=[2], time_fmt='jd', coord_col=[4,5,6,7,8,9], skiprows=3)
