@@ -5,6 +5,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 from observation_3 import read2
 
+#####################################################################
+
+plt.rcParams['text.latex.preamble']=[r"\usepackage{txfonts}"]
+
+params = {'text.usetex' : True,
+          'font.size' : 22,
+          'font.family' : 'txfonts',
+          'text.latex.unicode': True,
+          }
+          
+plt.rcParams.update(params)
+
+sizel = 17
+
+#####################################################################
+
 a = 'Triton_eme.eph'
 b = 'Triton_jpl.eph'
 m = 'Triton_zhang.eph'
@@ -46,21 +62,23 @@ for i in np.arange(2015,2019,1):
 
 r = np.array(r)
 
-plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, label='Right Ascencion')
-plt.plot(jpl_time.jd - 2451544.5, ddeltaz.mas, label='Declination')
+plt.plot(jpl_time.jd - 2451544.5, ddeltaz.mas, color='green', label=r'$\Delta\delta$')
+plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, color='blue', label=r'$\Delta\alpha\cos\delta$')
 
 #plt.plot(pos_time.jd - 2451544.5, dalfapos.mas, 'r+')
 #plt.plot(pos_time.jd - 2451544.5, ddeltapos.mas, 'rx')
 
 plt.xlim(Time('2015-01-01 00:00:00').jd - 2451544.5, Time('2018-01-01 00:00:00').jd - 2451544.5)
-plt.ylim(-15,15)
-#plt.title('Laurene - JUP300')
-plt.xlabel('Time')
+plt.ylim(-20,20)
+plt.title('Zhang (2014) - Emelyanov (2015)', fontsize=sizel)
+plt.xlabel('Time', fontsize=sizel)
 plt.xticks(r, ['{}'.format(i) for i in np.arange(2015,2019,1)])
-plt.ylabel('Zhang - Emelyanov (mas)')
+plt.ylabel('DIfference (mas)', fontsize=sizel)
 plt.legend()
 plt.axhline(0, color='black')
+plt.legend(labelspacing=0.25, borderpad=0.5, handlelength=1.7, prop={'size':sizel})
+plt.tick_params(axis='both', which='major', labelsize=sizel)
 fig =plt.gcf()
-fig.set_size_inches((40.0*u.cm).to(u.imperial.inch).value,(16.0*u.cm).to(u.imperial.inch).value)
-fig.savefig('JPL-EME_Zhang.png',dpi=100, bbox_inches='tight')
+fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(9.9*u.cm).to(u.imperial.inch).value)
+fig.savefig('JPL-EME_Zhang.eps',dpi=300, format='eps', bbox_inches='tight')
 plt.clf()
