@@ -70,10 +70,10 @@ plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, color='blue', label=r'$\Delta\alph
 
 plt.xlim(Time('2015-01-01 00:00:00').jd - 2451544.5, Time('2018-01-01 00:00:00').jd - 2451544.5)
 plt.ylim(-20,20)
-plt.title('Zhang (2014) - Emelyanov (2015)', fontsize=sizel)
+plt.title('Zhang (2013) - Emelyanov (2015)', fontsize=sizel)
 plt.xlabel('Time', fontsize=sizel)
 plt.xticks(r, ['{}'.format(i) for i in np.arange(2015,2019,1)])
-plt.ylabel('DIfference (mas)', fontsize=sizel)
+plt.ylabel('Difference (mas)', fontsize=sizel)
 plt.legend()
 plt.axhline(0, color='black')
 plt.legend(labelspacing=0.25, borderpad=0.5, handlelength=1.7, prop={'size':sizel})
