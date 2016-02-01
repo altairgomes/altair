@@ -45,8 +45,8 @@ zha_coord = SkyCoord(n['coords'].transpose(), unit=(u.hourangle, u.deg))
 dalfa = jpl_coord.ra*np.cos(jpl_coord.dec) - eme_coord.ra*np.cos(eme_coord.dec)
 ddelta = jpl_coord.dec - eme_coord.dec
 
-#dalfaz = zha_coord.ra*np.cos(zha_coord.dec) - eme_coord.ra*np.cos(eme_coord.dec)
-#ddeltaz = zha_coord.dec - eme_coord.dec
+dalfaz = zha_coord.ra*np.cos(zha_coord.dec) - eme_coord.ra*np.cos(eme_coord.dec)
+ddeltaz = zha_coord.dec - eme_coord.dec
 
 #pos_time = Time(e['times'], format='jd', scale='utc')
 #pos_coord = SkyCoord(e['coords'].transpose(), unit=(u.hourangle, u.deg))
@@ -71,9 +71,9 @@ plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, color='blue', label=r'$\Delta\alpha
 plt.xlim(Time('2015-01-01 00:00:00').jd - 2451544.5, Time('2018-01-01 00:00:00').jd - 2451544.5)
 plt.ylim(-100,100)
 plt.title('NEP081 - Emelyanov (2011)', fontsize=sizel)
-plt.xlabel('Time', fontsize=sizel)
+plt.xlabel('Time (years)', fontsize=sizel)
 plt.xticks(r, ['{}'.format(i) for i in np.arange(2015,2019,1)])
-plt.ylabel('Difference (mas)', fontsize=sizel)
+plt.ylabel('Offset (mas)', fontsize=sizel)
 plt.legend()
 plt.axhline(0, color='black')
 plt.legend(labelspacing=0.25, borderpad=0.5, handlelength=1.7, prop={'size':sizel})
