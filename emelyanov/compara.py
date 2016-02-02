@@ -21,11 +21,11 @@ sizel = 17
 
 #####################################################################
 
-a = 'Nereida_eme.eph'
-b = 'Nereida_jpl.eph'
+a = 'Triton_eme.eph'
+b = 'Triton_jpl.eph'
 m = 'Triton_zhang.eph'
 
-c = read2(a, time_col=[0,1,2,3,4,5], time_fmt='iso', coord_col=[6,7], skiprows=8)
+c = read2(a, time_col=[0,1,2,3,4,5], time_fmt='iso', coord_col=[6,7], skiprows=7)
 #c = read2(a, time_col=[2], time_fmt='jd', coord_col=[4,5,6,7,8,9], skiprows=3)
 d = read2(b, time_col=[2], time_fmt='jd', coord_col=[4,5,6,7,8,9], skiprows=3)
 n = read2(m, time_col=[0,1,2,3,4,5], time_fmt='iso', coord_col=[6,7], skiprows=8)
@@ -48,6 +48,9 @@ ddelta = jpl_coord.dec - eme_coord.dec
 dalfaz = zha_coord.ra*np.cos(zha_coord.dec) - eme_coord.ra*np.cos(eme_coord.dec)
 ddeltaz = zha_coord.dec - eme_coord.dec
 
+dalfay = jpl_coord.ra*np.cos(jpl_coord.dec) - zha_coord.ra*np.cos(zha_coord.dec)
+ddeltay = jpl_coord.dec - zha_coord.dec
+
 #pos_time = Time(e['times'], format='jd', scale='utc')
 #pos_coord = SkyCoord(e['coords'].transpose(), unit=(u.hourangle, u.deg))
 #lna_time = Time(f['times'], format='jd', scale='utc')
@@ -62,15 +65,15 @@ for i in np.arange(2015,2019,1):
 
 r = np.array(r)
 
-plt.plot(jpl_time.jd - 2451544.5, ddelta.mas, color='green', label=r'$\Delta\delta$')
-plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, color='blue', label=r'$\Delta\alpha\cos\delta$')
+plt.plot(jpl_time.jd - 2451544.5, ddeltay.mas, color='green', label=r'$\Delta\delta$')
+plt.plot(jpl_time.jd - 2451544.5, dalfay.mas, color='blue', label=r'$\Delta\alpha\cos\delta$')
 
 #plt.plot(pos_time.jd - 2451544.5, dalfapos.mas, 'r+')
 #plt.plot(pos_time.jd - 2451544.5, ddeltapos.mas, 'rx')
 
 plt.xlim(Time('2015-01-01 00:00:00').jd - 2451544.5, Time('2018-01-01 00:00:00').jd - 2451544.5)
-plt.ylim(-100,100)
-plt.title('NEP081 - Emelyanov (2011)', fontsize=sizel)
+plt.ylim(-30,30)
+plt.title('NEP081 - Zhang (2014)', fontsize=sizel)
 plt.xlabel('Time (years)', fontsize=sizel)
 plt.xticks(r, ['{}'.format(i) for i in np.arange(2015,2019,1)])
 plt.ylabel('Offset (mas)', fontsize=sizel)
@@ -80,5 +83,5 @@ plt.legend(labelspacing=0.25, borderpad=0.5, handlelength=1.7, prop={'size':size
 plt.tick_params(axis='both', which='major', labelsize=sizel)
 fig =plt.gcf()
 fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(9.9*u.cm).to(u.imperial.inch).value)
-fig.savefig('JPL-EME_Nereid.eps',dpi=300, format='eps', bbox_inches='tight')
+fig.savefig('JPL-ZHANG_Triton.png',dpi=300, format='png', bbox_inches='tight')
 plt.clf()

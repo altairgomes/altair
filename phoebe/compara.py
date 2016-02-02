@@ -62,8 +62,8 @@ for i in np.arange(2015,2019,1):
 
 r = np.array(r)
 
-plt.plot(jpl_time.jd - 2451544.5, ddelta.mas, 'g:', label=r'SAT375 $\Delta\delta$')
-plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, 'g', label=r'SAT375 $\Delta\alpha\cos\delta$')
+plt.plot(jpl_time.jd - 2451544.5, ddelta.mas, 'r:', label=r'SAT375 $\Delta\delta$')
+plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, 'r', label=r'SAT375 $\Delta\alpha\cos\delta$')
 
 plt.plot(jpl_time.jd - 2451544.5, ddeltaz.mas, 'b:', label=r'Eme2007 $\Delta\delta$')
 plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, 'b', label=r'Eme2007 $\Delta\alpha\cos\delta$')
