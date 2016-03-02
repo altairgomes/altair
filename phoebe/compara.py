@@ -45,8 +45,8 @@ ph15_coord = SkyCoord(n['coords'].transpose(), unit=(u.hourangle, u.deg))
 dalfa = jpl_coord.ra*np.cos(jpl_coord.dec) - ph15_coord.ra*np.cos(ph15_coord.dec)
 ddelta = jpl_coord.dec - ph15_coord.dec
 
-dalfaz = eme_coord.ra*np.cos(eme_coord.dec) - ph15_coord.ra*np.cos(ph15_coord.dec)
-ddeltaz = eme_coord.dec - ph15_coord.dec
+#dalfaz = eme_coord.ra*np.cos(eme_coord.dec) - ph15_coord.ra*np.cos(ph15_coord.dec)
+#ddeltaz = eme_coord.dec - ph15_coord.dec
 
 #pos_time = Time(e['times'], format='jd', scale='utc')
 #pos_coord = SkyCoord(e['coords'].transpose(), unit=(u.hourangle, u.deg))
@@ -57,22 +57,22 @@ ddeltaz = eme_coord.dec - ph15_coord.dec
 
 
 r = []
-for i in np.arange(2015,2019,1):
+for i in np.arange(2016,2022,1):
     r.append(Time('{}-01-01 00:00:00'.format(i), format='iso').jd - 2451544.5)
 
 r = np.array(r)
 
-plt.plot(jpl_time.jd - 2451544.5, ddelta.mas, 'r:', label=r'SAT375 $\Delta\delta$')
-plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, 'r', label=r'SAT375 $\Delta\alpha\cos\delta$')
+plt.plot(jpl_time.jd - 2451544.5, ddelta.mas, 'g', label=r'$\Delta\delta$')
+plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, 'b', label=r'$\Delta\alpha\cos\delta$')
 
-plt.plot(jpl_time.jd - 2451544.5, ddeltaz.mas, 'b:', label=r'Eme2007 $\Delta\delta$')
-plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, 'b', label=r'Eme2007 $\Delta\alpha\cos\delta$')
+#plt.plot(jpl_time.jd - 2451544.5, ddeltaz.mas, 'b:', label=r'Eme2007 $\Delta\delta$')
+#plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, 'b', label=r'Eme2007 $\Delta\alpha\cos\delta$')
 
-plt.xlim(Time('2015-01-01 00:00:00').jd - 2451544.5, Time('2018-01-01 00:00:00').jd - 2451544.5)
-plt.ylim(-150,150)
-plt.title('Phoebe', fontsize=sizel)
+plt.xlim(Time('2016-01-01 00:00:00').jd - 2451544.5, Time('2021-01-01 00:00:00').jd - 2451544.5)
+plt.ylim(-40,40)
+plt.title('SAT375 - PH15', fontsize=sizel)
 plt.xlabel('Time (years)', fontsize=sizel)
-plt.xticks(r, ['{}'.format(i) for i in np.arange(2015,2019,1)])
+plt.xticks(r, ['{}'.format(i) for i in np.arange(2016,2022,1)])
 plt.ylabel('Offset (mas)', fontsize=sizel)
 plt.legend()
 plt.axhline(0, color='black')
