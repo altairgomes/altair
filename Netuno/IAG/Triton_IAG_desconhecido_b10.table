@@ -1,0 +1,48 @@
+                                                     
+   Table notes:
+
+ - Offsets (Observed minus JPL ephemeris) are in mas.
+ - (E_a,E_d) are (RA,DEC) position error estimates in
+   mas, based on the dispersion (standard deviation) 
+   of the offsets.
+ - N_fr is the number of observations per night.     
+ - First block of offsets statistics regards filtered
+   results; second block regards to all offsets.
+ - (Per) is the 0-100 percentage of eliminated
+   outliers.
+ - (Sig) is the sigma theshold for elimination (mas).
+ - (Fac) is the sigma factor for offset elimination. 
+ - (RA,DEC) are given in the usual notation (h, m, s 
+   and dg, ...), but also in decimal form; they are  
+   averaged to the mean time of observations.
+ - Mean time (UTC) is given in the usual form (h, m, 
+   s, day, month, year), but also in years (decimal) 
+   and in Julian Days.
+ - Mag is the estimated magnitude of the object.     
+ - (S_a,S_d) (in mas) are the (RA,DEC) mean error of 
+   reference catalogue stars, from the astrometric   
+   solutions.
+ - Ncat is the average No. of reference stars/frame. 
+ - Target is the usual name of the object.           
+ - Pixel scale is given in arcseconds per pixel.     
+ - Obs/Inst gives information about the telescope,   
+   instrument and site of observation with IAU code. 
+ - Observer or main observer is also listed.         
+ - Data Treatment lists who has made the astrometry. 
+ - Package indicates the astrometric software used.  
+ - Tangent Plane Model indicates the polynomial form 
+   relating (x,y) and (RA,DEC) in the tangent plane. 
+ - The reference catalogue is also listed.           
+ - The reference JPL ephemeris is also indicated.    
+ - Data release informs the Table publication date.  
+ - General remarks may be also furnished.            
+ - Values marked -1 mean quantity not known.         
+                                                     
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  off_ra  off_de   E_a   E_d  N_fr  off_ra  off_de   E_a   E_d  N_fr    Per  Sig   Fac   hh mm ss        dg  '   "      h  m  s      dd mo year    Julian Date         Year           RA (ICRS)     DEC (ICRS)   Mag   S_a   S_d  Ncat Target Name          "/pixel Obs/Inst IAU code    Observer             Data treatment       Package              Tangent Plane Model  Reference catalogue  Reference ephemeris  Data release         General remarks
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   -93.3   -58.1  39.7  22.2    21   -93.3   -58.1  39.7  22.2    21   0.00  80.0  2.0   19 38 36.08667 -20 57 57.4557 00 26 00.7143 17 09 1995 2449977.5180638232 1995.709837272  19.6433574086 -20.9659599070 13.4  54.5  47.7    13 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+   -44.9   -23.3  15.3  22.5    26   -48.7   -15.6  19.0  29.3    30  13.33  80.0  2.0   21 52 29.33259 -13 19 39.3573 03 59 51.3731 18 07 2009 2455030.6665668185 2009.544603879  21.8748146075 -13.3275992383 13.5  36.0  63.3    19 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+   -43.7    83.3  17.7  39.2    24   -43.8    87.8  26.4  47.3    30  20.00  80.0  2.0   21 52 18.65673 -13 21  1.7773 06 04 37.0018 20 07 2009 2455032.7532060388 2009.550316785  21.8718490926 -13.3504936862 13.4  44.4  67.9    15 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+

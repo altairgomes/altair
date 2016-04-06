@@ -1,0 +1,51 @@
+                                                     
+   Table notes:
+
+ - Offsets (Observed minus JPL ephemeris) are in mas.
+ - (E_a,E_d) are (RA,DEC) position error estimates in
+   mas, based on the dispersion (standard deviation) 
+   of the offsets.
+ - N_fr is the number of observations per night.     
+ - First block of offsets statistics regards filtered
+   results; second block regards to all offsets.
+ - (Per) is the 0-100 percentage of eliminated
+   outliers.
+ - (Sig) is the sigma theshold for elimination (mas).
+ - (Fac) is the sigma factor for offset elimination. 
+ - (RA,DEC) are given in the usual notation (h, m, s 
+   and dg, ...), but also in decimal form; they are  
+   averaged to the mean time of observations.
+ - Mean time (UTC) is given in the usual form (h, m, 
+   s, day, month, year), but also in years (decimal) 
+   and in Julian Days.
+ - Mag is the estimated magnitude of the object.     
+ - (S_a,S_d) (in mas) are the (RA,DEC) mean error of 
+   reference catalogue stars, from the astrometric   
+   solutions.
+ - Ncat is the average No. of reference stars/frame. 
+ - Target is the usual name of the object.           
+ - Pixel scale is given in arcseconds per pixel.     
+ - Obs/Inst gives information about the telescope,   
+   instrument and site of observation with IAU code. 
+ - Observer or main observer is also listed.         
+ - Data Treatment lists who has made the astrometry. 
+ - Package indicates the astrometric software used.  
+ - Tangent Plane Model indicates the polynomial form 
+   relating (x,y) and (RA,DEC) in the tangent plane. 
+ - The reference catalogue is also listed.           
+ - The reference JPL ephemeris is also indicated.    
+ - Data release informs the Table publication date.  
+ - General remarks may be also furnished.            
+ - Values marked -1 mean quantity not known.         
+                                                     
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  off_ra  off_de   E_a   E_d  N_fr  off_ra  off_de   E_a   E_d  N_fr    Per  Sig   Fac   hh mm ss        dg  '   "      h  m  s      dd mo year    Julian Date         Year           RA (ICRS)     DEC (ICRS)   Mag   S_a   S_d  Ncat Target Name          "/pixel Obs/Inst IAU code    Observer             Data treatment       Package              Tangent Plane Model  Reference catalogue  Reference ephemeris  Data release         General remarks
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   669.9  -893.4  23.7  26.8    16   669.1  -889.1  23.2  31.4    17   5.88  80.0  2.0   19 59  2.79779 -20 07 27.3413 09 48 02.5426 07 05 1996 2450210.9083627611 1996.348825086  19.9841104978 -20.1242614639 13.5  53.9  44.1     9 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+     8.7     3.0  19.6  45.8    31    11.0     0.8  25.0  45.0    34   8.82  80.0  2.0   19 53 28.69455 -20 22 58.1730 00 51 54.0339 17 07 1996 2450281.5360420593 1996.542193133  19.8913040421 -20.3828258305 13.3  60.4  62.7     9 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+    26.8    22.8  32.6  45.2    50    18.7    30.1  49.7  66.6    59  15.25  80.0  2.0   19 53 22.82392 -20 23 16.9624 01 59 54.5994 18 07 1996 2450282.5832708268 1996.545060289  19.8896733124 -20.3880451217 13.2  60.4  67.7     8 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+    64.4   -42.6  37.4  64.7    42    68.8  -104.7 106.3 171.8    67  37.31  80.0  2.0   19 53 15.35662 -20 23 53.0702 06 26 34.4365 19 07 1996 2450283.7684541256 1996.548305144  19.8875990598 -20.3980750597 13.3  43.3  57.5     4 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+    33.3   -11.1  11.5  29.3    36    29.2   -11.3  20.1  30.1    45  20.00  80.0  2.0   19 52 41.83044 -20 25 13.6844 03 22 42.3325 24 07 1996 2450288.6407677373 1996.561644812  19.8782862346 -20.4204678991 13.5  42.7  53.0    13 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+    22.9   -17.1  38.1  40.7    30    35.9   -17.4  94.7  95.3    50  40.00  80.0  2.0   19 52  2.07697 -20 27  5.7639 01 43 06.3234 30 07 1996 2450294.5716009648 1996.577882548  19.8672436028 -20.4516010805 13.5  64.9  60.8     7 Triton                0.0000 ZEISS                varios               Altair               PRAIA V.0.1.1        1rd degree           UCAC4                NEP081               06 Apr 2016                                                  
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
