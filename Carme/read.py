@@ -40,20 +40,28 @@ for i in [0, 1, 2]:
     difjpldec = coord[code == b[i]].dec - coordjpl.dec
     diflaudec = coord[code == b[i]].dec - coordlau.dec
     difemedec = coord[code == b[i]].dec - coordeme.dec
-    j, = plt.plot(anom, difjpldec.mas, '+', color='blue')
-    m, = plt.plot(anom, difemedec.mas, '.', color='green')
-    l, = plt.plot(anom, diflaudec.mas, 'x', color='red')
+    j, = plt.plot(time[code == b[i]].jd - 2451544.5, difjpldec.mas, '+', color='blue')
+    m, = plt.plot(time[code == b[i]].jd - 2451544.5, difemedec.mas, '.', color='green')
+    l, = plt.plot(time[code == b[i]].jd - 2451544.5, diflaudec.mas, 'x', color='red')
     
-plt.xlim(0,360)
+r = []
+for i in np.arange(1995,2016,3):
+    r.append(Time('{}-01-01 00:00:00'.format(i), format='iso').jd - 2451544.5)
+
+r = np.array(r)
+    
+#plt.xlim(0,360)
+plt.xlim(Time('1995-01-01 00:00:00').jd - 2451544.5, Time('2015-01-01 00:00:00').jd - 2451544.5)
 plt.ylim(-300,300)
 plt.axhline(0, color='black')
 plt.title('Carme', fontsize=sizel)
 plt.xlabel('True Anomaly (degrees)', fontsize=sizel)
 plt.ylabel('Offset (mas)', fontsize=sizel)
-plt.xticks(np.arange(0,370,45))
+#plt.xticks(np.arange(0,370,45))
+plt.xticks(r, ['{}'.format(i) for i in np.arange(1995,2016,3)])
 #ax = plt.gca().add_artist(first_legend)
-plt.legend([l, j, m], ['STE', 'JUP300', 'Eme2008'], numpoints=1, loc=3, labelspacing=0.25, borderpad=0.1, handlelength=0.5, prop={'size':sizel})
+plt.legend([l, j, m], ['STE', 'JUP300', 'Eme2008'], numpoints=1, loc=1, labelspacing=0.25, borderpad=0.1, handlelength=0.5, prop={'size':sizel})
 plt.tick_params(axis='both', which='major', labelsize=sizel)
 fig =plt.gcf()
 fig.set_size_inches((17.6*u.cm).to(u.imperial.inch).value,(9.9*u.cm).to(u.imperial.inch).value)
-fig.savefig('Carme_ephemeris.eps', format='eps', dpi=300, bbox_inches='tight')
+fig.savefig('Carme_ephemeris_time.eps', format='eps', dpi=300, bbox_inches='tight')
