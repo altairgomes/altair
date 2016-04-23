@@ -25,10 +25,12 @@ gcrs = itrs.transform_to(GCRS(obstime=time))
 delt = 0*u.s
 n = 0
 
+topo = kernel[0,3].compute(time.jd) + kernel[3,399].compute(time.jd)
+
 while True:
     n = n + 1
     tempo = time - delt
-    position = kernel[0,8].compute(tempo.jd) + kernelnep[8,899].compute(tempo.jd)[0:3] - kernel[0,3].compute(tempo.jd) - kernel[3,399].compute(tempo.jd)
+    position = kernel[0,8].compute(tempo.jd) + kernelnep[8,899].compute(tempo.jd)[0:3] - topo
     dist = np.linalg.norm(position)*u.km
     delt = (dist/const.c).decompose()
     if np.all(np.absolute(time - tempo - delt) < 1*u.s):
