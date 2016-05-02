@@ -38,8 +38,23 @@ for i in [0, 1, 2]:
     f = read2('{}-eme.eph'.format(b[i]), coord_col=[1, 2], skiprows=8)
     coordeme = SkyCoord(f['coords'][0], f['coords'][1], unit=(u.hourangle, u.deg))
     difjpldec = coord[code == b[i]].dec - coordjpl.dec
+    difjplra = (coord[code == b[i]].ra - coordjpl.ra)*np.cos(coordjpl.dec)
+    f = open('off_jpl.txt', 'a')
+    for j in np.arange(len(difjpldec)):
+        f.write('{:16.8f} {:+04.0f} {:+04.0f}\n'.format(time[code == b[i]].jd[j], difjplra[j].mas, difjpldec[j].mas))
+    f.close()
     diflaudec = coord[code == b[i]].dec - coordlau.dec
+    diflaura = (coord[code == b[i]].ra - coordlau.ra)*np.cos(coordlau.dec)
+    f = open('off_ste.txt', 'a')
+    for j in np.arange(len(diflaudec)):
+        f.write('{:16.8f} {:+04.0f} {:+04.0f}\n'.format(time[code == b[i]].jd[j], diflaura[j].mas, diflaudec[j].mas))
+    f.close()
     difemedec = coord[code == b[i]].dec - coordeme.dec
+    difemera = (coord[code == b[i]].ra - coordeme.ra)*np.cos(coordeme.dec)
+    f = open('off_eme.txt', 'a')
+    for j in np.arange(len(difemedec)):
+        f.write('{:16.8f} {:+04.0f} {:+04.0f}\n'.format(time[code == b[i]].jd[j], difemera[j].mas, difemedec[j].mas))
+    f.close()
     j, = plt.plot(time[code == b[i]].jd - 2451544.5, difjpldec.mas, '+', color='blue')
     m, = plt.plot(time[code == b[i]].jd - 2451544.5, difemedec.mas, '.', color='green')
     l, = plt.plot(time[code == b[i]].jd - 2451544.5, diflaudec.mas, 'x', color='red')
