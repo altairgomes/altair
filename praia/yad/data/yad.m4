@@ -20,7 +20,7 @@ AC_DEFUN([AM_PATH_YAD],[
       AC_PATH_PROG([YAD], yad, :)
     fi
     AC_MSG_CHECKING([whether yad version >= $1])
-    m4_define([yad_version],[0.26.1])
+    m4_define([yad_version],[0.36.2])
     m4_if(m4_version_compare(yad_version,[$1]),[-1],
       [AC_MSG_ERROR([too old (]yad_version[)])],
       [AC_MSG_RESULT(yad_version)])
