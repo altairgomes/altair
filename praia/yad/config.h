@@ -16,6 +16,12 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #define HAVE_GETTEXT 1
 
+/* Define this if you have glib gio framework */
+#define HAVE_GIO 1
+
+/* Define this if you have webkit installed */
+/* #undef HAVE_HTML */
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
@@ -27,6 +33,12 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
+
+/* Define this if you need GtkSourceView support */
+/* #undef HAVE_SOURCEVIEW */
+
+/* Define this if you need spell check support */
+/* #undef HAVE_SPELL */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -59,7 +71,7 @@
 #define PACKAGE_NAME "YAD"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "YAD 0.26.1"
+#define PACKAGE_STRING "YAD 0.36.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "yad"
@@ -68,7 +80,7 @@
 #define PACKAGE_URL "https://sourceforge.net/projects/yad-dialog/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.26.1"
+#define PACKAGE_VERSION "0.36.2"
 
 /* Path to rgb.txt file */
 #define RGB_FILE "/etc/X11/rgb.txt"
@@ -77,4 +89,4 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.26.1"
+#define VERSION "0.36.2"

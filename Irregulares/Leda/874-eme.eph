@@ -1,0 +1,14 @@
+v15.04     Planet: Jupiter  (DE431)
+        Satellite: J13 Leda  (Emelyanov N.V. Version 2011-04-17 ...)
+                               - ephemerides on 1905/01/01.0-2025/07/10.0
+    Observatory N: 874 - Itajuba
+        Timescale: UTC
+Mean equator and equinox of J2000.  ICRF. 
+Coordinates astrometric 
+      JD            alpha (h)          delta (º)
+ 2450258.644861    18.9805522108     -22.518831697  
+ 2450258.648831    18.9805213636     -22.518844482  
+ 2454656.766643    19.3006475850     -21.936744051  
+ 2454656.769885    19.3006220149     -21.936811262  
+ 2454656.777140    19.3005648335     -21.936961491  
+ 2454656.780370    19.3005393902     -21.937028309  

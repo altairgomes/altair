@@ -1,7 +1,7 @@
 # norootforbuild
 
 Name:		yad
-Version:	0.26.1
+Version:	0.36.2
 Release:	1
 
 Summary:	A fork of Zenity with many improvements

@@ -19,7 +19,7 @@
 
 GETTEXT_PACKAGE = yad
 PACKAGE = yad
-VERSION = 0.26.1
+VERSION = 0.36.2
 
 SHELL = /bin/bash
 
@@ -36,7 +36,7 @@ libdir = ${exec_prefix}/lib
 DATADIRNAME = share
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
 subdir = po
-install_sh = ${SHELL} /home/altair/Documentos/teste/praia/yad/build/install-sh
+install_sh = ${SHELL} /home/altair/Documentos/softwares/praia/yad/build/install-sh
 # Automake >= 1.8 provides $(MKDIR_P).
 # Until it can be supposed, use the safe fallback:
 mkdir_p = $(install_sh) -d
@@ -72,6 +72,7 @@ POTFILES = \
 	../src/file.c \
 	../src/font.c \
 	../src/form.c \
+	../src/html.c \
 	../src/icons.c \
 	../src/main.c \
 	../src/notification.c \
@@ -79,6 +80,8 @@ POTFILES = \
 	../src/list.c \
 	../src/option.c \
 	../src/multi-progress.c \
+	../src/paned.c \
+	../src/picture.c \
 	../src/print.c \
 	../src/progress.c \
 	../src/color.c \

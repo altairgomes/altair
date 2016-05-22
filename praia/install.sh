@@ -4,14 +4,14 @@
 install_yad(){
   echo "Checking YAD"
   yad=$(which yad)
-  yadnewversion="0.26.1"
+  yadnewversion="0.36.2"
   yadoldversion=$(yad --version)
   if [ -z "$yad" ];then
     echo "YAD not found. Installing..."
     echo "sudo apt-get install intltool"
     sudo apt-get install intltool
-    echo "sudo apt-get install gtk+-3.0"
-    sudo apt-get install gtk+-3.0
+    echo "sudo apt-get install gtk+-2.0"
+    sudo apt-get install gtk+-2.0
     cd yad
     echo "Installing YAD"
     chmod u+x configure
@@ -92,5 +92,5 @@ install_praia(){
 #### Inicio
 #
 install_yad
-install_gfortran
-install_praia
+#install_gfortran
+#install_praia
