@@ -20,7 +20,7 @@ for i in sat:
         c,d = np.where(np.absolute(time.jd[a] - ejd.jd[b]) < TimeDelta(0.2*u.s).jd)
         f = open('{}_{}_off.dat'.format(i,s), 'w')
         for k in np.arange(len(c)):
-            f.write(' {:-6.3f} {:-6.3f} {:16.8f} {:6.2f} {:2s}\n'.format((coord.ra[c][k]*np.cos(coord.dec[c][k])-ecoord.ra[d][k]*np.cos(ecoord.dec[d][k])).arcsec,
+            f.write(' {:-6.3f} {:-6.3f} {:16.8f} {:6.2f} {:2s}\n'.format(((coord.ra[c][k]-ecoord.ra[d][k])*np.cos(ecoord.dec[d][k])).arcsec,
             (coord.dec[c][k]-ecoord.dec[d][k]).arcsec,
             time.jd[c][k],
             anov[d][k],
