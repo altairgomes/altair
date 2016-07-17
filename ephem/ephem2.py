@@ -29,9 +29,9 @@ sites = {  '0': ['Greenwich',        EarthLocation.from_geodetic( +0.00000000000
 
 def compute(k, center, target, jd):
     for segment in k.segments:
-        print segment.center, segment.target, segment.start_jd, segment.end_jd
-#        if segment.center == center and segment.target == target and np.all(segment.start_jd <= jd <= segment.end_jd):
-        return segment.compute(jd)
+        print segment.center, segment.target
+        if segment.center == center and segment.target == target and np.all(segment.start_jd <= jd) and np.all(jd <= segment.end_jd):
+            return segment.compute(jd)
     raise ValueError('no segment matches')
     
 def sitios(iaucode):
@@ -55,7 +55,7 @@ def ephem(iaucode, peph, objcode, timefile, output='sky'):
     time = Time(jd, format='jd', scale='utc')
     timetdb = time.tdb
     
-    geop = compute(kernel,0,3,timetdb.jd) + compute(kernel,3,399,timetdb.jd)
+    geop = kernel[0,3].compute(timetdb.jd) + kernel[3,399].compute(timetdb.jd)
 
     if not isinstance(iaucode, str):
         iaucode = str(iaucode)
@@ -71,13 +71,14 @@ def ephem(iaucode, peph, objcode, timefile, output='sky'):
 
 
     while True:
-        n = n + 1
+	print n
         tempo = timetdb - delt
-        objp = compute(kernel,0,5,tempo.jd) + compute(kernelobj,5,506,tempo.jd)[0:3,:]
-        position = (objp - geop)*u.km
+        objp = kernel[0,5].compute(tempo.jd) + kernelobj[5,506].compute(tempo.jd)[0:3]
+        position = (objp - geop)
         dist = np.linalg.norm(position, axis=0)*u.km
         delt = (dist/const.c).decompose()
-        if np.all(np.absolute((timetdb - tempo - delt).sec) < 0.0001):
+        n = n + 1
+        if np.all(np.absolute(((timetdb - tempo) - delt).sec) < 0.0001):
             break
 
     if iaucode.lower() in ['g', 'geocenter']:
