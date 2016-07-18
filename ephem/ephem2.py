@@ -4,9 +4,11 @@ from astropy.coordinates import EarthLocation, SkyCoord, ITRS, GCRS
 from astropy.time import Time
 from jplephem.spk import SPK
 import astropy.constants as const
+import os
 
 #########################################################################################################
 
+### Defines coordinates for each location
 sites = {  '0': ['Greenwich',        EarthLocation.from_geodetic( +0.00000000000,   +51.47738889,      65.8)],
          '511': ['Haute Provence',   EarthLocation.from_geodetic( +5.71569444400,   +43.93186111,     633.9)],
          '586': ['Pic du Midi',      EarthLocation.from_geodetic( +0.14230555600,   +42.93655556,    2890.5)],
@@ -25,6 +27,25 @@ sites = {  '0': ['Greenwich',        EarthLocation.from_geodetic( +0.00000000000
           '20': ['La Palma MERCATOR',EarthLocation.from_geodetic( +342.121694444,   +28.76200000,    2356.9)],
           '84': ['Cerro Tololo-DEC', EarthLocation.from_geodetic( +289.193583333,   -30.16958333,    2202.7)]}
 
+### Defines type, name and kernel for each object
+### Types: 's' for satellites, 'p' for planet
+objects = { ### Planets
+            '599': ['p', 'Jupiter', 'jup300'], ## check kernel
+            ### Satellites
+            '506': ['s', 'Himalia', 'jup300'],
+            '507': ['s', 'Elara', 'jup300'],
+            '508': ['s', 'Pasiphae', 'jup300'],
+            '509': ['s', 'Sinope', 'jup300'],
+            '510': ['s', 'Lysithea', 'jup300'],
+            '511': ['s', 'Carme', 'jup300'],
+            '512': ['s', 'Ananke', 'jup300'],
+            '513': ['s', 'Leda', 'jup300'],
+            '607': ['s', 'Hyperion', 'jup300'], ## check kernel
+            '608': ['s', 'Iapetus', 'jup300'], ## check kernel
+            '609': ['s', 'Phoebe', 'sat359'], ## check kernel
+            '802': ['s', 'Nereid', 'nep081']
+            }
+
 #########################################################################################################
 
 def compute(k, center, target, jd):
@@ -40,56 +61,98 @@ def sitios(iaucode):
     except ValueError:
         print("This code is not presented in our database. Please give the coordinates of the location")
         
+def objs(code):
+    objt, objn, objk = objects[code]
+    return objt, objn, objk
+        
 
 ##########################################################################################################
 
 def ephem(iaucode, peph, objcode, timefile, output='sky'):
-    
+
+############## Reading planetary kernel ##############################################
     if peph[-3:] != 'bsp':
         peph = peph + '.bsp'
+    if not os.path.isfile(peph):
+        raise OSError('Planetary Kernel {} not found'.format(peph[:-4]))
     kernel = SPK.open(peph)
-    ################## fazer aqui ainda #####
-    kernelobj = SPK.open('jup300.bsp')
-    #########################################
+
+########## Reading Time File  #######################################################
     jd = np.loadtxt(timefile)
     time = Time(jd, format='jd', scale='utc')
     timetdb = time.tdb
-    
-    geop = kernel[0,3].compute(timetdb.jd) + kernel[3,399].compute(timetdb.jd)
-
+  
+######## Checking if it is geocenter or not and getting topocentric vectors ############
+##### Still have to check when not geocenter #######
     if not isinstance(iaucode, str):
         iaucode = str(iaucode)
     if iaucode.lower() not in ['g', 'geocenter']:
+        ### not geocenter
         site, siten = sitios(iaucode)
-    #itrs = ITRS(site,obstime=time.utc)
+        #itrs = ITRS(site,obstime=time.utc)
         gcrs = site.itrs.transform_to(GCRS(obstime=time))
+        print gcrs
     else:
+        ### geocenter
         siten = 'Geocenter'
+
+####################### fazer aqui ainda ################################################
+    kernelobj = SPK.open('nep081.bsp')
+    if not isinstance(objcode, str):
+        objcode = str(objcode)
+    objt, objn, objk = objs(objcode)
+    objk = objk + '.bsp'
+    if not os.path.isfile(kernelobj):
+        raise OSError('Object Kernel {} not found'.format(objk[:-4]))
+    kernelobj = SPK.open(kernelobj)
+    
+#########################################################################################
+
+## compute vector Solar System Barycenter -> Earth Geocenter
+    geop = kernel[0,3].compute(timetdb.jd) + kernel[3,399].compute(timetdb.jd) 
+
+########### Calculates time delay ###########################################
+# delt = light time
+# n = number of loops necessary
 
     delt = 0*u.s
     n = 0
-
-
     while True:
-	print n
+        ### calculates new time
         tempo = timetdb - delt
-        objp = kernel[0,5].compute(tempo.jd) + kernelobj[5,506].compute(tempo.jd)[0:3]
+        ### calculates vector Solar System Baricenter -> Object
+        if objt in ['s', 'p']:
+            objp = kernel[0,8].compute(tempo.jd) + kernelobj[8,802].compute(tempo.jd)[0:3]
+        ### calculates vector Earth Geocenter -> Object
         position = (objp - geop)
+        ### calculates linear distance Earth Geocenter -> Object
         dist = np.linalg.norm(position, axis=0)*u.km
+        ### calculates new light time
         delt = (dist/const.c).decompose()
         n = n + 1
-        if np.all(np.absolute(((timetdb - tempo) - delt).sec) < 0.0001):
+        ### if difference between new and previous light time is smaller than 0.001 sec, than continue.
+        if np.all(np.absolute(((timetdb - tempo) - delt).sec) < 0.001):
             break
-
+            
+##############################################################################
+### Creating SkyCoord Object with the coordinates for each instant
     if iaucode.lower() in ['g', 'geocenter']:
+        ### geocenter
         coord = SkyCoord(position[0], position[1], position[2], frame='icrs', unit=u.km, representation='cartesian')
     else:
+        ### topocenter
         coord = SkyCoord(position[0]*u.km - gcrs.cartesian.x, position[1]*u.km - gcrs.cartesian.y, position[2]*u.km - gcrs.cartesian.z, frame='icrs', representation='cartesian')
     
+### returning values
     if output  == 'radec':
         return coord.spherical.lon.hourangle, coord.spherical.lat.deg
     elif output == 'sky':
         return SkyCoord(ra=coord.spherical.lon, dec=coord.spherical.lat)
     else:
         print siten
+
+
+######################### TESTE ################################
+a = ephem('g', 'de435', 802, 'jd_de.dat', output='sky')
+
 
