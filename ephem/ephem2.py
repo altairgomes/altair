@@ -9,15 +9,14 @@ import os
 #########################################################################################################
 
 ### Defines coordinates for each location
-sites =
-{
+sites = {
    '0': ['Greenwich',        EarthLocation.from_geodetic( +0.00000000000,   +51.47738889,      65.8)],
    '1': ['Paranal VLT',      EarthLocation.from_geodetic( +289.597194444,   -24.62541667,    2635.0)],
   '13': ['Liverpool Tel.',   EarthLocation.from_geodetic( +342.120800000,   +28.76240000,    2387.6)],
   '20': ['La Palma MERCATOR',EarthLocation.from_geodetic( +342.121694444,   +28.76200000,    2356.9)],
   '33': ['SOAR',             EarthLocation.from_geodetic( +289.269805556,   -30.23802778,    2693.9)],
   '86': ['Sierra Nevada',    EarthLocation.from_geodetic( +356.615305556,   +37.06413889,    2930.4)],
-  '84': ['Cerro Tololo-DEC', EarthLocation.from_geodetic( +289.193583333,   -30.16958333,    2202.7)]
+  '84': ['Cerro Tololo-DEC', EarthLocation.from_geodetic( +289.193583333,   -30.16958333,    2202.7)],
   '95': ['La Hita',          EarthLocation.from_geodetic( +356.813944444,   +39.56861111,     674.9)],
   '97': ['Wise Observatory', EarthLocation.from_geodetic( +34.7625000000,   +30.59566667,     904.2)],
  '267': ['CFHT',             EarthLocation.from_geodetic( +204.530444444,   +19.82536111,    4147.8)],
@@ -32,23 +31,22 @@ sites =
 
 ### Defines type, name and kernel for each object
 ### Types: 's' for satellites, 'p' for planet
-objects =
-{
+objects = {
 ### Planets
-    '599': ['p', 'Jupiter', 'jup300'], ## check kernel
+    599: ['p', 'Jupiter', 'jup300'], ## check kernel
 ### Satellites
-    '506': ['s', 'Himalia', 'jup300'],
-    '507': ['s', 'Elara', 'jup300'],
-    '508': ['s', 'Pasiphae', 'jup300'],
-    '509': ['s', 'Sinope', 'jup300'],
-    '510': ['s', 'Lysithea', 'jup300'],
-    '511': ['s', 'Carme', 'jup300'],
-    '512': ['s', 'Ananke', 'jup300'],
-    '513': ['s', 'Leda', 'jup300'],
-    '607': ['s', 'Hyperion', 'jup300'], ## check kernel
-    '608': ['s', 'Iapetus', 'jup300'], ## check kernel
-    '609': ['s', 'Phoebe', 'sat359'], ## check kernel
-    '802': ['s', 'Nereid', 'nep081']
+    506: ['s', 'Himalia', 'jup300'],
+    507: ['s', 'Elara', 'jup300'],
+    508: ['s', 'Pasiphae', 'jup300'],
+    509: ['s', 'Sinope', 'jup300'],
+    510: ['s', 'Lysithea', 'jup300'],
+    511: ['s', 'Carme', 'jup300'],
+    512: ['s', 'Ananke', 'jup300'],
+    513: ['s', 'Leda', 'jup300'],
+    607: ['s', 'Hyperion', 'jup300'], ## check kernel
+    608: ['s', 'Iapetus', 'jup300'], ## check kernel
+    609: ['s', 'Phoebe', 'sat359'], ## check kernel
+    802: ['s', 'Nereid', 'nep081']
 ### TNOs e Centauros
 }
 
@@ -103,14 +101,12 @@ def ephem(iaucode, peph, objcode, timefile, output='sky'):
         siten = 'Geocenter'
 
 ####################### fazer aqui ainda ################################################
-    kernelobj = SPK.open('nep081.bsp')
-    if not isinstance(objcode, str):
-        objcode = str(objcode)
     objt, objn, objk = objs(objcode)
     objk = objk + '.bsp'
-    if not os.path.isfile(kernelobj):
+    print objk
+    if not os.path.isfile(objk):
         raise OSError('Object Kernel {} not found'.format(objk[:-4]))
-    kernelobj = SPK.open(kernelobj)
+    kernelobj = SPK.open(objk)
     
 #########################################################################################
 
@@ -128,7 +124,7 @@ def ephem(iaucode, peph, objcode, timefile, output='sky'):
         tempo = timetdb - delt
         ### calculates vector Solar System Baricenter -> Object
         if objt in ['s', 'p']:
-            objp = kernel[0,8].compute(tempo.jd) + kernelobj[8,802].compute(tempo.jd)[0:3]
+            objp = kernel[0,5].compute(tempo.jd) + kernelobj[5,506].compute(tempo.jd)[0:3]
         ### calculates vector Earth Geocenter -> Object
         position = (objp - geop)
         ### calculates linear distance Earth Geocenter -> Object
@@ -159,6 +155,4 @@ def ephem(iaucode, peph, objcode, timefile, output='sky'):
 
 
 ######################### TESTE ################################
-a = ephem('g', 'de435', 802, 'jd_de.dat', output='sky')
-
-
+a = ephem('g', 'de430', 506, 'jd_de.dat', output='sky')
