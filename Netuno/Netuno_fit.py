@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import astropy.units as u
 from astropy.time import Time
-from astropy.coordinates import SkyCoord
+from astropy.coordinates import SkyCoord, EarthLocation
 import scipy.odr.odrpack as odrpack
 
 ##################################### FUNCOES #######################
@@ -15,7 +15,7 @@ def time_hourangle(time, ra):
     return hourangle
     
 def refraction(delta, hourangle):
-    den = np.tan(delta)*np.tan(lna.latitude)+np.cos(hourangle0)
+    den = np.tan(delta)*np.tan(lna.latitude)+np.cos(hourangle)
     valfa = np.sin(hourangle)/(den*np.cos(delta))
     vdelta = (np.tan(lna.latitude)-np.tan(delta)*np.cos(hourangle))/den
     return valfa, vdelta
@@ -31,11 +31,42 @@ nep = np.loadtxt('ucac4_Netuno_160_cp', usecols=[0,1,35,36,43,45], dtype={'names
 ra = nep['ra']*u.hourangle
 dec = nep['dec']*u.deg
 tempo = Time(nep['jd'], format='jd', scale='utc')
+filt = np.char.array(nep['filt'])
 
+hourangle = time_hourangle(tempo, ra)
 
+filtros = ['clear', 'b', 'v', 'r', 'i', 'metano']
 
+valfa = np.zeros((len(filtros), len(nep['ofra'])))
+vdelta = np.zeros((len(filtros), len(nep['ofde'])))
+
+va, vd = refraction(dec, hourangle)
+
+for i in np.arange(len(filtros)):
+    a = np.where(filt.lower() == filtros[i])
+    valfa[i,a[0]] = va[a[0]]
+    vdelta[i,a[0]] = vd[a[0]]
+    
+    
+jdn, netanom = np.loadtxt('Netuno.eph', skiprows=3, usecols=[2, 36], unpack=True)
+jdt, trianom = np.loadtxt('Triton.eph', skiprows=3, usecols=[2, 36], unpack=True)
+
+n,m = np.indices((len(jdn), len(tempo)))
+o = np.where(np.absolute(jdn[n]-tempo[m].jd)*u.day < 0.01*u.s)
+anomnet = netanom[o[0]]
+
+n,m = np.indices((len(jdt), len(tempo)))
+o = np.where(np.absolute(jdt[n]-tempo[m].jd)*u.day < 0.01*u.s)
+anomtri = trianom[o[0]]
 
 ############## Funcoes de ajuste #####################################
+
+g1 = np.vstack(valfa, np.sin(anomnet*u.deg), np.cos(anomnet*u.deg), np.sin(anomtri*u.deg), np.cos(anomtri*u.deg), np.ones(len(nep['ofra'])))
+
+def f1(B,x):
+
+
+################  EXEMPLOS  ##########################################
 
 g1 = np.vstack([y[0] - 2451544.5, np.sin(y[3]*u.deg), np.cos(y[3]*u.deg), np.ones(len(y[3]))]).T
 
