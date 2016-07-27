@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import astropy.units as u
-from astropy.time import Time
+from astropy.time import Time, TimeDelta
 from astropy.coordinates import SkyCoord, EarthLocation
 import scipy.odr.odrpack as odrpack
 
@@ -20,26 +20,46 @@ def refraction(delta, hourangle):
     vdelta = (np.tan(lna.latitude)-np.tan(delta)*np.cos(hourangle))/den
     return valfa, vdelta
     
+def cluster(data, maxgap):             
+    '''Arrange data into groups where successive elements
+       differ by no more than *maxgap*
 
+        >>> cluster([1, 6, 9, 100, 102, 105, 109, 134, 139], maxgap=10)
+        [[1, 6, 9], [100, 102, 105, 109], [134, 139]]
+
+        >>> cluster([1, 6, 9, 99, 100, 102, 105, 134, 139, 141], maxgap=10)
+        [[1, 6, 9], [99, 100, 102, 105], [134, 139, 141]]
+
+    '''
+    data.sort()
+    groups = [[0]]
+    for x in np.arange(len(data)-1):
+        if abs(data[x+1] - data[groups[-1][-1]]) <= maxgap:
+            groups[-1].append(x+1)
+        else:
+            groups.append([x+1])
+    return groups
 
 #####################################################################
 
 lna = EarthLocation('-45 34 57', '-22 32 04', 1864)
 
 tel= 'Netuno_160'
-nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f16', 'f16', 'f16', 'S10')})
+nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
 
-ra = nep['ra']*u.hourangle
-dec = nep['dec']*u.deg
-tempo = Time(nep['jd'], format='jd', scale='utc')
-filt = np.char.array(nep['filt'])
+sor = nep['jd'].argsort()
+
+ra = nep['ra'][sor]*u.hourangle
+dec = nep['dec'][sor]*u.deg
+tempo = Time(nep['jd'][sor], format='jd', scale='utc')
+filt = np.char.array(nep['filt'][sor])
 
 hourangle = time_hourangle(tempo, ra)
 
 filtros = ['clear', 'b', 'v', 'r', 'i', 'metano']
 
-valfa = np.zeros((len(filtros), len(nep['ofra'])))
-vdelta = np.zeros((len(filtros), len(nep['ofde'])))
+valfa = np.zeros((len(filtros), len(nep['ofra'][sor])))
+vdelta = np.zeros((len(filtros), len(nep['ofde'][sor])))
 
 va, vd = refraction(dec, hourangle)
 
@@ -64,7 +84,7 @@ bin = np.arange(-380,400,40)
 
 ############## Funcoes de ajuste #####################################
 
-g1 = np.vstack((valfa, np.sin(anomnet*u.deg), np.cos(anomnet*u.deg), np.sin(anomtri*u.deg), np.cos(anomtri*u.deg), np.ones(len(nep['ofra'])))).T
+g1 = np.vstack((valfa, np.sin(anomnet*u.deg), np.cos(anomnet*u.deg), np.sin(anomtri*u.deg), np.cos(anomtri*u.deg), np.ones(len(nep['ofra'][sor])))).T
 
 def ff(B,x):
     return np.sum([B[i]*x[i] for i in np.arange(len(filtros))], axis=0)
@@ -124,85 +144,99 @@ def residuos(func, par, x, y, sy=[]):
     resid = np.sqrt(var)
     return resid
     
+    
 #######################################################################
 
-p = np.linalg.lstsq(g1, nep['ofra'])
+groups = cluster(tempo.jd,TimeDelta(10*u.h).jd)
+for i in groups:
+    if hourangle[i[-1]] - hourangle[i[0]] < 1.5*u.hourangle:
+        continue
+    g = np.vstack((va[i], np.ones(len(i)))).T
+    g = g.astype(np.float64)
+    p = np.linalg.lstsq(g, nep['ofra'][sor][i])
+    t = Time(int('{:8.0f}'.format(tempo[i][0].jd)), format='jd')
+    print '{}: {:5.3f}; B={:+6.3f}, off={:+6.3f}, size={:3d}'.format(t.iso.split(' ')[0], hourangle[i[-1]] - hourangle[i[0]], p[0][0], p[0][1], len(i))
 
-x = np.vstack((valfa, anomnet, anomtri))
-
-print 'Ascensao Reta\n'
-
-fun=f1
-beta0=p[0]
-
-ajranwg = least(func=fun, x=x, y=nep['ofra'], beta0=beta0)
-
-for i in np.arange(len(filtros)):
-    print '{:10s}: B={:-6.3f}+-{:5.3f}, n_images={:3d}'.format(filtros[i], ajranwg.beta[i], ajranwg.sd_beta[i], len(np.where(valfa[i] != 0.0)[0]))
     
-f, axarr = plt.subplots(2, sharex=True, sharey=True)
-axarr[0].plot(tempo.jyear, nep['ofra']*1000, '.')
-axarr[1].plot(tempo.jyear, nep['ofra']*1000 - ff(ajranwg.beta, x)*1000, '.')
-axarr[0].set_title('Right Ascension - no correction')
-axarr[1].set_title('Right Ascension - with correction')
-axarr[0].set_ylabel('Offset (mas)')
-axarr[1].set_ylabel('Offset (mas)')
-axarr[1].set_xlabel('Year')
-plt.savefig('RAf_{}.png'.format(tel), dpi=300)
-plt.clf()
+#######################################################################
 
-
-### Declinacao
-    
-#p = np.linalg.lstsq(g1, nep['ofde'])
-
-x = np.vstack((vdelta, anomnet, anomtri))
-
-print 'Declinacao\n'
-
+#p = np.linalg.lstsq(g1, nep['ofra'])
+#
+#x = np.vstack((valfa, anomnet, anomtri))
+#
+#print 'Ascensao Reta\n'
+#
 #fun=f1
-#beta0=np.ones(len(beta0))
-#beta0[:len(filtros)] = ajranwg.beta[:len(filtros)]
-#ifixb = np.ones(len(beta0))
-#ifixb[:len(filtros)] = 0
-
-#ajdenwg = least(func=fun, x=x, y=nep['ofra'], beta0=beta0, ifixb=ifixb)
-
+#beta0=p[0]
+#
+#ajranwg = least(func=fun, x=x, y=nep['ofra'], beta0=beta0)
+#
 #for i in np.arange(len(filtros)):
-#    print '{:10s}: B={:-6.3f}, n_images={:3d}'.format(filtros[i], ajdenwg.beta[i], len(np.where(valfa[i] != 0.0)[0]))
-
-f, axarr = plt.subplots(2, sharex=True, sharey=True)
-axarr[0].plot(tempo.jyear, nep['ofde']*1000, '.')
-axarr[1].plot(tempo.jyear, nep['ofde']*1000 - ff(ajranwg.beta, x)*1000, '.')
-axarr[0].set_title('Declination - no correction')
-axarr[1].set_title('Declination - with correction')
-axarr[0].set_ylabel('Offset (mas)')
-axarr[1].set_xlabel('Year')
-plt.savefig('DECf_{}.png'.format(tel), dpi=300)
-plt.clf()
-
-f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
-
-lim = 250
-
-ax1.hist(nep['ofra']*1000,bin)
-ax1.set_title('RA - no corr')
-ax1.set_ylabel('Number of positions')
-ax1.set_ylim(0,lim)
-
-ax2.hist(nep['ofde']*1000,bin)
-ax2.set_title('DEC - no corr')
-
-ax3.hist((nep['ofra'] - ff(ajranwg.beta, x))*1000,bin)
-ax3.set_title('RA - corr')
-ax3.set_ylabel('Number of positions')
-ax3.set_xlabel('Offsets (mas)')
-ax3.set_ylim(0,lim)
-
-ax4.hist((nep['ofde'] - ff(ajranwg.beta, x))*1000,bin)
-ax4.set_title('DEC - corr')
-ax4.set_xlabel('Offsets (mas)')
-
-plt.savefig('dist_{}.png'.format(tel), dpi=300)
-plt.clf()
-
+#    print '{:10s}: B={:-6.3f}+-{:5.3f}, n_images={:3d}'.format(filtros[i], ajranwg.beta[i], ajranwg.sd_beta[i], len(np.where(valfa[i] != 0.0)[0]))
+#    
+#f, axarr = plt.subplots(2, sharex=True, sharey=True)
+#axarr[0].plot(tempo.jyear, nep['ofra']*1000, '.')
+#axarr[1].plot(tempo.jyear, nep['ofra']*1000 - ff(ajranwg.beta, x)*1000, '.')
+#axarr[0].set_title('Right Ascension - no correction')
+#axarr[1].set_title('Right Ascension - with correction')
+#axarr[0].set_ylabel('Offset (mas)')
+#axarr[1].set_ylabel('Offset (mas)')
+#axarr[1].set_xlabel('Year')
+#plt.savefig('RAf_{}.png'.format(tel), dpi=300)
+#plt.clf()
+#
+#
+#### Declinacao
+#    
+##p = np.linalg.lstsq(g1, nep['ofde'])
+#
+#x = np.vstack((vdelta, anomnet, anomtri))
+#
+#print 'Declinacao\n'
+#
+##fun=f1
+##beta0=np.ones(len(beta0))
+##beta0[:len(filtros)] = ajranwg.beta[:len(filtros)]
+##ifixb = np.ones(len(beta0))
+##ifixb[:len(filtros)] = 0
+#
+##ajdenwg = least(func=fun, x=x, y=nep['ofra'], beta0=beta0, ifixb=ifixb)
+#
+##for i in np.arange(len(filtros)):
+##    print '{:10s}: B={:-6.3f}, n_images={:3d}'.format(filtros[i], ajdenwg.beta[i], len(np.where(valfa[i] != 0.0)[0]))
+#
+#f, axarr = plt.subplots(2, sharex=True, sharey=True)
+#axarr[0].plot(tempo.jyear, nep['ofde']*1000, '.')
+#axarr[1].plot(tempo.jyear, nep['ofde']*1000 - ff(ajranwg.beta, x)*1000, '.')
+#axarr[0].set_title('Declination - no correction')
+#axarr[1].set_title('Declination - with correction')
+#axarr[0].set_ylabel('Offset (mas)')
+#axarr[1].set_xlabel('Year')
+#plt.savefig('DECf_{}.png'.format(tel), dpi=300)
+#plt.clf()
+#
+#f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
+#
+#lim = 250
+#
+#ax1.hist(nep['ofra']*1000,bin)
+#ax1.set_title('RA - no corr')
+#ax1.set_ylabel('Number of positions')
+#ax1.set_ylim(0,lim)
+#
+#ax2.hist(nep['ofde']*1000,bin)
+#ax2.set_title('DEC - no corr')
+#
+#ax3.hist((nep['ofra'] - ff(ajranwg.beta, x))*1000,bin)
+#ax3.set_title('RA - corr')
+#ax3.set_ylabel('Number of positions')
+#ax3.set_xlabel('Offsets (mas)')
+#ax3.set_ylim(0,lim)
+#
+#ax4.hist((nep['ofde'] - ff(ajranwg.beta, x))*1000,bin)
+#ax4.set_title('DEC - corr')
+#ax4.set_xlabel('Offsets (mas)')
+#
+#plt.savefig('dist_{}.png'.format(tel), dpi=300)
+#plt.clf()
+#
