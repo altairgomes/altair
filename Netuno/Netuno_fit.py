@@ -31,35 +31,48 @@ def cluster(data, maxgap):
         [[1, 6, 9], [99, 100, 102, 105], [134, 139, 141]]
 
     '''
-    data.sort()
-    groups = [[0]]
-    for x in np.arange(len(data)-1):
-        if abs(data[x+1] - data[groups[-1][-1]]) <= maxgap:
-            groups[-1].append(x+1)
+    d = data.argsort()
+    groups = [[d[0]]]
+    for x in d[1:]:
+        if abs(data[x] - data[groups[-1][-1]]) <= maxgap:
+            groups[-1].append(x)
         else:
-            groups.append([x+1])
+            groups.append([x])
     return groups
+
+def match():
+    nep = np.loadtxt('ucac4_Netuno_IAG_cp', usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
+    tri = np.loadtxt('ucac4_Triton_IAG_cp', usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
+    n,m = np.indices((len(nep['jd']), len(tri['jd'])))
+    o = np.where(nep['jd'][n] == tri['jd'][m])
+    difx = tri['ofra'][o[1]] - nep['ofra'][o[0]]
+    dify = tri['ofde'][o[1]] - nep['ofde'][o[0]]
+    jd = nep['jd'][o[0]]
+    f = open('ucac4_Match_IAG', 'w')
+    for i in np.arange(len(o[0])):
+        f.write(' {:-6.3f} {:-6.3f}'.format(difx[i], dify[i]) + ' x '*33 + ' {:12.9f} {:-13.9f}'.format(nep['ra'][o[0]][i],nep['dec'][o[0]][i]) + ' x '*6 + '{:16.8f} {} {}\n'.format(jd[i], 'x', nep['filt'][o[0]][i]))
+    f.close()
 
 #####################################################################
 
+#match()
+
 lna = EarthLocation('-45 34 57', '-22 32 04', 1864)
 
-tel= 'Netuno_160'
+tel= 'Match_IAG'
 nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
 
-sor = nep['jd'].argsort()
-
-ra = nep['ra'][sor]*u.hourangle
-dec = nep['dec'][sor]*u.deg
-tempo = Time(nep['jd'][sor], format='jd', scale='utc')
-filt = np.char.array(nep['filt'][sor])
+ra = nep['ra']*u.hourangle
+dec = nep['dec']*u.deg
+tempo = Time(nep['jd'], format='jd', scale='utc')
+filt = np.char.array(nep['filt'])
 
 hourangle = time_hourangle(tempo, ra)
 
 filtros = ['clear', 'b', 'v', 'r', 'i', 'metano']
 
-valfa = np.zeros((len(filtros), len(nep['ofra'][sor])))
-vdelta = np.zeros((len(filtros), len(nep['ofde'][sor])))
+valfa = np.zeros((len(filtros), len(nep['ofra'])))
+vdelta = np.zeros((len(filtros), len(nep['ofde'])))
 
 va, vd = refraction(dec, hourangle)
 
@@ -84,7 +97,7 @@ bin = np.arange(-380,400,40)
 
 ############## Funcoes de ajuste #####################################
 
-g1 = np.vstack((valfa, np.sin(anomnet*u.deg), np.cos(anomnet*u.deg), np.sin(anomtri*u.deg), np.cos(anomtri*u.deg), np.ones(len(nep['ofra'][sor])))).T
+g1 = np.vstack((valfa, np.sin(anomnet*u.deg), np.cos(anomnet*u.deg), np.sin(anomtri*u.deg), np.cos(anomtri*u.deg), np.ones(len(nep['ofra'])))).T
 
 def ff(B,x):
     return np.sum([B[i]*x[i] for i in np.arange(len(filtros))], axis=0)
@@ -152,10 +165,18 @@ for i in groups:
     if hourangle[i[-1]] - hourangle[i[0]] < 1.5*u.hourangle:
         continue
     g = np.vstack((va[i], np.ones(len(i)))).T
-    g = g.astype(np.float64)
-    p = np.linalg.lstsq(g, nep['ofra'][sor][i])
+    p = np.linalg.lstsq(g, nep['ofra'][i])
     t = Time(int('{:8.0f}'.format(tempo[i][0].jd)), format='jd')
-    print '{}: {:5.3f}; B={:+6.3f}, off={:+6.3f}, size={:3d}'.format(t.iso.split(' ')[0], hourangle[i[-1]] - hourangle[i[0]], p[0][0], p[0][1], len(i))
+    cora = nep['ofra'][i] - p[0][0]*va[i]
+    cord = nep['ofde'][i] - p[0][0]*vd[i]
+    print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
+    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
+    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
+    plt.xlabel('Hourangle')
+    plt.ylabel('Offset (arcsec)')
+    plt.legend(numpoints=1)
+    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
+    plt.clf()
 
     
 #######################################################################
