@@ -30,25 +30,45 @@ sites = {
 }
 
 ### Defines type, name and kernel for each object
-### Types: 's' for satellites, 'p' for planet
-objects = {
-### Planets
-      599: ['p', 599, 'Jupiter', ['jup300', 'JIS-2015-10-sat']], ## check kernel
-### Satellites
-      506: ['s', 506, 'Himalia', ['jup300', 'JIS-2015-10-sat']], 'himalia': ['s', 506, 'Himalia', ['jup300', 'JIS-2015-10-sat']],
-      507: ['s', 507, 'Elara', ['jup300', 'JIS-2015-10-sat']], 'elara': ['s', 507, 'Himalia', ['jup300', 'JIS-2015-10-sat']],
-      508: ['s', 508, 'Pasiphae', ['jup300', 'JIS-2015-10-sat']],
-      509: ['s', 509, 'Sinope', ['jup300', 'JIS-2015-10-sat']],
-      510: ['s', 510, 'Lysithea', ['jup300', 'JIS-2015-10-sat']],
-      511: ['s', 511, 'Carme', ['jup300', 'JIS-2015-10-sat']],
-      512: ['s', 512, 'Ananke', ['jup300', 'JIS-2015-10-sat']],
-      513: ['s', 512, 'Leda', ['jup300', 'JIS-2015-10-sat']],
-      607: ['s', 607, 'Hyperion', ['jup300', 'JIS-2015-10-sat']], ## check kernel
-      608: ['s', 608, 'Iapetus', ['jup300', 'JIS-2015-10-sat']], ## check kernel
-      609: ['s', 609, 'Phoebe', ['sat375', 'ph15']],
-      802: ['s', 802, 'Nereid', 'nep081']
-### TNOs e Centauros
+### Types: 's' for satellites, 'p' for planet, 't' for TNOs and 'c' for Centaurs
+### keys added must be in lower case
+ephs = {
+    'noe': 'NOE-5-2010-GAL.a',
+    'lau': 'JIS-2015-10-sat',
 }
+
+objects = {}
+### Planets
+objects.update(dict.fromkeys([199, 'mercury'], ['p', 199, 'Mercury', 'de435']))
+objects.update(dict.fromkeys([299, 'venus'], ['p', 299, 'Venus', 'de435']))
+objects.update(dict.fromkeys([399, 'earth'], ['p', 399, 'Earth', 'de435']))
+objects.update(dict.fromkeys([499, 'mars'], ['p', 499, 'Mars', 'mar097']))
+objects.update(dict.fromkeys([599, 'jupiter'], ['p', 599, 'Jupiter', 'jup310']))
+objects.update(dict.fromkeys([699, 'saturn'], ['p', 699, 'Saturn', 'sat359l']))
+objects.update(dict.fromkeys([799, 'uranus'], ['p', 799, 'Uranus', 'ura112']))
+objects.update(dict.fromkeys([899, 'neptune'], ['p', 899, 'Neptune', 'nep081']))
+objects.update(dict.fromkeys([999, 'pluto'], ['p', 999, 'Pluto', 'plu043']))
+### Satellites
+    ## Sat of Jupiter
+objects.update(dict.fromkeys([501, 'io'], ['s', 501, 'Io', ['jup310', ephs['noe']]]))
+objects.update(dict.fromkeys([506, 'himalia'], ['s', 506, 'Himalia', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([507, 'elara'], ['s', 507, 'Elara', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([508, 'pasiphae'], ['s', 508, 'Pasiphae', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([509, 'sinope'], ['s', 509, 'Sinope', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([510, 'lysithea'], ['s', 510, 'Lysithea', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([511, 'carme'], ['s', 511, 'Carme', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([512, 'ananke'], ['s', 512, 'Ananke', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([513, 'leda'], ['s', 512, 'Leda', ['jup300', ephs['lau']]]))
+    ## Sat of Saturn
+objects.update(dict.fromkeys([607, 'hyperion'], ['s', 607, 'Hyperion', 'sat375']))
+objects.update(dict.fromkeys([608, 'iapetus'], ['s', 608, 'Iapetus', 'sat375']))
+objects.update(dict.fromkeys([609, 'phoebe'], ['s', 609, 'Phoebe', ['sat375', 'ph15']]))
+    ## Sat of Neptune
+objects.update(dict.fromkeys([802, 'nereid'], ['s', 802, 'Nereid', 'nep081']))
+    ## Sat of Pluto
+objects.update(dict.fromkeys([901, 'charon'], ['s', 901, 'Charon', 'plu043']))
+### TNOs e Centauros
+objects.update(dict.fromkeys([2050000, 'quaoar', '2002lm60', 50000], ['t', 2050000, 'QUAOAR (2002 LM60)', '50000']))
 
 #########################################################################################################
 
@@ -64,6 +84,8 @@ def compute(k, center, target, jd):
         return k[center,target].compute(jd)
     except:
         pos = []
+        if isinstance(jd,(int, float)):
+            jd = [jd]
         for jj in jd:
             pos.append(calculate(jj)) 
         return np.array(pos).T
@@ -78,7 +100,9 @@ def objs(code, kern):
     if isinstance(code, str):
         code = code.lower()
     objt, objn, objm, objk = objects[code]
-    objk = kern
+    print objt, objn, objm, objk
+    if kern:
+        objk = kern
     if isinstance(objk, list):
         print '{} kernels available for the object {}.'.format(len(objk), objm)
         for i in np.arange(len(objk)):
@@ -90,7 +114,7 @@ def objs(code, kern):
     itm = None
     if objk == 'JIS-2015-10-sat':
         itm = 599
-    return objt, objn, objm, objk, itm
+    return objt, objn, objm, objk
         
 
 ##########################################################################################################
@@ -130,9 +154,8 @@ def ephem(iaucode, peph, objcode, timefile, kern=None, output='sky'):
         siten = 'Geocenter'
 
 ####################### fazer aqui ainda ################################################
-    objt, objn, objm, objk, itm = objs(objcode, kern)
+    objt, objn, objm, objk = objs(objcode, kern)
     objk = objk + '.bsp'
-    print objk
     if not os.path.isfile(objk):
         raise OSError('Object Kernel {} not found'.format(objk[:-4]))
     kernelobj = SPK.open(objk)
@@ -157,7 +180,7 @@ def ephem(iaucode, peph, objcode, timefile, kern=None, output='sky'):
             cc = objn//100
             objp = kernel[0,cc].compute(tempo.jd) + compute(kernelobj,cc,objn,tempo.jd)[0:3]
         if objt in ['t', 'c']:
-            objp = compute(kernelobj,0,objn,tempo.jd)[0:3]
+            objp = kernel[0,10].compute(tempo.jd) + compute(kernelobj,10,objn,tempo.jd)[0:3]
         ### calculates vector Earth Geocenter -> Object
         position = (objp - geop)
         ### calculates linear distance Earth Geocenter -> Object
@@ -190,4 +213,4 @@ def ephem(iaucode, peph, objcode, timefile, kern=None, output='sky'):
 
 
 ######################### TESTE ################################
-a = ephem('g', 'de430', 506, 'jd_de.dat', output='sky')
+#a = ephem('g', 'de430', 506, 'jd_de.dat', output='sky')
