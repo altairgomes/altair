@@ -35,6 +35,7 @@ sites = {
 ephs = {
     'noe': 'NOE-5-2010-GAL.a',
     'lau': 'JIS-2015-10-sat',
+    'jpljup': 'jup300'
 }
 
 objects = {}
@@ -51,14 +52,17 @@ objects.update(dict.fromkeys([999, 'pluto'], ['p', 999, 'Pluto', 'plu043']))
 ### Satellites
     ## Sat of Jupiter
 objects.update(dict.fromkeys([501, 'io'], ['s', 501, 'Io', ['jup310', ephs['noe']]]))
-objects.update(dict.fromkeys([506, 'himalia'], ['s', 506, 'Himalia', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([507, 'elara'], ['s', 507, 'Elara', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([508, 'pasiphae'], ['s', 508, 'Pasiphae', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([509, 'sinope'], ['s', 509, 'Sinope', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([510, 'lysithea'], ['s', 510, 'Lysithea', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([511, 'carme'], ['s', 511, 'Carme', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([512, 'ananke'], ['s', 512, 'Ananke', ['jup300', ephs['lau']]]))
-objects.update(dict.fromkeys([513, 'leda'], ['s', 512, 'Leda', ['jup300', ephs['lau']]]))
+objects.update(dict.fromkeys([502, 'europa'], ['s', 502, 'Europa', ['jup310', ephs['noe']]]))
+objects.update(dict.fromkeys([503, 'ganymede'], ['s', 503, 'Ganymede', ['jup310', ephs['noe']]]))
+objects.update(dict.fromkeys([504, 'callisto'], ['s', 504, 'Callisto', ['jup310', ephs['noe']]]))
+objects.update(dict.fromkeys([506, 'himalia'], ['s', 506, 'Himalia', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([507, 'elara'], ['s', 507, 'Elara', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([508, 'pasiphae'], ['s', 508, 'Pasiphae', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([509, 'sinope'], ['s', 509, 'Sinope', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([510, 'lysithea'], ['s', 510, 'Lysithea', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([511, 'carme'], ['s', 511, 'Carme', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([512, 'ananke'], ['s', 512, 'Ananke', [ephs['jpljup'], ephs['lau']]]))
+objects.update(dict.fromkeys([513, 'leda'], ['s', 512, 'Leda', [ephs['jpljup'], ephs['lau']]]))
     ## Sat of Saturn
 objects.update(dict.fromkeys([607, 'hyperion'], ['s', 607, 'Hyperion', 'sat375']))
 objects.update(dict.fromkeys([608, 'iapetus'], ['s', 608, 'Iapetus', 'sat375']))
@@ -67,7 +71,7 @@ objects.update(dict.fromkeys([609, 'phoebe'], ['s', 609, 'Phoebe', ['sat375', 'p
 objects.update(dict.fromkeys([802, 'nereid'], ['s', 802, 'Nereid', 'nep081']))
     ## Sat of Pluto
 objects.update(dict.fromkeys([901, 'charon'], ['s', 901, 'Charon', 'plu043']))
-### TNOs e Centauros
+### TNOs e Centaurs
 objects.update(dict.fromkeys([2050000, 'quaoar', '2002lm60', 50000], ['t', 2050000, 'QUAOAR (2002 LM60)', '50000']))
 
 #########################################################################################################
