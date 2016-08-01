@@ -42,7 +42,7 @@ jpl_coord = SkyCoord(d['coords'].transpose(), unit=(u.hourangle, u.deg))
 ph15_time = Time(n['times'], format='jd', scale='utc')
 ph15_coord = SkyCoord(n['coords'].transpose(), unit=(u.hourangle, u.deg))
 
-dalfa = jpl_coord.ra*np.cos(jpl_coord.dec) - ph15_coord.ra*np.cos(ph15_coord.dec)
+dalfa = (jpl_coord.ra - ph15_coord.ra)*np.cos(ph15_coord.dec)
 ddelta = jpl_coord.dec - ph15_coord.dec
 
 #dalfaz = eme_coord.ra*np.cos(eme_coord.dec) - ph15_coord.ra*np.cos(ph15_coord.dec)
@@ -62,8 +62,10 @@ for i in np.arange(2016,2022,1):
 
 r = np.array(r)
 
-plt.plot(jpl_time.jd - 2451544.5, ddelta.mas, 'g', label=r'$\Delta\delta$')
-plt.plot(jpl_time.jd - 2451544.5, dalfa.mas, 'b', label=r'$\Delta\alpha\cos\delta$')
+k = np.arange(0,len(dalfa), 6)
+
+plt.plot(jpl_time.jd[k] - 2451544.5, ddelta[k].mas, 'g', label=r'$\Delta\delta$')
+plt.plot(jpl_time.jd[k] - 2451544.5, dalfa[k].mas, ':b', label=r'$\Delta\alpha\cos\delta$')
 
 #plt.plot(jpl_time.jd - 2451544.5, ddeltaz.mas, 'b:', label=r'Eme2007 $\Delta\delta$')
 #plt.plot(jpl_time.jd - 2451544.5, dalfaz.mas, 'b', label=r'Eme2007 $\Delta\alpha\cos\delta$')
