@@ -39,7 +39,7 @@ def least(func, x, y, sy=None, beta0=None, ifixb=None):
 ###########################################################################
 
 image = fits.getdata('Netuno_08.21.06_0001.fits')
-a, b = np.indices(image.shape) + 1
+a, b = np.indices(image.shape)
 c = np.where(np.sqrt((a-912)**2 + (b-1060)**2) < 10)
 d,e = np.meshgrid(np.arange(c[1].min(), c[1].max()), np.arange(c[0].min(), c[0].max()))
 
@@ -50,14 +50,24 @@ d,e = np.meshgrid(np.arange(c[1].min(), c[1].max()), np.arange(c[0].min(), c[0].
 x = np.array(c)
 y = image[c]
 
+t = Time.now()
 beta0 = np.array([20000.0,912.0,1060.0,1.9, 100.0])
 aj = least(func=gaussian, x=x, y=y, beta0=beta0)
+print 'gaussiana: ', (Time.now()-t).sec
 
+t = Time.now()
 beta0 = np.array([20000.0,1.9,912.0,1060.0,6.48, 100.0]) # A, sigma, x0, y0, R, c
 aje = least(func=extenso, x=x, y=y, beta0=beta0)
+print 'extenso: ', (Time.now()-t).sec
 
-f = np.sqrt((c[0]-aj.beta[1])**2 + (c[1]-aj.beta[2])**2)
-plt.plot(f, y, 'o')
-plt.plot(f, gaussian(aj.beta, x))
+#c = np.where(np.sqrt((a-aje.beta[1])**2 + (b-aje.beta[2])**2) < 10)+1
+#x = np.array(c)
+f = np.sqrt((c[0]-aje.beta[2])**2 + (c[1]-aje.beta[3])**2)
+g = np.argsort(f)
+plt.plot(f[g], y[g], 'o')
+
+plt.plot(f[g], gaussian(aj.beta, x)[g], label='gaussiana')
+plt.plot(f[g], extenso(aje.beta, x)[g], label='extenso')
+plt.legend()
 plt.show()
 
