@@ -99,6 +99,9 @@ bin = np.arange(-380,400,40)
 
 g1 = np.vstack((valfa, np.sin(anomnet*u.deg), np.cos(anomnet*u.deg), np.sin(anomtri*u.deg), np.cos(anomtri*u.deg), np.ones(len(nep['ofra'])))).T
 
+def fun(B,x):
+    return B[0]*x[0] + B[1]*x[1]
+
 def ff(B,x):
     return np.sum([B[i]*x[i] for i in np.arange(len(filtros))], axis=0)
 
@@ -167,8 +170,9 @@ x,y,cx,cy = np.array([]),np.array([]),np.array([]),np.array([])
 for i in groups:
     if hourangle[i[-1]] - hourangle[i[0]] < 1.5*u.hourangle:
         continue
-    g = np.vstack((va[i], np.ones(len(i)))).T
-    p = np.linalg.lstsq(g, nep['ofra'][i])
+    g = np.vstack((va[i], np.ones(len(i))))
+    p = np.linalg.lstsq(g.T, nep['ofra'][i])
+    r = least(func=fun, x=g, y=nep['ofra'][i], beta0=p[0])
     t = Time(int('{:8.0f}'.format(tempo[i][0].jd)), format='jd')
     x = np.hstack((x, nep['ofra'][i]))
     y = np.hstack((y, nep['ofde'][i]))
@@ -176,15 +180,15 @@ for i in groups:
     cy = np.hstack((cy, nep['ofde'][i] - p[0][0]*vd[i]))
     cora = nep['ofra'][i] - p[0][0]*va[i]
     cord = nep['ofde'][i] - p[0][0]*vd[i]
-    f.write('{} & {:5s} & {:4.2f} & {:+6.3f} & {:-4.0f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f}\n'.format(t.iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
+    f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(t.iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, r.beta[0], r.sd_beta[0], len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
     print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
-#    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
-#    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
-#    plt.xlabel('Hourangle')
-#    plt.ylabel('Offset (arcsec)')
-#    plt.legend(numpoints=1)
-#    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
-#    plt.clf()
+    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
+    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
+    plt.xlabel('Hourangle')
+    plt.ylabel('Offset (arcsec)')
+    plt.legend(numpoints=1)
+    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
+    plt.clf()
 f.close()
 
 
