@@ -15,16 +15,17 @@ def gaussian(B,x):
 
 def extenso(B,x):
     def func_integer(mi, i):
-        return np.exp(-(x[0][i]-B[2]-mi)*(x[0][i]-B[2]-mi)/(2*B[1]*B[1]))*(special.erf((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))-special.erf((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1])))
+        erf = special.erf((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))-special.erf((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))
+        return np.exp(-(x[0][i]-B[2]-mi)*(x[0][i]-B[2]-mi)/(2*B[1]*B[1]))*erf
     integral = np.array([integrate.quad(func_integer,-B[4], B[4], args=[i])[0] for i in np.arange(len(x[0]))])
     return B[0]*np.sqrt(np.pi/2)*B[1]*integral + B[5]
 #    A, sigma, x0, y0, R, c
 
-def extenso2(B,x):
-    def func_integer(mi):
-        return np.exp(-(x[0]-B[2]-mi)*(x[0]-B[2]-mi)/2*B[1]*B[1])*(special.erf((x[1]-B[3]+np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))-special.erf((x[1]-B[3]-np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1])))
-    integral = integrate.quad(func_integer,-B[4], B[4])
-    return B[0]*np.sqrt(np.pi/2)*B[1]*integral + B[5]
+#def extenso2(B,x):
+#    def func_integer(mi):
+#        return np.exp(-(x[0]-B[2]-mi)*(x[0]-B[2]-mi)/2*B[1]*B[1])*(special.erf((x[1]-B[3]+np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))-special.erf((x[1]-B[3]-np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1])))
+#    integral = integrate.quad(func_integer,-B[4], B[4])
+#    return B[0]*np.sqrt(np.pi/2)*B[1]*integral + B[5]
 
 def least(func, x, y, sy=None, beta0=None, ifixb=None):
     linear = odrpack.Model(func)
