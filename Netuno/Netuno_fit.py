@@ -41,8 +41,8 @@ def cluster(data, maxgap):
     return groups
 
 def match():
-    nep = np.loadtxt('ucac4_Netuno_IAG_cp', usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
-    tri = np.loadtxt('ucac4_Triton_IAG_cp', usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
+    nep = np.loadtxt('ucac4_Netuno_IAG_cp', usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
+    tri = np.loadtxt('ucac4_Triton_IAG_cp', usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
     n,m = np.indices((len(nep['jd']), len(tri['jd'])))
     o = np.where(nep['jd'][n] == tri['jd'][m])
     difx = tri['ofra'][o[1]] - nep['ofra'][o[0]]
@@ -59,8 +59,8 @@ def match():
 
 lna = EarthLocation('-45 34 57', '-22 32 04', 1864)
 
-tel= 'Match_IAG'
-nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'S10')})
+tel= 'Netuno_IAG'
+nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
 
 ra = nep['ra']*u.hourangle
 dec = nep['dec']*u.deg
@@ -159,25 +159,57 @@ def residuos(func, par, x, y, sy=[]):
     
     
 #######################################################################
-
+f = open('refrac_{}.dat'.format(tel), 'w')
 groups = cluster(tempo.jd,TimeDelta(10*u.h).jd)
+bin = np.arange(-380,400,40)
+
+x,y,cx,cy = np.array([]),np.array([]),np.array([]),np.array([])
 for i in groups:
     if hourangle[i[-1]] - hourangle[i[0]] < 1.5*u.hourangle:
         continue
     g = np.vstack((va[i], np.ones(len(i)))).T
     p = np.linalg.lstsq(g, nep['ofra'][i])
     t = Time(int('{:8.0f}'.format(tempo[i][0].jd)), format='jd')
+    x = np.hstack((x, nep['ofra'][i]))
+    y = np.hstack((y, nep['ofde'][i]))
+    cx = np.hstack((cx, nep['ofra'][i] - p[0][0]*va[i]))
+    cy = np.hstack((cy, nep['ofde'][i] - p[0][0]*vd[i]))
     cora = nep['ofra'][i] - p[0][0]*va[i]
     cord = nep['ofde'][i] - p[0][0]*vd[i]
+    f.write('{} & {:5s} & {:4.2f} & {:+6.3f} & {:-4.0f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f}\n'.format(t.iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
     print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
-    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
-    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
-    plt.xlabel('Hourangle')
-    plt.ylabel('Offset (arcsec)')
-    plt.legend(numpoints=1)
-    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
-    plt.clf()
+#    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
+#    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
+#    plt.xlabel('Hourangle')
+#    plt.ylabel('Offset (arcsec)')
+#    plt.legend(numpoints=1)
+#    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
+#    plt.clf()
+f.close()
 
+
+f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
+
+ax1.hist(x*1000,bin)
+ax1.set_title('RA - no corr')
+ax1.set_ylabel('Number of positions')
+#ax1.set_ylim(0,450)
+
+ax2.hist(y*1000,bin)
+ax2.set_title('DEC - no corr')
+
+ax3.hist(cx*1000,bin)
+ax3.set_title('RA - corr')
+ax3.set_ylabel('Number of positions')
+ax3.set_xlabel('Offsets (mas)')
+#ax3.set_ylim(0,450)
+
+ax4.hist(cy*1000,bin)
+ax4.set_title('DEC - corr')
+ax4.set_xlabel('Offsets (mas)')
+
+plt.savefig('dist_{}.png'.format(tel), dpi=300)
+plt.clf()
     
 #######################################################################
 
