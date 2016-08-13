@@ -41,14 +41,14 @@ def cluster(data, maxgap):
     return groups
 
 def match():
-    nep = np.loadtxt('ucac4_Netuno_IAG_cp', usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
-    tri = np.loadtxt('ucac4_Triton_IAG_cp', usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
+    nep = np.loadtxt('ucac4_Netuno_ZEI_cp', usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
+    tri = np.loadtxt('ucac4_Triton_ZEI_cp', usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
     n,m = np.indices((len(nep['jd']), len(tri['jd'])))
     o = np.where(nep['jd'][n] == tri['jd'][m])
     difx = tri['ofra'][o[1]] - nep['ofra'][o[0]]
     dify = tri['ofde'][o[1]] - nep['ofde'][o[0]]
     jd = nep['jd'][o[0]]
-    f = open('ucac4_Match_IAG', 'w')
+    f = open('ucac4_Match_ZEI_cp', 'w')
     for i in np.arange(len(o[0])):
         f.write(' {:-6.3f} {:-6.3f}'.format(difx[i], dify[i]) + ' x '*33 + ' {:12.9f} {:-13.9f}'.format(nep['ra'][o[0]][i],nep['dec'][o[0]][i]) + ' x '*6 + '{:16.8f} {} {}\n'.format(jd[i], 'x', nep['filt'][o[0]][i]))
     f.close()
