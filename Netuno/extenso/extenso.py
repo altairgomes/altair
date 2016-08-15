@@ -41,7 +41,7 @@ def least(func, x, y, sy=None, beta0=None, ifixb=None):
 
 image = fits.getdata('Netuno_08.21.06_0001.fits')
 a, b = np.indices(image.shape)
-c = np.where(np.sqrt((a-912)**2 + (b-1060)**2) < 10)
+c = np.where(np.sqrt((a-912)**2 + (b-1060)**2) < 20)
 d,e = np.meshgrid(np.arange(c[1].min(), c[1].max()), np.arange(c[0].min(), c[0].max()))
 
 #plt.imshow(image[e,d], cmap='gray')
@@ -51,44 +51,46 @@ fi = open('saida.txt', 'w')
 x = np.array(c)
 y = image[c]
 
-t = Time.now()
-beta0 = np.array([20000.0,912.0,1060.0,1.9, 100.0])
-aj = least(func=gaussian, x=x, y=y, beta0=beta0)
-fi.write('gaussiana: {} sec, A={}+-{}, x0={}+-{}, y0={}+-{}, sigma={}, c={}+-{}\n\n'.format((Time.now()-t).sec, aj.beta[0], aj.sd_beta[0], aj.beta[1]+1, aj.sd_beta[1], aj.beta[2]+1, aj.sd_beta[2], aj.beta[3], aj.beta[4], aj.sd_beta[4]))
+#t = Time.now()
+#beta0 = np.array([20000.0,912.0,1060.0,1.9, 100.0])
+#aj = least(func=gaussian, x=x, y=y, beta0=beta0)
+#fi.write('gaussiana: {} sec, A={}+-{}, x0={}+-{}, y0={}+-{}, sigma={}, c={}+-{}\n\n'.format((Time.now()-t).sec, aj.beta[0], aj.sd_beta[0], aj.beta[1]+1, aj.sd_beta[1], aj.beta[2]+1, aj.sd_beta[2], aj.beta[3], aj.beta[4], aj.sd_beta[4]))
 
-t = Time.now()
-beta0 = np.array([20000.0,1.9,912.0,1060.0,6.48, 100.0]) # A, sigma, x0, y0, R, c
-aje = least(func=extenso, x=x, y=y, beta0=beta0)
-fi.write('extenso: {} sec, A={}+-{}, x0={}+-{}, y0={}+-{}, sigma={}, R={}+-{}, c={}+-{}\n\n'.format((Time.now()-t).sec, aje.beta[0], aje.sd_beta[0], aje.beta[2]+1, aje.sd_beta[2], aje.beta[3]+1, aje.sd_beta[3], aje.beta[1], aje.beta[4], aje.sd_beta[4], aje.beta[5], aje.sd_beta[5]))
+#t = Time.now()
+#beta0 = np.array([20000.0,1.9,912.0,1060.0,6.48, 100.0]) # A, sigma, x0, y0, R, c
+#aje = least(func=extenso, x=x, y=y, beta0=beta0)
+#fi.write('extenso: {} sec, A={}+-{}, x0={}+-{}, y0={}+-{}, sigma={}, R={}+-{}, c={}+-{}\n\n'.format((Time.now()-t).sec, aje.beta[0], aje.sd_beta[0], aje.beta[2]+1, aje.sd_beta[2], aje.beta[3]+1, aje.sd_beta[3], aje.beta[1], aje.beta[4], aje.sd_beta[4], aje.beta[5], aje.sd_beta[5]))
 
-fi.write('extenso (testes)\n')
-for i in np.arange(0.8, 5.0, 0.2):
-    c = np.where(np.sqrt((a-aje.beta[2])**2 + (b-aje.beta[3])**2) < aje.beta[1]*i)
-    x = np.array(c)
-    y = image[c]
-    t = Time.now()
-    beta0 = aje.beta # A, sigma, x0, y0, R, c
-    ajt = least(func=extenso, x=x, y=y, beta0=beta0)
-    fi.write('{} {} {} {:7.1f} {:6.1f} {:7.2f} {:4.2f} {:7.2f} {:4.2f} {:4.1f} {:5.2f} {:4.2f} {:7.1f} {}\n'.format((Time.now()-t).sec, len(y), i, ajt.beta[0], ajt.sd_beta[0], ajt.beta[2]+1, ajt.sd_beta[2], ajt.beta[3]+1, ajt.sd_beta[3], ajt.beta[1], ajt.beta[4], ajt.sd_beta[4], ajt.beta[5], ajt.sd_beta[5]))
-    f = np.sqrt((c[0]-aje.beta[2])**2 + (c[1]-aje.beta[3])**2)
-    g = np.argsort(f)
-    plt.plot(f[g], y[g], 'o')
+#fi.write('extenso (testes)\n')
+#for i in np.arange(0.8, 5.0, 0.2):
+#    c = np.where(np.sqrt((a-aje.beta[2])**2 + (b-aje.beta[3])**2) < aje.beta[1]*i)
+#    x = np.array(c)
+#    y = image[c]
+#    t = Time.now()
+#    beta0 = aje.beta # A, sigma, x0, y0, R, c
+#    ajt = least(func=extenso, x=x, y=y, beta0=beta0)
+#    fi.write('{} {} {} {:7.1f} {:6.1f} {:7.2f} {:4.2f} {:7.2f} {:4.2f} {:4.1f} {:5.2f} {:4.2f} {:7.1f} {}\n'.format((Time.now()-t).sec, len(y), i, ajt.beta[0], ajt.sd_beta[0], ajt.beta[2]+1, ajt.sd_beta[2], ajt.beta[3]+1, ajt.sd_beta[3], ajt.beta[1], ajt.beta[4], ajt.sd_beta[4], ajt.beta[5], ajt.sd_beta[5]))
+#    f = np.sqrt((c[0]-aje.beta[2])**2 + (c[1]-aje.beta[3])**2)
+#    g = np.argsort(f)
+#    plt.plot(f[g], y[g], 'o')
     #plt.plot(f[g], gaussian(aj.beta, x)[g], label='gaussiana')
-    plt.plot(f[g], extenso(ajt.beta, x)[g], label='extenso')
-    plt.legend()
-    plt.savefig('teste_sig_{}.png'.format(i), dpi=300)
-    plt.clf()
+#    plt.plot(f[g], extenso(ajt.beta, x)[g], label='extenso')
+#    plt.legend()
+#    plt.savefig('teste_sig_{}.png'.format(i), dpi=300)
+#    plt.clf()
 
-fi.close()
+#fi.close()
 
-#c = np.where(np.sqrt((a-aje.beta[1])**2 + (b-aje.beta[2])**2) < 10)+1
-#x = np.array(c)
-#f = np.sqrt((c[0]-aje.beta[2])**2 + (c[1]-aje.beta[3])**2)
+c = np.where(np.sqrt((a-911.447964519)**2 + (b-1059.02996984)**2) < 20)
+x = np.array(c)
+f = np.sqrt((c[0]-911.447964519)**2 + (c[1]-1059.02996984)**2)
 #g = np.argsort(f)
-#plt.plot(f[g], y[g], 'o')
+plt.plot(f, image[c], 'o')
 
-#plt.plot(f[g], gaussian(aj.beta, x)[g], label='gaussiana')
-#plt.plot(f[g], extenso(aje.beta, x)[g], label='extenso')
-#plt.legend()
-#plt.show()
+beta1=np.array([39438.8794772, 911.447964519, 1059.02996984, 4.80370494377, -1898.25592524])
+beta2=np.array([884.728146958, 2.56992636061, 911.440791197, 1059.0107055, 5.9031003977, 1726.15672919])
+plt.plot(f, gaussian(beta1, x), label='gaussiana', color='red')
+plt.plot(f, extenso(beta2, x), label='extenso', color='green')
+plt.legend()
+plt.savefig('ajuste2.png', dpi=300)
 
