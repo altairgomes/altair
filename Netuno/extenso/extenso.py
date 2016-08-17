@@ -22,47 +22,40 @@ class Memoize:
 def gaussian(B,x):
     return B[0]*np.exp(-((x[0]-B[1])*(x[0]-B[1]) + (x[1]-B[2])*(x[1]-B[2]))/(2*B[3]*B[3])) + B[4]
 
+def extenso1(B, x, mi, a, b):
+    erf = special.erf((x[1][b]-B[3]+np.sqrt(B[4]*B[4]-mi[a]*mi[a]))/(np.sqrt(2)*B[1]))-special.erf((x[1][b]-B[3]-np.sqrt(B[4]*B[4]-mi[a]*mi[a]))/(np.sqrt(2)*B[1]))
+    integ = np.exp(-(x[0][b]-B[2]-mi[a])*(x[0][b]-B[2]-mi[a])/(2*B[1]*B[1]))*erf
+#    integral = np.trapz(integ, x=mi, axis=0)
+    return B[0]*np.sqrt(np.pi/2)*B[1]*integ
+
 def extenso(B,x):
     def func_integer(mi, i):
+#        erf = func_erf(x[1][i][0], B[3], B[4], mi, B[1])
         erf = special.erf((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))-special.erf((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi))/(np.sqrt(2)*B[1]))
         return np.exp(-(x[0][i]-B[2]-mi)*(x[0][i]-B[2]-mi)/(2*B[1]*B[1]))*erf
     integral = np.array([integrate.quad(func_integer,-B[4], B[4], args=[i])[0] for i in np.arange(len(x[0]))])
     return B[0]*np.sqrt(np.pi/2)*B[1]*integral + B[5]
 #    A, sigma, x0, y0, R, c
-def func_z(x, B):
-    return x/(np.sqrt(2)*B)
     
-def func_w1(x,x0,R,mi,s):
-    return ((x-x0+np.sqrt(R*R-mi*mi)))/(np.sqrt(2)*s)
-
-def func_w2(x,x0,R,mi,s):
-    return ((x-x0-np.sqrt(R*R-mi*mi)))/(np.sqrt(2)*s)
-
-def func_erf(x,x0,R,mi,s):
-    w1 = func_w1(x,x0,R,mi,s)
-    w2 = func_w2(x,x0,R,mi,s)
-    erf = special.erf(w1)-special.erf(w2)
-    return erf
-
-func_z = Memoize(func_z)
-func_w1 = Memoize(func_w1)
-func_w2 = Memoize(func_w2)
-func_erf = Memoize(func_erf)
+def integral(func, B, x, xi, xf, xn=100, xs=None):
+    mi = np.linspace(xi,xf,xn)
+    a,b = np.indices((len(mi),len(x[0])))
+    return np.trapz(func(B, x, mi, a, b), x=mi, axis=0) + B[-1]
 
 def derivadas(B,x):
     def integ1(mi,i):
         z = (x[0][i] - B[2] - mi)/(np.sqrt(2)*B[1])
-        erf = func_erf(x[1][i], B[3], B[4], mi, B[1])
-#        w1 = ((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
-#        w2 = ((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
-#        erf = special.erf(w1)-special.erf(w2)
+#        erf = func_erf(x[1][i][0], B[3], B[4], mi, B[1])
+        w1 = ((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
+        w2 = ((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
+        erf = special.erf(w1)-special.erf(w2)
         return np.exp(-z*z)*erf
     def integ2(mi,i):
         z = (x[0][i] - B[2] - mi)/(np.sqrt(2)*B[1])
-        erf = func_erf(x[1][i], B[3], B[4], mi, B[1])
-#        w1 = ((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
-#        w2 = ((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
-#        erf = special.erf(w1)-special.erf(w2)
+#        erf = func_erf(x[1][i][0], B[3], B[4], mi, B[1])
+        w1 = ((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
+        w2 = ((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
+        erf = special.erf(w1)-special.erf(w2)
         return z*np.exp(-z*z)*erf
     def integ3(mi,i):
         z = (x[0][i] - B[2] - mi)/(np.sqrt(2)*B[1])
@@ -72,11 +65,13 @@ def derivadas(B,x):
         return np.exp(-z*z)*erf
     def integ4(mi,i):
         z = (x[0][i] - B[2] - mi)/(np.sqrt(2)*B[1])
-        erf = func_erf(x[1][i], B[3], B[4], mi, B[1])
-#        w1 = ((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
-#        w2 = ((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
-#        p1 = np.sqrt(np.pi/2)*(1+2*z*z)*(special.erf(w1)-special.erf(w2))
-        p1 =  np.sqrt(np.pi/2)*(1+2*z*z)*erf
+#        erf = func_erf(x[1][i][0], B[3], B[4], mi, B[1])
+#        w1 = func_w1(x[1][i][0], B[3], B[4], mi, B[1])
+#        w2 = func_w2(x[1][i][0], B[3], B[4], mi, B[1])
+        w1 = ((x[1][i]-B[3]+np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
+        w2 = ((x[1][i]-B[3]-np.sqrt(B[4]*B[4]-mi*mi)))/(np.sqrt(2)*B[1])
+        p1 = np.sqrt(np.pi/2)*(1+2*z*z)*(special.erf(w1)-special.erf(w2))
+#        p1 =  np.sqrt(np.pi/2)*(1+2*z*z)*erf
         p2 = np.sqrt(2)*(w1*np.exp(-w1*w1)-w2*np.exp(-w2*w2))
         return np.exp(-z*z)*(p1-p2)
     def integ5(mi,i):
