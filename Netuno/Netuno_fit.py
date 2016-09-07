@@ -59,13 +59,18 @@ def match():
 
 lna = EarthLocation('-45 34 57', '-22 32 04', 1864)
 
-tel= 'Netuno_IAG'
+tel= 'Triton_IAG'
 nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
+f = open('ucac4_{}_cp'.format(tel), 'r')
+dados = f.readlines()
+f.close()
 
 ra = nep['ra']*u.hourangle
 dec = nep['dec']*u.deg
 tempo = Time(nep['jd'], format='jd', scale='utc')
 filt = np.char.array(nep['filt'])
+
+print len(ra)
 
 hourangle = time_hourangle(tempo, ra)
 
@@ -149,7 +154,7 @@ def least(func, x, y, sy=None, beta0=None, ifixb=None):
     myodr = odrpack.ODR(mydata, linear, beta0=beta0, ifixb=ifixb)
     myodr.set_job(fit_type=2)
     myoutput = myodr.run()
-    myoutput.pprint()
+#    myoutput.pprint()
     return myodr.output
     
 def residuos(func, par, x, y, sy=[]):
@@ -166,9 +171,13 @@ f = open('refrac_{}.dat'.format(tel), 'w')
 groups = cluster(tempo.jd,TimeDelta(10*u.h).jd)
 bin = np.arange(-380,400,40)
 
+corra, corrd = nep['ofra'].copy(), nep['ofde'].copy()
 x,y,cx,cy = np.array([]),np.array([]),np.array([]),np.array([])
+filtro, deltab, instante = np.array([]), np.array([]), np.array([])
 for i in groups:
     if hourangle[i[-1]] - hourangle[i[0]] < 1.5*u.hourangle:
+        continue
+    if len(i) < 5:
         continue
     g = np.vstack((va[i], np.ones(len(i))))
     p = np.linalg.lstsq(g.T, nep['ofra'][i])
@@ -180,24 +189,90 @@ for i in groups:
     cy = np.hstack((cy, nep['ofde'][i] - p[0][0]*vd[i]))
     cora = nep['ofra'][i] - p[0][0]*va[i]
     cord = nep['ofde'][i] - p[0][0]*vd[i]
-    f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(t.iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, r.beta[0], r.sd_beta[0], len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
-    print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
-    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
-    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
-    plt.xlabel('Hourangle')
-    plt.ylabel('Offset (arcsec)')
-    plt.legend(numpoints=1)
-    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
-    plt.clf()
+    corra[i] = nep['ofra'][i] - p[0][0]*va[i]
+    corrd[i] = nep['ofde'][i] - p[0][0]*vd[i]
+    filtro = np.hstack((filtro, nep['filt'][i][0].lower()))
+    deltab = np.hstack((deltab, p[0][0]))
+    instante = np.hstack((instante, tempo[i].jd.mean()))
+    f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(t.iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, 0.0, 0.0, len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
+#    print len(i), len(cora)
+#    print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
+#    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
+#    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
+#    plt.xlabel('Hourangle')
+#    plt.ylabel('Offset (arcsec)')
+#    plt.legend(numpoints=1)
+#    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
+#    plt.clf()
+
+
+for i in groups:
+#    try:
+    t = tempo[i].jd.mean()
+    if (hourangle[i[-1]] - hourangle[i[0]] > 1.5*u.hourangle) & (len(i) > 4):
+        continue
+    if (hourangle[i[-1]] < 1*u.hourangle) & (hourangle[i[0]] > -1*u.hourangle):
+        x = np.hstack((x, nep['ofra'][i]))
+        y = np.hstack((y, nep['ofde'][i]))
+        cx = np.hstack((cx, nep['ofra'][i]))
+        cy = np.hstack((cy, nep['ofde'][i]))
+        cora = nep['ofra'][i]
+        cord = nep['ofde'][i]
+#        print len(i), len(cora)
+        f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(Time(t, format='jd').iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, r.beta[0], r.sd_beta[0], len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
+        continue
+    fi = np.where(filtro == nep['filt'][i][0].lower())
+    if len(fi[0]) == 0:
+        x = np.hstack((x, nep['ofra'][i]))
+        y = np.hstack((y, nep['ofde'][i]))
+        cx = np.hstack((cx, nep['ofra'][i]))
+        cy = np.hstack((cy, nep['ofde'][i]))
+        cora = nep['ofra'][i]
+        cord = nep['ofde'][i]
+#        print len(i), len(cora)
+        f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(Time(t, format='jd').iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, r.beta[0], r.sd_beta[0], len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
+#        print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(Time(t, format='jd').iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, 0.0, 0.0, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
+        continue
+#    print fi, instante[fi], len(fi), t
+    ts = np.absolute(instante[fi] - t).argsort()[0]
+    if np.absolute(instante[fi][ts] - t) < 3.0:
+        p = deltab[fi][ts]
+    else:
+        p = deltab[fi].mean()
+#    g = np.vstack((va[i], np.ones(len(i))))
+#    p = np.linalg.lstsq(g.T, nep['ofra'][i])
+#    r = least(func=fun, x=g, y=nep['ofra'][i], beta0=p[0])
+#    t = Time(int('{:8.0f}'.format(tempo[i][0].jd)), format='jd')
+    x = np.hstack((x, nep['ofra'][i]))
+    y = np.hstack((y, nep['ofde'][i]))
+    cx = np.hstack((cx, nep['ofra'][i] - p*va[i]))
+    cy = np.hstack((cy, nep['ofde'][i] - p*vd[i]))
+    cora = nep['ofra'][i] - p*va[i]
+    cord = nep['ofde'][i] - p*vd[i]
+    corra[i] = nep['ofra'][i] - p*va[i]
+    corrd[i] = nep['ofde'][i] - p*vd[i]
+#    print len(i), len(cora)
+    f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(Time(t, format='jd').iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, p, 0.0, len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
+#    print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(Time(t, format='jd').iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p, 0.0, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
+#        plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
+#        plt.plot(hourangle[i], nep['ofra'][i] - p*va[i], 'o', label='cor')
+#        plt.xlabel('Hourangle')
+#        plt.ylabel('Offset (arcsec)')
+#        plt.legend(numpoints=1)
+#        plt.savefig('{}_{}.png'.format(tel, Time(t, format='jd').iso.split(' ')[0]))
+#        plt.clf()
+#    except:
+#        continue
 f.close()
 
+print len(cx)
 
 f, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
 
 ax1.hist(x*1000,bin)
 ax1.set_title('RA - no corr')
 ax1.set_ylabel('Number of positions')
-#ax1.set_ylim(0,450)
+ax1.set_ylim(0,1000)
 
 ax2.hist(y*1000,bin)
 ax2.set_title('DEC - no corr')
@@ -206,7 +281,7 @@ ax3.hist(cx*1000,bin)
 ax3.set_title('RA - corr')
 ax3.set_ylabel('Number of positions')
 ax3.set_xlabel('Offsets (mas)')
-#ax3.set_ylim(0,450)
+ax3.set_ylim(0,1000)
 
 ax4.hist(cy*1000,bin)
 ax4.set_title('DEC - corr')
@@ -214,6 +289,15 @@ ax4.set_xlabel('Offsets (mas)')
 
 plt.savefig('dist_{}.png'.format(tel), dpi=300)
 plt.clf()
+
+f = open('{}_cor.dat'.format(tel), 'w')
+for i in np.arange(len(dados)):
+    a = ((corra[i] - nep['ofra'][i])*u.arcsec/np.cos(dec[i]) + ra[i]).to(u.hourangle)
+    b = (dec[i] + (corrd[i] - nep['ofde'][i])*u.arcsec).to(u.deg)
+#    print a, b
+#    print '{} {:-6.3f} {:-6.3f} {:11.8f} {:12.9f} \n'.format(dados[i][:-1], corra[i], corrd[i], hourangle[i].value, a, b)
+    f.write('{} {:-6.3f} {:-6.3f} {:11.8f} {:12.9f} {:-13.9f}\n'.format(dados[i][:-1], corra[i], corrd[i], hourangle[i].value, a.value, b.value))
+f.close()
     
 #######################################################################
 
