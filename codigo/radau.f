@@ -14,16 +14,20 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 *  the final position-velocity vector.
 *  Integration is in double precision. A 64-bit double-word is assumed.
 *
-      subroutine ra15(x,v,tf,xl,ll,nv,nclass,nor)
+      subroutine ra15(x,v,tf,xl,ll,nv,nclass,nor, out1, out2)
+      use constants
       implicit double precision (a-h,o-z)
       parameter (nvx=90000) !!!
       parameter (nsor=20)
 !      parameter (nvx=18)
       real tval,pw
       dimension x(90000),v(90000),f1(nvx),fj(nvx),c(21),d(21),
-     a     r(21),y(nvx),z(nvx),
+     a     r(21),y(nvx),z(nvx), elemx(11),
      b     b(7,nvx),g(7,nvx),e(7,nvx),bd(7,nvx),h(8),w(7),u(7),nw(8)
       logical npq,nsf,nper,ncl,nes
+      integer, intent(in) :: out1
+      integer, intent(in) :: out2
+      real(wp) :: mu
       data nw/0,0,1,3,6,10,15,21/
       data zero, half, one,sr/0.0d0, 0.5d0, 1.0d0,1.4d0/
 *  These H values are the Gauss-Radau spacings, scaled to the range 0 to 1,
@@ -120,6 +124,22 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       t2=t*t
       if(ncl) t2=t
       tval=dabs(t)
+      
+      IF(NS/nsor*nsor.EQ.NS) then  
+        call energy(X,V,TM,VIP,ener4) 
+        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0
+        write(out1,*) tm, x(1:3*nbody)
+        do kkk=1,nbody
+!        write(19, *) TM, kkk, relf(kkk,:)
+        enddo
+        mu = Gaussk*Gaussk*(mass0+mass(1))
+        call PV2ALZDZ(mu, x(1:3*nbody), V(1:3*nbody), ELEMX)
+        write(15, *), elemx
+!        relfor(kkk,:,:) = relf
+!        kkk = kkk + 1
+      end if 
+      
+      
 *     IF(NS/10*10.EQ.NS) WRITE(*,7) NF,NS,X(1),X(2),T,TM,TF
 *  7  FORMAT(1X,2I6,3F12.5,1P,2E10.2)
 *  Loop 175 is 6 iterations on first sequence and two iterations therafter.
@@ -236,11 +256,26 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
   35  continue
       tm=tm+t
       ns=ns+1
+      
+      IF(.NOT.NPER) GO TO 78 
+        call energy(X,V,TD+NS*T,VIP,ener4) 
+        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0
+        write(out1,*) tm, x(1:3*nbody)
+        do kkk=1,nbody
+!        write(19, *) TM, kkk, relf(kkk,:)
+        enddo
+        mu = Gaussk*Gaussk*(mass0+mass(1))
+        call PV2ALZDZ(MU, x(1:3*nbody), V(1:3*nbody), ELEMX)
+        write(15, *), elemx
+!        relfor(kkk,:,:) = relf
+!        kkk = kkk + 1
+      RETURN
+      
 *  Return if done.
-      if(.not.nper) go to 78
+!      if(.not.nper) go to 78
 *     WRITE(*,7) NF,NS,X(1),X(2),T,TM,TF
 *     WRITE(4,7) NF,NS
-      return
+!      return
 *  Control on size of next sequence and adjust last sequence to exactly
 *  cover the integration span. NPER=.TRUE. set on last sequence.
 78    call force (x,v,tm,f1)
@@ -297,15 +332,16 @@ C  the final position-velocity vector.
 C  Integration is in double precision. A 64-bit double-word is assumed.
       use constants 
       IMPLICIT REAL*8 (A-H,O-Z) 
-      REAL *4 TVAL,PW! , mu
+      REAL *4 TVAL,PW
       DIMENSION X(90000),V(90000),F1(90000),FJ(90000),C(21),D(21),
      & R(21),Y(90000),Z(90000), 
      A     B(7,90000),G(7,90000),E(7,90000),BD(7,90000),H(8),W(7),
-     & U(7),NW(8), ener4(4)!, elemx(11)
+     & U(7),NW(8), ener4(4), elemx(11)
       LOGICAL NPQ,NSF,NPER,NCL,NES
       integer, intent(in) :: out1
       integer, intent(in) :: out2
       integer kkk
+      real(wp) :: mu
 !      EXTERNAL FORCE,SORTIE   
       DATA NW/0,0,1,3,6,10,15,21/ 
       DATA ZERO, HALF, ONE,SR/0.0D0, 0.5D0, 1.0D0,1.4D0/ 
@@ -406,13 +442,13 @@ C  values from the predicted B-values, following Eq. (2.7) in text.
       TVAL=DABS(T) 
       IF(NS/nsor*nsor.EQ.NS) then  
         call energy(X,V,TM,VIP,ener4) 
-        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0, ener4
+        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0
         write(out1,*) tm, x(1:3*nbody)
         do kkk=1,nbody
-        write(19, *) TM, kkk, relf(kkk,:)
+!        write(19, *) TM, kkk, relf(kkk,:)
         enddo
-        mu = k*k*(mass0+mass(1))
-        call PV2ALZDZ(MU,x(1:3*nbody),V(1:3*nbody),ELEMX)
+        mu = Gaussk*Gaussk*(mass0+mass(1))
+        call PV2ALZDZ(mu, x(1:3*nbody), V(1:3*nbody), ELEMX)
         write(15, *), elemx
 !        relfor(kkk,:,:) = relf
 !        kkk = kkk + 1
@@ -542,13 +578,13 @@ C Loop 35 finds new X and V values at end of sequence using Eqs. (2.11),(2.12)
 C  Return if done. 
       IF(.NOT.NPER) GO TO 78 
         call energy(X,V,TD+NS*T,VIP,ener4) 
-        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0, ener4
+        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0
         write(out1,*) tm, x(1:3*nbody)
         do kkk=1,nbody
-        write(19, *) TM, kkk, relf(kkk,:)
+!        write(19, *) TM, kkk, relf(kkk,:)
         enddo
-        mu = k*k*(mass0+mass(1))
-        call PV2ALZDZ(MU,x(1:3*nbody),V(1:3*nbody),ELEMX)
+        mu = Gaussk*Gaussk*(mass0+mass(1))
+        call PV2ALZDZ(MU, x(1:3*nbody), V(1:3*nbody), ELEMX)
         write(15, *), elemx
 !        relfor(kkk,:,:) = relf
 !        kkk = kkk + 1

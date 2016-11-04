@@ -4,7 +4,7 @@ from astropy.time import Time
 import astropy.units as u
 
 
-backfw = False
+backfw = True
 
 t, ene, dene = np.loadtxt('energy.dat', usecols=[0,1,2], unpack=True, dtype=np.float64)
 
@@ -52,14 +52,15 @@ if backfw:
     nbody = (len(x)-1)/3
 
     for i in np.arange(nbody):
-        delta = x2[3*i+1:3*i+3,::-1]-x[3*i+1:3*i+3]
-        d = np.sqrt(np.dot(delta,delta))
+#        delta = x2[3*i+1:3*i+3]-x[3*i+1:3*i+3]
+        delta = np.array([x2[3*i+1,::-1]-x[3*i+1,:], x2[3*i+2,::-1]-x[3*i+2,:], x2[3*i+3,::-1]-x[3*i+3,:]])
+        d = np.sqrt(np.sum(delta*delta, axis=0))
 #        d = np.sqrt(x[3*i+1]*x[3*i+1]+x[3*i+2]*x[3*i+2]+x[3*i+3]*x[3*i+3])
 #        d2 = np.sqrt(x2[3*i+1]*x2[3*i+1]+x2[3*i+2]*x2[3*i+2]+x2[3*i+3]*x2[3*i+3])
         d = d*u.AU
 #        d2 = d2*u.AU
 #        deltad = d2[::-1] - d
-        plt.plot(time.jyear, deltad.to(u.km))
+        plt.plot(time.jyear, d.to(u.km))
         plt.axhline(0)
         plt.ylabel('Delta Distance (km)')
         plt.xlabel('Time (years)')

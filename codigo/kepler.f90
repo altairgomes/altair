@@ -5,9 +5,9 @@
     ! ELEMX(9)=varpi; ELEMX(10)=sis2; ELEMX(11)=Omega
       use constants
       IMPLICIT NONE
-      REAL(wp), INTENT(IN):: MU
-      REAL(wp), DIMENSION(3), INTENT(IN):: POS, VIT
-      REAL(wp), DIMENSION(11), INTENT(OUT):: ELEMX
+      REAL(wp), INTENT(IN) :: MU
+      REAL(wp), DIMENSION(3), INTENT(IN) :: POS, VIT
+      REAL(wp), DIMENSION(11), INTENT(OUT) :: ELEMX
 
       REAL(wp):: R, A, GG, F, P, EX, MUinv, Rinv, Inc, sinOme, cosOme, sinpomeplusf, cospomeplusf, V2, sinInc,  &
          cosInc, GGinv, sinf, cosf, EXinv, pomeplusf, pome, Ainv, EXsinE, EXcosE, Moy, Ome, E, E1, sinI2, Long
@@ -73,3 +73,4 @@
       ELEMX(9)=Ome+pome; ELEMX(10)=sinI2; ELEMX(11)=Ome
 
       END SUBROUTINE PV2ALZDZ
+      
