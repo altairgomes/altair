@@ -16,11 +16,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 *
       subroutine ra15(x,v,tf,xl,ll,nv,nclass,nor)
       implicit double precision (a-h,o-z)
-      parameter (nvx=100) !!!
+      parameter (nvx=90000) !!!
+      parameter (nsor=20)
 !      parameter (nvx=18)
       real tval,pw
-      dimension x(3000:3),v(3000:3),f1(nvx:3),fj(nvx:3),c(21),d(21),
-     a     r(21),y(nvx:3),z(nvx:3),
+      dimension x(90000),v(90000),f1(nvx),fj(nvx),c(21),d(21),
+     a     r(21),y(nvx),z(nvx),
      b     b(7,nvx),g(7,nvx),e(7,nvx),bd(7,nvx),h(8),w(7),u(7),nw(8)
       logical npq,nsf,nper,ncl,nes
       data nw/0,0,1,3,6,10,15,21/
@@ -281,7 +282,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 C 
 C  $$$$  RA15.FOR   
 C 
-      SUBROUTINE RA15M(X,V,TD,TF0,XL,LL,NV,NCLASS,NOR,nsor,FORCE,SORTIE) 
+      SUBROUTINE RA15M(X,V,TD,TF0,XL,LL,NV,NCLASS,NOR,nsor, out1, out2) 
 C  Integrator RADAU by E. Everhart, Physics Department, University of Denver 
 C  This 15th-order version, called RA15, is written out for faster execution. 
 C  y'=F(y,t) is  NCLASS=1,  y"=F(y,t) is NCLASS= -2,  y"=F(y',y,t) is NCLASS=2 
@@ -293,15 +294,19 @@ C  A typical LL-value is in the range 6 to 12 for this order 11 program.
 C  However, if LL.LT.0 then XL is the constant sequence size used. 
 C  X and V enter as the starting position-velocity vector, and are output as 
 C  the final position-velocity vector. 
-C  Integration is in double precision. A 64-bit double-word is assumed. 
+C  Integration is in double precision. A 64-bit double-word is assumed.
+      use constants 
       IMPLICIT REAL*8 (A-H,O-Z) 
-      REAL *4 TVAL,PW 
+      REAL *4 TVAL,PW! , mu
       DIMENSION X(90000),V(90000),F1(90000),FJ(90000),C(21),D(21),
      & R(21),Y(90000),Z(90000), 
      A     B(7,90000),G(7,90000),E(7,90000),BD(7,90000),H(8),W(7),
-     & U(7),NW(8) 
-      LOGICAL NPQ,NSF,NPER,NCL,NES 
-      EXTERNAL FORCE,SORTIE   
+     & U(7),NW(8), ener4(4)!, elemx(11)
+      LOGICAL NPQ,NSF,NPER,NCL,NES
+      integer, intent(in) :: out1
+      integer, intent(in) :: out2
+      integer kkk
+!      EXTERNAL FORCE,SORTIE   
       DATA NW/0,0,1,3,6,10,15,21/ 
       DATA ZERO, HALF, ONE,SR/0.0D0, 0.5D0, 1.0D0,1.4D0/ 
 C  These H values are the Gauss-Radau spacings, scaled to the range 0 to 1, 
@@ -309,6 +314,7 @@ C  for integrating to order 15.
       DATA H/         0.D0, .05626256053692215D0, .18024069173689236D0, 
      A.35262471711316964D0, .54715362633055538D0, .73421017721541053D0, 
      B.88532094683909577D0, .97752061356128750D0/ 
+     
 C  The sum of the H-values should be 3.73333333333333333 
       NPER=.FALSE. 
       NSF=.FALSE. 
@@ -399,9 +405,17 @@ C  values from the predicted B-values, following Eq. (2.7) in text.
       IF(NCL) T2=T 
       TVAL=DABS(T) 
       IF(NS/nsor*nsor.EQ.NS) then  
-        call SORTIE(X,V,TM,VIP) 
- 
-        WRITE(16,*) TM,VIP 
+        call energy(X,V,TM,VIP,ener4) 
+        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0, ener4
+        write(out1,*) tm, x(1:3*nbody)
+        do kkk=1,nbody
+        write(19, *) TM, kkk, relf(kkk,:)
+        enddo
+        mu = k*k*(mass0+mass(1))
+        call PV2ALZDZ(MU,x(1:3*nbody),V(1:3*nbody),ELEMX)
+        write(15, *), elemx
+!        relfor(kkk,:,:) = relf
+!        kkk = kkk + 1
       end if 
  
 C  Loop 175 is 6 iterations on first sequence and two iterations therafter. 
@@ -527,10 +541,17 @@ C Loop 35 finds new X and V values at end of sequence using Eqs. (2.11),(2.12)
       end if 
 C  Return if done. 
       IF(.NOT.NPER) GO TO 78 
-        call SORTIE(X,V,TD+NS*T,VIP) 
- 
-      WRITE(16,*) TM,VIP 
-
+        call energy(X,V,TD+NS*T,VIP,ener4) 
+        WRITE(out2,*) TM, VIP, (VIP-ener0)/ener0, ener4
+        write(out1,*) tm, x(1:3*nbody)
+        do kkk=1,nbody
+        write(19, *) TM, kkk, relf(kkk,:)
+        enddo
+        mu = k*k*(mass0+mass(1))
+        call PV2ALZDZ(MU,x(1:3*nbody),V(1:3*nbody),ELEMX)
+        write(15, *), elemx
+!        relfor(kkk,:,:) = relf
+!        kkk = kkk + 1
       RETURN 
 C  Control on size of next sequence and adjust last sequence to exactly 
 C  cover the integration span. NPER=.TRUE. set on last sequence. 

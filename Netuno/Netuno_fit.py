@@ -55,11 +55,11 @@ def match():
 
 #####################################################################
 
-#match()
+match()
 
 lna = EarthLocation('-45 34 57', '-22 32 04', 1864)
 
-tel= 'Triton_IAG'
+tel= 'Netuno_160'
 nep = np.loadtxt('ucac4_{}_cp'.format(tel), usecols=[0,1,31,35,36,43,45], dtype={'names': ('ofra', 'ofde', 'nstar', 'ra', 'dec', 'jd', 'filt'), 'formats': ('f8', 'f8', 'i4', 'f8', 'f8', 'f8', 'S10')})
 f = open('ucac4_{}_cp'.format(tel), 'r')
 dados = f.readlines()
@@ -195,13 +195,13 @@ for i in groups:
     deltab = np.hstack((deltab, p[0][0]))
     instante = np.hstack((instante, tempo[i].jd.mean()))
     f.write('{} & {:5s} & {:4.2f} & {:+5.2f}$\pm${:4.2f} & {:3d} & {:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} & {:-4.0f}$\pm${:3.0f} \\\\ \n'.format(t.iso.split(' ')[0], nep['filt'][i][0], (hourangle[i[-1]] - hourangle[i[0]]).value, 0.0, 0.0, len(i), nep['nstar'][i].mean(), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cora.mean()*1000, cora.std()*1000, cord.mean()*1000, cord.std()*1000))
-#    print len(i), len(cora)
-#    print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
-#    plt.plot(hourangle[i], nep['ofra'][i], 'o', label='no cor')
+    print len(i), len(cora)
+    print '{}: Delta_H={:5.3f}; B={:+6.3f}, off={:-4.0f}, Ni={:3d}, ncora={:-4.0f}+-{:3.0f}, cora={:-4.0f}+-{:3.0f}, ncord={:-4.0f}+-{:3.0f}, cord={:-4.0f}+-{:3.0f}'.format(t.iso.split(' ')[0], (hourangle[i[-1]] - hourangle[i[0]]).value, p[0][0], p[0][1]*1000, len(i), nep['ofra'][i].mean()*1000, nep['ofra'][i].std()*1000, cora.mean()*1000, cora.std()*1000, nep['ofde'][i].mean()*1000, nep['ofde'][i].std()*1000, cord.mean()*1000, cord.std()*1000)
+#    plt.plot(hourangle[i], nep['ofra'][i], 'r+', label='no cor')
 #    plt.plot(hourangle[i], nep['ofra'][i] - p[0][0]*va[i], 'o', label='cor')
 #    plt.xlabel('Hourangle')
 #    plt.ylabel('Offset (arcsec)')
-#    plt.legend(numpoints=1)
+#    plt.legend(numpoints=1, loc=2)
 #    plt.savefig('{}_{}.png'.format(tel, t.iso.split(' ')[0]))
 #    plt.clf()
 

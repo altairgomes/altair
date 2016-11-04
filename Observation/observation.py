@@ -810,7 +810,8 @@ property.
             culmi = culmination.iso.reshape((b.size,))
             t['Culmination'] = Column(np.char.array(culmi).rpartition(' ')[:,2].rpartition(':')[:,0])
             t['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
-            obs = vstack([obs, t[np.where(altura.reshape((b.size,)) > self.limheight)]])
+            #obs = vstack([obs, t[np.where(altura.reshape((b.size,)) > self.limheight)]])
+            obs = vstack([obs, t])
         t1 = Time.now()
         if hasattr(self, 'eph'):
             ephem_min = identify_min(self.eph['coord'], self.eph['time'], (instants - self.fuse)[:,0])
@@ -833,7 +834,8 @@ property.
             culmie = culminatione.iso.reshape((b.size,))
             teph['Culmination'] = Column(np.char.array(culmie).rpartition(' ')[:,2].rpartition(':')[:,0])
             teph['time'] = Column(instants[:,0].iso[a.reshape((a.size,))])
-            obs = vstack([obs, teph[np.where(alturae.reshape((b.size,)) > self.limheight)]])
+            #obs = vstack([obs, teph[np.where(alturae.reshape((b.size,)) > self.limheight)]])
+            obs = vstack([obs, teph])
         t4 = Time.now()
 #        print "min: ", (t2-t1).sec
 #        print "culmi, alti: ", (t3-t2).sec
@@ -877,21 +879,37 @@ property.
         output.write('Observational Plan to the night: {}\n\n'.format(self.instants[0][0].iso.split(' ')[0]))
         output.write('Latitude: {}  Longitude: {}\nMinimum height: {}\nField Size: {}\n\n'.format(self.site.latitude, self.site.longitude, self.limheight, self.limdist))
         output.write('Height: Height above the horizons (deg)\nTleft: Time left to reach minimum height (hh:mm)\n\n')
+        output.write('\nTable of observability (height in degrees by time by object)\n')
+        head = [' '+i[0][11:16]+ ' |' for i in self.instants.iso]
+        head = ''.join(head)
+        head = '       Objects           |'+head
+        output.write('-'*len(head)+'\n{}\n'.format(head)+'-'*len(head)+'\n')
+        for i in np.sort(np.unique(self.obs['Objects'])):
+            a = self.obs[np.where(self.obs['Objects'] == i)]
+            a.sort('time')
+            output.write('{:25s}|'.format(i))
+            for j in a:
+                if j['Height'] > self.limheight.to(u.deg).value:
+                    output.write('  {:2.0f}   |'.format(j['Height']))
+                else:
+                    output.write('       |')
+            output.write('\n')
+        output.write('-'*len(head)+'\n\n')
         for i in np.arange(len(self.instants), dtype=np.int16):
-            obs = self.obs[np.where(self.obs['time'] == self.instants[i,0].iso)]
+            obs = self.obs[np.where((self.obs['time'] == self.instants[i,0].iso) & (self.obs['Height'] > self.limheight.to(u.deg).value))]
             obs.sort(sort)
             output.write('\n---LT: {} (UT: {}) ----------------------------------------------------------------\n'.format(obs.meta['LT'][i].iso.rpartition(' ')[2].rpartition(':')[0], obs.meta['UT'][i].iso.rpartition(' ')[2].rpartition(':')[0]))
             if 'moon_h' in obs.meta:
                 output.write('Moon height: {:4.1f}\n\n'.format(obs.meta['moon_h'][i]))
-            for i in obs['RA_J2000_DEC', 'Height', 'Time_left', 'D_moon', 'Culmination', 'Objects', 'Comments'].pformat(max_lines=-1, max_width=-1):
-                output.write(i + '\n')
-        night = self.__resume_night__(self.instants[0])
-        night.sort('Objects')
-        output.write('\n\n' + '-'*100 + '\n')
-        output.write('---Observability of the Targets----------------------------------------------------------------------\n')
-        output.write('-'*100 + '\n')
-        for i in night['RA_J2000_DEC', 'Rise', 'Culmination', 'Set', 'Objects','Comments'].pformat(max_lines=-1, max_width=-1):
-            output.write(i + '\n')
+            for j in obs['RA_J2000_DEC', 'Height', 'Time_left', 'D_moon', 'Culmination', 'Objects', 'Comments'].pformat(max_lines=-1, max_width=-1):
+                output.write(j + '\n')
+#        night = self.__resume_night__(self.instants[0])
+#        night.sort('Objects')
+#        output.write('\n\n' + '-'*100 + '\n')
+#        output.write('---Observability of the Targets----------------------------------------------------------------------\n')
+#        output.write('-'*100 + '\n')
+#        for i in night['RA_J2000_DEC', 'Rise', 'Culmination', 'Set', 'Objects','Comments'].pformat(max_lines=-1, max_width=-1):
+#            output.write(i + '\n')
         output.close()
         
     def __region__(self, ra, dec, names, radius=10*u.arcsec):
