@@ -1,4 +1,0 @@
-2451545.0D0   ! initial start day TDB
-0.05D0        ! integrator interval (days)
-20000         ! number of steps
-F             ! T -> back and forward method
