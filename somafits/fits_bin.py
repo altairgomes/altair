@@ -23,7 +23,7 @@ for i in np.arange(len(image_list) // binagem):
     final_image = np.mean(image_concat, axis=0)
     outfile = '{}_{:05d}.fits'.format(nome_saida, i + 1)
     hdu = fits.PrimaryHDU(final_image)
-    hdu.scale(type='int16')
+    hdu.scale(type='int16', bzero=32768)
     hdu.writeto(outfile)
     h.write('{} = {}\n'.format(outfile, image_list[i*binagem + elimina: (i+1)*binagem - elimina]))
 
